@@ -3,16 +3,24 @@ import './index.css'
 
 // ── Data ────────────────────────────────────────────────────────────────────
 
-const PLATFORM_PARAS = [
-  "The billionaires have had it too good for too long. CEO salaries are up more than 40 percent in a year while living standards for everyone else are getting smashed. Decade after decade, under both major parties, the rich have gotten richer while everyone else struggles. And the politicians run Victoria like it's their own private cash machine.",
-  "We have to change things. We've got to put politicians on a worker's wage so they live like the rest of us. And we've got to get socialists into parliament who will fight to make workers richer and billionaires poorer, not the other way around.",
-  "Under the business-as-usual politics of Liberal and Labor, Melbourne has become a segregated city — working-class areas are starved of resources while the wealthy suburbs get the best of everything.",
-  "The property market has become a casino for speculators interested only in profits, while homes are priced out of reach of an entire generation.",
-  'Our gas and electricity infrastructure and services have been sold in the name of "efficiency". Now we\'re paying for it as the energy barons squeeze us for every cent.',
-  "Our natural resources — from the minerals beneath the ground, to the arable land, to the forests, to the water in our rivers — have been handed to the highest bidder.",
-  "The climate emergency gets worse every year as mass extinction events and irreversible losses of biodiversity put our future in jeopardy.",
-  "Our public schools are the most underfunded in the country and our public health system is in permanent crisis.",
-  'Under business-as-usual politics, it\'s divide and conquer. Whether it\'s the relentless attacks on trans people, the racist panics about "boat people" or "African gangs" or the attacks on Aboriginal sovereignty—all of it is there to divide us and to distract us from the great robbery going on right in front of our eyes.',
+const PLATFORM_CONTENT = [
+  { type: 'heading', text: 'A Victoria run for working people, not billionaires' },
+  { type: 'para', text: 'The billionaires have had it too good for too long. CEO salaries are up more than 40 percent in a year while living standards for everyone else are getting smashed.' },
+  { type: 'para', text: 'Decade after decade, under both major parties, the rich have gotten richer while workers struggle with housing, bills and insecure work.' },
+  { type: 'para', text: 'We need socialists in parliament who will fight to make workers richer and billionaires poorer — not the other way around.' },
+  { type: 'heading', text: 'Billionaires are getting richer while everyone else struggles' },
+  { type: 'para', text: 'CEO salaries are up more than 40 percent in a year while living standards for everyone else are getting smashed.' },
+  { type: 'para', text: 'Decade after decade, under both major parties, the rich have gotten richer while workers struggle to pay rent, mortgages and bills.' },
+  { type: 'heading', text: 'Melbourne has become a segregated city' },
+  { type: 'para', text: 'Working-class areas are starved of resources while wealthy suburbs get the best of everything.' },
+  { type: 'para', text: 'Housing has become a casino for speculators while an entire generation is locked out of home ownership.' },
+  { type: 'heading', text: 'Public assets have been sold off' },
+  { type: 'para', text: 'Our energy system has been privatised in the name of "efficiency".' },
+  { type: 'para', text: 'Now energy corporations squeeze ordinary people for every cent while profits soar.' },
+  { type: 'heading', text: 'Divide and conquer politics keeps people powerless' },
+  { type: 'para', text: 'Whether it\'s attacks on trans people, racist panics about refugees or attacks on Aboriginal sovereignty — these divisions are used to distract from the transfer of wealth to the rich.' },
+  { type: 'heading', text: 'We need socialists in parliament' },
+  { type: 'para', text: 'Politicians should live on a worker\'s wage and fight to make workers richer and billionaires poorer — not the other way around.' },
 ]
 
 const POLICIES = [
@@ -148,6 +156,15 @@ const S = {
   },
   platformText: {
     maxWidth: 640,
+  },
+  platformHeading: {
+    fontSize: 22,
+    fontWeight: 800,
+    lineHeight: '28px',
+    color: '#000',
+    fontFamily: "'Work Sans', system-ui, sans-serif",
+    marginTop: 36,
+    marginBottom: 12,
   },
   para: {
     fontSize: 16,
@@ -403,9 +420,14 @@ export default function App() {
       <main style={S.content}>
         {tab === 'platform' ? (
           <div style={S.platformText}>
-            {PLATFORM_PARAS.map((p, i) => (
-              <p key={i} style={S.para}>{p}</p>
-            ))}
+            <p style={{ fontSize: 15, color: '#FF4B33', marginBottom: 24, fontFamily: "'Open Sans', system-ui, sans-serif", fontStyle: 'normal' }}>
+              (Rather than long blocks of text, as shown in the placeholder copy below, breaking the content into smaller sections like this would make it easier to scan and read, particularly on mobile.)
+            </p>
+            {PLATFORM_CONTENT.map((item, i) =>
+              item.type === 'heading'
+                ? <h2 key={i} style={{ ...S.platformHeading, ...(i === 0 ? { marginTop: 0, fontSize: 26 } : { fontWeight: 600, fontSize: 21 }) }}>{item.text}</h2>
+                : <p key={i} style={S.para}>{item.text}</p>
+            )}
           </div>
         ) : (
           <>
