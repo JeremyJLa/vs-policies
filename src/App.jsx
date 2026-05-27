@@ -632,6 +632,7 @@ export default function App() {
   const [tab, setTab] = useState('platform')
   const [cardView, setCardView] = useState('titles')
   const [policyLayout, setPolicyLayout] = useState('grid')
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const w = useWindowWidth()
   const isMobile = w <= 640
@@ -642,56 +643,127 @@ export default function App() {
   return (
     <div style={S.page}>
 
-      <nav style={S.nav}>
-        <div style={S.navViewToggle}>
-          <button style={S.navViewBtn(cardView === 'titles')} onClick={() => setCardView('titles')}>Titles</button>
-          <button style={S.navViewBtn(cardView === 'expanded')} onClick={() => setCardView('expanded')}>Details</button>
-          <button style={S.navViewBtn(cardView === 'reddetails')} onClick={() => setCardView('reddetails')}>Red details hover</button>
-          <button style={S.navViewBtn(cardView === 'icons')} onClick={() => setCardView('icons')}>Icons</button>
-        </div>
+      <nav style={{ ...S.nav, padding: isMobile ? '0 16px' : '0 24px', position: 'relative' }}>
+        {isMobile ? (
+          <button
+            onClick={() => setMenuOpen(o => !o)}
+            style={{
+              background: 'none', border: '1px solid',
+              borderColor: menuOpen ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.25)',
+              borderRadius: 3, color: '#fff', fontSize: 20, lineHeight: 1,
+              width: 36, height: 36, cursor: 'pointer', display: 'flex',
+              alignItems: 'center', justifyContent: 'center',
+            }}
+            aria-label="View options"
+          >⋮</button>
+        ) : (
+          <div className="nav-toggle" style={S.navViewToggle}>
+            <button style={S.navViewBtn(cardView === 'titles')} onClick={() => setCardView('titles')}>Titles</button>
+            <button style={S.navViewBtn(cardView === 'expanded')} onClick={() => setCardView('expanded')}>Details</button>
+            <button style={S.navViewBtn(cardView === 'reddetails')} onClick={() => setCardView('reddetails')}>Red details hover</button>
+            <button style={S.navViewBtn(cardView === 'icons')} onClick={() => setCardView('icons')}>Icons</button>
+          </div>
+        )}
       </nav>
 
-      <div style={S.heroSection}>
-        <div style={S.heroPurple} />
-        <div style={S.pageTitleBox}>
-          <h1 style={S.pageTitle}>What we'll fight for</h1>
+      {/* Kebab dropdown — mobile only */}
+      {isMobile && menuOpen && (
+        <>
+          <div onClick={() => setMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 98 }} />
+          <div style={{
+            position: 'fixed', top: 82, right: 0, zIndex: 99,
+            background: '#fff', borderLeft: '1px solid #E8E8E8', borderBottom: '1px solid #E8E8E8',
+            minWidth: 230, boxShadow: '-4px 8px 24px rgba(0,0,0,0.12)',
+          }}>
+            {/* Accordion option */}
+            <div style={{ padding: '6px 0' }}>
+              {[{ label: 'Accordion', action: () => { setPolicyLayout('accordion'); setMenuOpen(false) }, active: policyLayout === 'accordion' }].map(item => (
+                <button key="acc" onClick={item.action} style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  width: '100%', padding: '13px 20px', background: 'none', border: 'none',
+                  fontSize: 15, fontWeight: item.active ? 700 : 400, cursor: 'pointer',
+                  fontFamily: "'Open Sans', system-ui, sans-serif",
+                  color: item.active ? '#FF4B33' : '#000', textAlign: 'left',
+                }}>
+                  {item.label}
+                  {item.active && <span style={{ fontSize: 13 }}>✓</span>}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ height: 1, background: '#EBEBEB', margin: '0 20px' }} />
+
+            {/* Tile options */}
+            <div style={{ padding: '6px 20px 4px', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#999', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Tiles</div>
+            <div style={{ paddingBottom: 6 }}>
+              {[
+                { label: 'Titles', view: 'titles' },
+                { label: 'Details', view: 'expanded' },
+                { label: 'Red details hover', view: 'reddetails' },
+                { label: 'Icons', view: 'icons' },
+              ].map(({ label, view }) => {
+                const active = policyLayout === 'grid' && cardView === view
+                return (
+                  <button key={view} onClick={() => { setPolicyLayout('grid'); setCardView(view); setMenuOpen(false) }} style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    width: '100%', padding: '13px 20px', background: 'none', border: 'none',
+                    fontSize: 15, fontWeight: active ? 700 : 400, cursor: 'pointer',
+                    fontFamily: "'Open Sans', system-ui, sans-serif",
+                    color: active ? '#FF4B33' : '#000', textAlign: 'left',
+                  }}>
+                    {label}
+                    {active && <span style={{ fontSize: 13 }}>✓</span>}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </>
+      )}
+
+      <div style={{ ...S.heroSection, height: isMobile ? 190 : 280 }}>
+        <div style={{ ...S.heroPurple, clipPath: isMobile ? 'polygon(0 0, 100% 0, 100% 90%, 0 70%)' : 'polygon(0 0, 100% 0, 100% 86%, 0 63%)' }} />
+        <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 290, top: isMobile ? 116 : 178 }}>
+          <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36 }}>What we'll fight for</h1>
         </div>
       </div>
 
-      <div style={S.tabBar}>
-        <button style={S.tabBtn(tab === 'platform')} onClick={() => setTab('platform')}>
+      <div style={{ ...S.tabBar, padding: isMobile ? '0 16px' : isTablet ? '0 40px' : '0 300px', gap: isMobile ? 16 : 24 }}>
+        <button style={{ ...S.tabBtn(tab === 'platform'), fontSize: isMobile ? 15 : 18 }} onClick={() => setTab('platform')}>
           Our platform
         </button>
-        <button style={S.tabBtn(tab === 'policies')} onClick={() => setTab('policies')}>
+        <button style={{ ...S.tabBtn(tab === 'policies'), fontSize: isMobile ? 15 : 18 }} onClick={() => setTab('policies')}>
           Our policies
         </button>
       </div>
 
-      <main style={S.content}>
+      <main style={{ ...S.content, padding: isMobile ? '28px 16px 60px' : isTablet ? '48px 40px 60px' : '64px 80px 80px 300px' }}>
         {tab === 'platform' ? (
-          <div style={S.platformText}>
-            <p style={{ fontSize: 15, color: '#FF4B33', marginBottom: 24, fontFamily: "'Open Sans', system-ui, sans-serif", fontStyle: 'normal' }}>
+          <div style={{ ...S.platformText, maxWidth: isMobile ? '100%' : 640 }}>
+            <p style={{ fontSize: isMobile ? 13 : 15, color: '#FF4B33', marginBottom: 24, fontFamily: "'Open Sans', system-ui, sans-serif", fontStyle: 'normal' }}>
               (Rather than long blocks of text, as shown in the placeholder copy below, breaking the content into smaller sections like this would make it easier to scan and read, particularly on mobile.)
             </p>
             {PLATFORM_CONTENT.map((item, i) =>
               item.type === 'heading'
-                ? <h2 key={i} style={{ ...S.platformHeading, ...(i === 0 ? { marginTop: 0, fontSize: 26 } : { fontWeight: 600, fontSize: 21 }) }}>{item.text}</h2>
-                : <p key={i} style={S.para}>{item.text}</p>
+                ? <h2 key={i} style={{ ...S.platformHeading, ...(i === 0 ? { marginTop: 0, fontSize: isMobile ? 20 : 26 } : { fontWeight: 600, fontSize: isMobile ? 17 : 21 }) }}>{item.text}</h2>
+                : <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{item.text}</p>
             )}
           </div>
         ) : (
           <>
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 32 }}>
-              <p style={{ ...S.para, maxWidth: 500 }}>
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 32, gap: isMobile ? 16 : 0 }}>
+              <p style={{ ...S.para, maxWidth: isMobile ? '100%' : 500, fontSize: isMobile ? 15 : 16 }}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
               </p>
-              <div style={{ display: 'flex', gap: 6, flexShrink: 0, marginLeft: 24 }}>
-                <button style={S.layoutBtn(policyLayout === 'grid')} onClick={() => setPolicyLayout('grid')}>Grid</button>
-                <button style={S.layoutBtn(policyLayout === 'accordion')} onClick={() => setPolicyLayout('accordion')}>Accordion</button>
-              </div>
+              {!isMobile && (
+                <div style={{ display: 'flex', gap: 6, flexShrink: 0, marginLeft: 24 }}>
+                  <button style={S.layoutBtn(policyLayout === 'grid')} onClick={() => setPolicyLayout('grid')}>Grid</button>
+                  <button style={S.layoutBtn(policyLayout === 'accordion')} onClick={() => setPolicyLayout('accordion')}>Accordion</button>
+                </div>
+              )}
             </div>
             {policyLayout === 'accordion' ? <AccordionPolicies /> : (
-            <div style={S.grid}>
+            <div style={{ ...S.grid, gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 300px)', gap: isMobile ? 12 : 24 }}>
               {grid.map((policy, i) => {
                 if (cardView === 'expanded') return <PolicyCardExpanded key={i} policy={policy} index={i} />
                 if (cardView === 'reddetails') return <PolicyCardRedDetails key={i} policy={policy} index={i} />

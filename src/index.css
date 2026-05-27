@@ -16,3 +16,11 @@ body {
 .policy-card {
   transition: background-color 0.18s ease;
 }
+
+/* Hide scrollbar on nav toggle (mobile) */
+.nav-toggle {
+  scrollbar-width: none;
+}
+.nav-toggle::-webkit-scrollbar {
+  display: none;
+}
