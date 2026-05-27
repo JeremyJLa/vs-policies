@@ -47,6 +47,9 @@ const WORKERS_POLICY = {
   Icon: WorkersIcon,
 }
 
+const ACCORDION_BASE = [WORKERS_POLICY, ...POLICIES]
+const ACCORDION_POLICIES = Array.from({ length: 15 }, (_, i) => ACCORDION_BASE[i % ACCORDION_BASE.length])
+
 const POLICY_GRID = Array.from({ length: 30 }, (_, i) => {
   const row = Math.floor(i / 3)
   const col = i % 3
@@ -248,6 +251,21 @@ const S = {
     height: 120,
     flexShrink: 0,
   },
+  layoutBtn: (active) => ({
+    background: 'none',
+    border: '1px solid',
+    borderColor: active ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.18)',
+    borderRadius: 3,
+    color: active ? '#000' : 'rgba(0,0,0,0.35)',
+    fontSize: 11,
+    fontFamily: "'Open Sans', system-ui, sans-serif",
+    fontWeight: 600,
+    letterSpacing: '0.06em',
+    textTransform: 'uppercase',
+    padding: '4px 10px',
+    cursor: 'pointer',
+    transition: 'all 0.15s',
+  }),
 }
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
@@ -480,7 +498,7 @@ function PolicyCardRedDetails({ policy, index }) {
       <div style={{
         position: 'absolute', inset: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        opacity: hovered ? 0.2 : 0,
+        opacity: hovered ? 0.35 : 0,
         transition: hovered ? 'opacity 0.4s ease 0.14s' : 'opacity 0.18s ease',
         pointerEvents: 'none', zIndex: 0,
       }}>
@@ -517,6 +535,60 @@ function PolicyCardRedDetails({ policy, index }) {
   )
 }
 
+function AccordionPolicies() {
+  const [openIndex, setOpenIndex] = useState(null)
+  return (
+    <div style={{ maxWidth: 700 }}>
+      {ACCORDION_POLICIES.map((policy, i) => {
+        const isOpen = openIndex === i
+        const { Icon } = policy
+        return (
+          <div key={i} style={{ borderBottom: '1px solid #C4C4C4', ...(i === 0 ? { borderTop: '1px solid #C4C4C4' } : {}) }}>
+            <button
+              onClick={() => setOpenIndex(isOpen ? null : i)}
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center',
+                justifyContent: 'space-between', gap: 16,
+                background: 'none', border: 'none', cursor: 'pointer',
+                padding: '20px 0', textAlign: 'left',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+                <Icon height={28} color={isOpen ? '#FF4B33' : '#000'} />
+                <h2 style={{
+                  fontSize: 22, fontWeight: 800, lineHeight: 1,
+                  fontFamily: "'Work Sans', system-ui, sans-serif",
+                  textTransform: 'uppercase', letterSpacing: '0.02em',
+                  color: isOpen ? '#FF4B33' : '#000',
+                  transition: 'color 0.15s ease',
+                  whiteSpace: 'nowrap',
+                }}>
+                  {policy.title.replace(/\n/g, ' ')}
+                </h2>
+              </div>
+              <span style={{
+                fontSize: 26, lineHeight: 1, fontWeight: 300, flexShrink: 0,
+                color: isOpen ? '#FF4B33' : '#000',
+                transition: 'color 0.15s ease',
+              }}>
+                {isOpen ? '−' : '+'}
+              </span>
+            </button>
+            <div style={{ maxHeight: isOpen ? 500 : 0, overflow: 'hidden', transition: 'max-height 0.4s ease' }}>
+              <p style={{ ...S.para, maxWidth: 580, marginBottom: 16 }}>{policy.body}</p>
+              <p style={{ ...S.para, maxWidth: 580, marginBottom: 16 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+              <p style={{ ...S.para, maxWidth: 580 }}>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt.</p>
+              <a href="#" style={{ display: 'inline-block', marginTop: 16, marginBottom: 24, fontSize: 14, fontWeight: 700, fontFamily: "'Open Sans', system-ui, sans-serif", color: '#000', textDecoration: 'underline', letterSpacing: '0.02em' }}>
+                See full policy ›
+              </a>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 function PolicyCardIcons({ policy, index }) {
   const [hovered, setHovered] = useState(false)
   const fg = hovered ? '#fff' : '#000'
@@ -545,6 +617,7 @@ function PolicyCardIcons({ policy, index }) {
 export default function App() {
   const [tab, setTab] = useState('platform')
   const [cardView, setCardView] = useState('titles')
+  const [policyLayout, setPolicyLayout] = useState('grid')
 
   const grid = cardView === 'icons' ? POLICY_GRID_ICONS : POLICY_GRID
 
@@ -590,9 +663,16 @@ export default function App() {
           </div>
         ) : (
           <>
-            <p style={{ ...S.para, maxWidth: 640, marginBottom: 32 }}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </p>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 32 }}>
+              <p style={{ ...S.para, maxWidth: 500 }}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+              </p>
+              <div style={{ display: 'flex', gap: 6, flexShrink: 0, marginLeft: 24 }}>
+                <button style={S.layoutBtn(policyLayout === 'grid')} onClick={() => setPolicyLayout('grid')}>Grid</button>
+                <button style={S.layoutBtn(policyLayout === 'accordion')} onClick={() => setPolicyLayout('accordion')}>Accordion</button>
+              </div>
+            </div>
+            {policyLayout === 'accordion' ? <AccordionPolicies /> : (
             <div style={S.grid}>
               {grid.map((policy, i) => {
                 if (cardView === 'expanded') return <PolicyCardExpanded key={i} policy={policy} index={i} />
@@ -601,6 +681,7 @@ export default function App() {
                 return <PolicyCard key={i} policy={policy} index={i} />
               })}
             </div>
+            )}
           </>
         )}
       </main>
