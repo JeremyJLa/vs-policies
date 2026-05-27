@@ -94,9 +94,10 @@ const S = {
   pageTitle: {
     fontSize: 36,
     fontWeight: 900,
-    letterSpacing: '-0.01em',
+    letterSpacing: '0.02em',
     color: '#000',
     fontFamily: "'Work Sans', system-ui, sans-serif",
+    textTransform: 'uppercase',
   },
   tabBar: {
     padding: '0 300px',
