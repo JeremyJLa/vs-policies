@@ -390,7 +390,7 @@ export default function App() {
 
       <div style={S.tabBar}>
         <button style={S.tabBtn(tab === 'platform')} onClick={() => setTab('platform')}>
-          Our policy platform
+          Our platform
         </button>
         <button style={S.tabBtn(tab === 'policies')} onClick={() => setTab('policies')}>
           Our policies
