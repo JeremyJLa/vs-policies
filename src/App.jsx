@@ -94,19 +94,22 @@ const S = {
   },
   heroSection: {
     position: 'relative',
-    height: 220,
+    height: 280,
     flexShrink: 0,
   },
   heroPurple: {
     position: 'absolute',
     inset: 0,
-    background: '#e4dded',
-    clipPath: 'polygon(0 0, 100% 0, 100% 65%, 0 35%)',
+    background: [
+      'linear-gradient(rgba(196, 178, 212, 0.15), rgba(196, 178, 212, 0.15))',
+      'url("/imageA.jpeg") center / cover no-repeat',
+    ].join(', '),
+    clipPath: 'polygon(0 0, 100% 0, 100% 86%, 0 63%)',
   },
   pageTitleBox: {
     position: 'absolute',
     left: 290,
-    top: 80,
+    top: 178,
     background: '#fff',
     padding: '4px 24px 16px',
   },

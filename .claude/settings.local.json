@@ -9,7 +9,9 @@
       "Bash(xargs -I{} lsof -p {} -a -d cwd)",
       "mcp__Claude_in_Chrome__tabs_context_mcp",
       "Bash(curl -s http://localhost:5176/)",
-      "Bash(curl -s http://localhost:5176/src/App.jsx)"
+      "Bash(curl -s http://localhost:5176/src/App.jsx)",
+      "WebSearch",
+      "WebFetch(domain:unsplash.com)"
     ]
   }
 }
