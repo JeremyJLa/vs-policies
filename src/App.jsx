@@ -341,13 +341,17 @@ function PolicyCard({ policy, index }) {
       <div style={{
         position: 'absolute', inset: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        transform: hovered ? 'scale(1)' : 'scale(0.3)',
-        opacity: hovered ? 0.45 : 0,
-        transition: 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease',
+        opacity: hovered ? 0.45 : 0.07,
+        transition: 'opacity 0.3s ease',
         pointerEvents: 'none',
         zIndex: 0,
       }}>
-        <Icon color="#fff" height={90} />
+        <div style={{
+          transform: hovered ? 'scale(1)' : 'scale(0.6)',
+          transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        }}>
+          <Icon color="#fff" height={90} />
+        </div>
       </div>
       <h2 style={{
         ...S.cardTitle,
@@ -365,17 +369,42 @@ function PolicyCard({ policy, index }) {
 
 function PolicyCardExpanded({ policy, index }) {
   const [hovered, setHovered] = useState(false)
-  const fg = hovered ? '#fff' : '#000'
+  const { Icon } = policy
   return (
     <div
       className="policy-card"
-      style={{ ...S.cardExpanded, background: hovered ? '#FF4B33' : TILE_COLOURS[index % 2] }}
+      style={{ ...S.cardExpanded, background: hovered ? '#FF4B33' : TILE_COLOURS[index % 2], position: 'relative', overflow: 'hidden' }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <h2 style={{ ...S.cardTitle, color: fg }}>{policy.title}</h2>
-      <p style={{ ...S.cardBody, color: fg }}>{policy.body}</p>
-      <span style={{ ...S.readMore, color: fg, alignSelf: 'flex-end' }}>
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        opacity: hovered ? 0.45 : 0.07,
+        transition: 'opacity 0.3s ease',
+        pointerEvents: 'none',
+        zIndex: 0,
+      }}>
+        <div style={{
+          transform: hovered ? 'scale(1)' : 'scale(0.6)',
+          transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        }}>
+          <Icon color="#fff" height={90} />
+        </div>
+      </div>
+      <h2 style={{
+        ...S.cardTitle, color: '#000',
+        opacity: hovered ? 0 : 1,
+        transition: 'opacity 0.35s ease',
+        position: 'relative', zIndex: 1,
+      }}>{policy.title}</h2>
+      <p style={{
+        ...S.cardBody, color: '#000',
+        opacity: hovered ? 0 : 1,
+        transition: 'opacity 0.35s ease',
+        position: 'relative', zIndex: 1,
+      }}>{policy.body}</p>
+      <span style={{ ...S.readMore, color: hovered ? '#fff' : '#000', alignSelf: 'flex-end', position: 'relative', zIndex: 1, transition: 'color 0.15s ease' }}>
         Read more <span style={{ fontSize: 16 }}>›</span>
       </span>
     </div>
