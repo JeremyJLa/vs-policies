@@ -404,7 +404,7 @@ export default function App() {
       <div style={S.heroSection}>
         <div style={S.heroPurple} />
         <div style={S.pageTitleBox}>
-          <h1 style={S.pageTitle}>Policies</h1>
+          <h1 style={S.pageTitle}>What we'll fight for</h1>
         </div>
       </div>
 
@@ -431,7 +431,6 @@ export default function App() {
           </div>
         ) : (
           <>
-            <h2 style={{ ...S.platformHeading, marginTop: 0, marginBottom: 16, fontSize: 26 }}>What we'll fight for</h2>
             <p style={{ ...S.para, maxWidth: 640, marginBottom: 32 }}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
             </p>
