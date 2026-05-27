@@ -723,7 +723,7 @@ export default function App() {
 
       <div style={{ ...S.heroSection, height: isMobile ? 190 : 280 }}>
         <div style={{ ...S.heroPurple, clipPath: isMobile ? 'polygon(0 0, 100% 0, 100% 90%, 0 70%)' : 'polygon(0 0, 100% 0, 100% 86%, 0 63%)' }} />
-        <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 290, top: isMobile ? 140 : 178 }}>
+        <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 290, top: isMobile ? 137 : 178 }}>
           <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36 }}>What we'll fight for</h1>
         </div>
       </div>
