@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "Bash(lsof -ti :5173 -sTCP:LISTEN)",
+      "Bash(xargs -I{} lsof -p {} -a -i :5173)",
+      "Bash(npx vite *)",
+      "Bash(lsof -ti :5176 -sTCP:LISTEN)",
+      "Bash(xargs -I{} lsof -p {} -a -d cwd)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(curl -s http://localhost:5176/)",
+      "Bash(curl -s http://localhost:5176/src/App.jsx)"
+    ]
+  }
+}
