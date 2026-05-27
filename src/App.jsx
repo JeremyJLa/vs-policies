@@ -405,13 +405,18 @@ export default function App() {
             ))}
           </div>
         ) : (
-          <div style={S.grid}>
-            {grid.map((policy, i) => {
-              if (cardView === 'expanded') return <PolicyCardExpanded key={i} policy={policy} index={i} />
-              if (cardView === 'icons') return <PolicyCardIcons key={i} policy={policy} index={i} />
-              return <PolicyCard key={i} policy={policy} index={i} />
-            })}
-          </div>
+          <>
+            <p style={{ ...S.para, maxWidth: 640, marginBottom: 32 }}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            </p>
+            <div style={S.grid}>
+              {grid.map((policy, i) => {
+                if (cardView === 'expanded') return <PolicyCardExpanded key={i} policy={policy} index={i} />
+                if (cardView === 'icons') return <PolicyCardIcons key={i} policy={policy} index={i} />
+                return <PolicyCard key={i} policy={policy} index={i} />
+              })}
+            </div>
+          </>
         )}
       </main>
 
