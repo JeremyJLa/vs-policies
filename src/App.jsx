@@ -86,7 +86,7 @@ const S = {
   },
   pageTitleBox: {
     position: 'absolute',
-    left: 300,
+    left: 290,
     top: 80,
     background: '#fff',
     padding: '4px 24px 16px',
