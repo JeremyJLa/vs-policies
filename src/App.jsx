@@ -214,7 +214,7 @@ const S = {
   cardTitle: {
     fontSize: 30,
     fontWeight: 800,
-    lineHeight: '28px',
+    lineHeight: '24px',
     whiteSpace: 'pre-line',
     letterSpacing: '0.02em',
     fontFamily: "'Work Sans', system-ui, sans-serif",
@@ -252,9 +252,10 @@ const S = {
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
 
-function WorkersIcon({ color = '#000' }) {
+function WorkersIcon({ color = '#000', height = 58 }) {
+  const width = Math.round(height * 60 / 58)
   return (
-    <svg width={60} height={58} viewBox="0 0 99 96" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+    <svg width={width} height={height} viewBox="0 0 99 96" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
       <g clipPath="url(#wu-clip)">
         <mask id="wu-mask" style={{ maskType: 'luminance' }} maskUnits="userSpaceOnUse" x="-5" y="-1" width="98" height="96">
           <path d="M92.8574 -0.0783691H-4.38086V94.0232H92.8574V-0.0783691Z" fill="white"/>
@@ -278,9 +279,10 @@ function WorkersIcon({ color = '#000' }) {
   )
 }
 
-function ClimateIcon({ color = '#000' }) {
+function ClimateIcon({ color = '#000', height = 58 }) {
+  const width = Math.round(height * 64 / 58)
   return (
-    <svg width={64} height={58} viewBox="0 0 65 59" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+    <svg width={width} height={height} viewBox="0 0 65 59" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
       <g clipPath="url(#climate-clip)">
         <path d="M45.8989 50.3152C46.1691 50.7657 46.4395 51.216 46.7548 51.6215C40.8991 56.3059 33.4219 58.4681 25.9898 57.6572C18.5575 56.8465 11.711 53.1529 6.98145 47.3423C7.16164 47.4775 7.34183 47.6127 7.56699 47.6576L13.8731 48.9639C14.0533 48.9639 14.2784 48.9639 14.4587 48.9639C15.0442 48.9639 15.6297 48.7837 16.1252 48.4234C16.6208 48.063 16.9811 47.6125 17.1612 47.027C17.2063 46.8918 17.3415 46.8469 17.4316 46.8469L25.224 48.6036C26.1699 48.8288 27.1608 48.5585 27.8815 47.8829C28.6022 47.2073 28.8726 46.2162 28.6923 45.2703L28.5122 44.3243C28.377 43.5136 27.8815 42.838 27.2059 42.3876L21.4854 38.9193C21.4404 38.8742 21.3953 38.7841 21.3953 38.739C21.3953 38.6489 21.4404 38.604 21.4854 38.5589L28.9175 31.2619C29.4581 30.7213 29.7734 30.0006 29.7734 29.2349C29.7734 28.4692 29.4581 27.7485 28.9175 27.2079L26.7105 25.2711C26.26 24.8207 25.7195 24.5504 25.0888 24.4603C24.4583 24.3702 23.8728 24.4603 23.2872 24.7756L17.7918 27.7034C17.7018 27.7485 17.5666 27.7485 17.5215 27.7034L16.3055 26.3971C16.2604 26.3522 16.2154 26.3071 16.2154 26.217C16.2154 26.1719 16.2604 26.0818 16.3055 26.0369L20.6297 22.0729C21.6206 21.1721 22.161 19.9561 22.161 18.6046V15.767C22.161 15.3165 22.2962 14.9112 22.5664 14.5958L23.6024 13.1995C23.6925 13.0644 23.8277 13.0193 23.9628 13.0193C23.9628 13.0193 24.188 13.0193 24.3231 13.1995L25.1339 14.2354C26.0347 15.3615 27.3861 16.0371 28.8275 16.0371H32.6561C33.8724 16.0371 35.0885 15.5418 35.9443 14.6859C36.8001 13.83 37.2956 12.6139 37.2956 11.3977V8.42483C37.2956 8.24473 37.3858 8.10959 37.5209 8.01949L41.3946 6.03755C41.8449 5.8123 42.1153 5.36192 42.1153 4.86647C42.1153 4.37094 41.8449 3.92055 41.3946 3.69531C44.0072 5.00153 46.3944 6.66814 48.5114 8.69512V30.0456L45.5386 28.7394C45.4484 28.6944 45.4035 28.6042 45.4484 28.5142L45.5836 28.2439C45.8088 27.6584 45.8088 27.0278 45.6287 26.3971C45.4484 25.8116 45.0881 25.2711 44.5476 24.9108L42.2504 23.3342C41.8 23.0189 41.3045 22.8838 40.7639 22.8387C40.2234 22.8387 39.7279 22.9288 39.2326 23.1992L33.0616 26.7125C32.521 27.0278 32.1157 27.5232 31.8453 28.0638C31.6202 28.6493 31.5751 29.2799 31.7103 29.8655L32.8813 34.2798C33.0616 35.0905 33.6471 35.7663 34.3678 36.1265L34.9534 36.4419C34.9985 36.4419 35.0436 36.487 35.0436 36.5319C35.0436 36.577 35.0436 36.622 35.0436 36.6671L30.0436 45.0452C29.7734 45.4955 29.6382 45.991 29.6382 46.4866V52.2071C29.6382 52.7926 29.8185 53.3781 30.1337 53.8286C30.449 54.3241 30.9445 54.6394 31.485 54.8646C31.8003 54.9997 32.1157 55.0448 32.431 55.0448C32.9715 55.0448 33.512 54.9096 33.9624 54.5943C34.4128 54.3241 34.7732 53.9187 34.9985 53.4232L38.9623 44.9551C39.0073 44.865 39.0523 44.865 39.1424 44.865L43.7819 45.3604C44.0072 45.4055 44.1873 45.4055 44.4124 45.3604C44.5927 47.0721 45.0432 48.7837 45.8989 50.3152Z" fill={color}/>
         <path d="M14.4576 46.4431C14.5475 46.4431 14.6376 46.3981 14.6827 46.3079C14.8628 45.7224 15.2233 45.2719 15.7187 44.9116C16.2142 44.5512 16.7997 44.3711 17.3854 44.3711H17.7456L25.8985 46.2178C25.9887 46.2178 26.0336 46.1729 26.0787 46.1278C26.1237 46.0827 26.1237 45.9926 26.1237 45.9027L26.0336 45.0018C26.0336 44.9567 25.9887 44.8666 25.9436 44.8215L20.2231 41.3532C19.4574 40.9028 18.9618 40.1371 18.8266 39.2362C18.6916 38.3354 19.0069 37.4795 19.6374 36.8489L27.0247 29.4617C27.0697 29.4167 27.1146 29.3716 27.1146 29.2816C27.1146 29.1915 27.0697 29.1465 27.0247 29.1014L24.8625 26.9393C24.8175 26.9393 24.7724 26.9393 24.7274 26.9393H24.5922L19.1419 29.8672L18.4214 30.2275H17.7456C16.9349 30.2275 16.1692 29.8672 15.5835 29.2816L14.4125 27.9753C13.9169 27.4348 13.6467 26.7141 13.6467 25.9483C13.6467 25.1375 13.962 24.3718 14.5475 23.7863L18.8717 19.8225C19.2771 19.4621 19.5473 18.8766 19.5473 18.336V15.6335C19.5473 14.6424 19.8626 13.6515 20.4482 12.8858L21.4842 11.4895C22.0697 10.7237 22.9707 10.2282 23.9616 10.2282H24.6823L25.0427 10.4535C25.5832 10.6336 26.0336 10.9939 26.349 11.3994L27.1597 12.4354C27.52 12.9308 28.1055 13.2012 28.7363 13.2012H32.61C33.7361 13.2012 34.6368 12.3002 34.6368 11.1741V8.20131C34.6368 7.61569 34.8171 7.0752 35.1324 6.57975C35.4477 6.08423 35.8981 5.67888 36.3935 5.45364C37.2494 5.00315 37.9701 4.41762 38.5107 3.65189L39.2314 2.66092C35.6728 1.3547 31.7992 0.724115 27.8804 0.904221C21.7545 1.12946 15.8989 3.33656 11.1243 7.21034C6.34966 11.039 2.9714 16.3091 1.43994 22.2548C-0.0915208 28.2006 0.313825 34.4615 2.65614 40.137C3.91733 41.4884 5.26868 42.7946 6.71004 44.0108C7.20548 44.4162 7.83607 44.7315 8.46673 44.9116L14.4576 46.4431Z" fill={color}/>
@@ -296,17 +298,19 @@ function ClimateIcon({ color = '#000' }) {
   )
 }
 
-function HealthIcon({ color = '#000' }) {
+function HealthIcon({ color = '#000', height = 58 }) {
+  const width = Math.round(height * 66 / 58)
   return (
-    <svg width={66} height={58} viewBox="0 0 67 59" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+    <svg width={width} height={height} viewBox="0 0 67 59" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
       <path d="M59.6915 3.97511C52.3732 -2.07655 41.4427 -0.997547 34.7342 5.71086L33.233 7.21212L31.7318 5.71086C24.9296 -0.997547 13.999 -2.07655 6.68077 3.97511C2.69318 7.21212 0.300688 12.044 0.0191882 17.1574C-0.215307 22.2709 1.70802 27.2905 5.32027 30.9496L33.1392 58.7686L60.958 30.9496C64.5703 27.2905 66.5406 22.3177 66.2591 17.1574C66.0715 12.044 63.679 7.21212 59.6915 3.97511ZM45.0548 32.9668H37.0799V40.942H29.3862V32.9668H21.4112V25.2733H29.3862V17.2982H37.0799V25.2733H45.0548V32.9668Z" fill={color}/>
     </svg>
   )
 }
 
-function HousingIcon({ color = '#000' }) {
+function HousingIcon({ color = '#000', height = 58 }) {
+  const width = Math.round(height * 70 / 58)
   return (
-    <svg width={70} height={58} viewBox="0 0 68 56" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+    <svg width={width} height={height} viewBox="0 0 68 56" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
       <g clipPath="url(#housing-clip)">
         <path d="M34.4563 0.416992L1.19971 26.1248L3.01635 28.4746L34.4563 4.17208L65.8962 28.4746L67.7128 26.1248L34.4563 0.416992Z" fill={color}/>
         <path d="M60.0788 27.6774L34.4557 7.87109L8.8326 27.6774V51.319H5.86182V54.661H41.1399V43.3349C41.1399 40.1546 43.7157 37.579 46.8959 37.579C50.0731 37.579 52.6518 40.1546 52.6518 43.3349V54.661H63.0496V51.319H60.0788V27.6774Z" fill={color}/>
@@ -326,16 +330,33 @@ const TILE_COLOURS = ['#F1ECF2', '#F7F7FF']
 
 function PolicyCard({ policy, index }) {
   const [hovered, setHovered] = useState(false)
-  const fg = hovered ? '#fff' : '#000'
+  const { Icon } = policy
   return (
     <div
       className="policy-card"
-      style={{ ...S.card, background: hovered ? '#FF4B33' : TILE_COLOURS[index % 2] }}
+      style={{ ...S.card, background: hovered ? '#FF4B33' : TILE_COLOURS[index % 2], position: 'relative', overflow: 'hidden' }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <h2 style={{ ...S.cardTitle, color: fg }}>{policy.title}</h2>
-      <span style={{ ...S.readMore, color: fg, alignSelf: 'flex-end' }}>
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        transform: hovered ? 'scale(1)' : 'scale(0.3)',
+        opacity: hovered ? 0.45 : 0,
+        transition: 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease',
+        pointerEvents: 'none',
+        zIndex: 0,
+      }}>
+        <Icon color="#fff" height={90} />
+      </div>
+      <h2 style={{
+        ...S.cardTitle,
+        color: '#000',
+        opacity: hovered ? 0 : 1,
+        transition: 'opacity 0.35s ease',
+        position: 'relative', zIndex: 1,
+      }}>{policy.title}</h2>
+      <span style={{ ...S.readMore, color: hovered ? '#fff' : '#000', alignSelf: 'flex-end', position: 'relative', zIndex: 1, transition: 'color 0.15s ease' }}>
         Read more <span style={{ fontSize: 16 }}>›</span>
       </span>
     </div>
@@ -374,10 +395,12 @@ function PolicyCardIcons({ policy, index }) {
     >
       {/* 92px zone: icon sits at bottom with 15px gap to heading */}
       <div style={{ height: 92, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', paddingBottom: 15 }}>
-        <Icon color={fg} />
+        <div style={{ transition: 'transform 0.18s ease', transform: hovered ? 'scale(1.15)' : 'scale(1)', transformOrigin: 'bottom left' }}>
+          <Icon color={fg} />
+        </div>
       </div>
       <h2 style={{ ...S.cardTitle, color: fg }}>{policy.title}</h2>
-      <span style={{ ...S.readMore, color: fg }}>
+      <span style={{ ...S.readMore, color: fg, alignSelf: 'flex-end' }}>
         Read more <span style={{ fontSize: 16 }}>›</span>
       </span>
     </div>
