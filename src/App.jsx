@@ -152,7 +152,7 @@ const S = {
   }),
   content: {
     flex: 1,
-    padding: '48px 80px 80px 300px',
+    padding: '64px 80px 80px 300px',
   },
   platformText: {
     maxWidth: 640,
@@ -431,6 +431,7 @@ export default function App() {
           </div>
         ) : (
           <>
+            <h2 style={{ ...S.platformHeading, marginTop: 0, marginBottom: 16, fontSize: 26 }}>What we'll fight for</h2>
             <p style={{ ...S.para, maxWidth: 640, marginBottom: 32 }}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
             </p>
