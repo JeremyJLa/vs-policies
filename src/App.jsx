@@ -342,7 +342,7 @@ function PolicyCard({ policy, index }) {
       <div style={{
         position: 'absolute', inset: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        opacity: hovered ? 0.22 : 0.06,
+        opacity: hovered ? 0.22 : 0,
         transition: hovered ? 'opacity 0.4s ease 0.14s' : 'opacity 0.18s ease',
         pointerEvents: 'none', zIndex: 0,
       }}>
@@ -374,16 +374,15 @@ function PolicyCard({ policy, index }) {
   )
 }
 
-function PolicyCardExpanded({ policy, index }) {
+function PolicyCardGhost({ policy, index }) {
   const [hovered, setHovered] = useState(false)
   const { Icon } = policy
   return (
     <div
-      style={{ ...S.cardExpanded, background: hovered ? TILE_HOVER_COLOURS[index % 2] : TILE_COLOURS[index % 2], position: 'relative', overflow: 'hidden', transition: 'background-color 0.2s ease' }}
+      style={{ ...S.card, background: hovered ? TILE_HOVER_COLOURS[index % 2] : TILE_COLOURS[index % 2], position: 'relative', overflow: 'hidden', transition: 'background-color 0.2s ease' }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Icon: waits for text to leave, then springs in; exits fast */}
       <div style={{
         position: 'absolute', inset: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -400,7 +399,100 @@ function PolicyCardExpanded({ policy, index }) {
           <Icon color="#000" height={90} />
         </div>
       </div>
+      <h2 style={{
+        ...S.cardTitle, color: '#000',
+        opacity: hovered ? 0 : 1,
+        transition: hovered ? 'opacity 0.12s ease' : 'opacity 0.2s ease 0.12s',
+        position: 'relative', zIndex: 1,
+      }}>{policy.title}</h2>
+      <span style={{
+        ...S.readMore, color: '#000', alignSelf: 'flex-end',
+        position: 'relative', zIndex: 1,
+        opacity: hovered ? 0 : 1,
+        transition: hovered ? 'opacity 0.12s ease' : 'opacity 0.2s ease 0.12s',
+      }}>
+        Read more <span style={{ fontSize: 16 }}>›</span>
+      </span>
+    </div>
+  )
+}
+
+function PolicyCardExpanded({ policy, index }) {
+  const [hovered, setHovered] = useState(false)
+  const { Icon } = policy
+  return (
+    <div
+      style={{ ...S.cardExpanded, background: hovered ? TILE_HOVER_COLOURS[index % 2] : TILE_COLOURS[index % 2], position: 'relative', overflow: 'hidden', transition: 'background-color 0.2s ease' }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Icon: waits for text to leave, then springs in; exits fast */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        opacity: hovered ? 0.22 : 0,
+        transition: hovered ? 'opacity 0.4s ease 0.14s' : 'opacity 0.18s ease',
+        pointerEvents: 'none', zIndex: 0,
+      }}>
+        <div style={{
+          transform: hovered ? 'scale(1)' : 'scale(0.6)',
+          transition: hovered
+            ? 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s'
+            : 'transform 0.22s ease',
+        }}>
+          <Icon color="#000" height={90} />
+        </div>
+      </div>
       {/* All text: snaps out fast, eases back in after icon exits */}
+      <h2 style={{
+        ...S.cardTitle, color: '#000',
+        opacity: hovered ? 0 : 1,
+        transition: hovered ? 'opacity 0.12s ease' : 'opacity 0.2s ease 0.12s',
+        position: 'relative', zIndex: 1,
+      }}>{policy.title}</h2>
+      <p style={{
+        ...S.cardBody, color: '#000',
+        opacity: hovered ? 0 : 1,
+        transition: hovered ? 'opacity 0.12s ease' : 'opacity 0.2s ease 0.12s',
+        position: 'relative', zIndex: 1,
+      }}>{policy.body}</p>
+      <span style={{
+        ...S.readMore, color: '#000', alignSelf: 'flex-end',
+        position: 'relative', zIndex: 1,
+        opacity: hovered ? 0 : 1,
+        transition: hovered ? 'opacity 0.12s ease' : 'opacity 0.2s ease 0.12s',
+      }}>
+        Read more <span style={{ fontSize: 16 }}>›</span>
+      </span>
+    </div>
+  )
+}
+
+function PolicyCardRedDetails({ policy, index }) {
+  const [hovered, setHovered] = useState(false)
+  const { Icon } = policy
+  return (
+    <div
+      style={{ ...S.cardExpanded, background: hovered ? '#FF4B33' : TILE_COLOURS[index % 2], position: 'relative', overflow: 'hidden', transition: 'background-color 0.18s ease' }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        opacity: hovered ? 0.2 : 0,
+        transition: hovered ? 'opacity 0.4s ease 0.14s' : 'opacity 0.18s ease',
+        pointerEvents: 'none', zIndex: 0,
+      }}>
+        <div style={{
+          transform: hovered ? 'scale(1)' : 'scale(0.6)',
+          transition: hovered
+            ? 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s'
+            : 'transform 0.22s ease',
+        }}>
+          <Icon color="#fff" height={90} />
+        </div>
+      </div>
       <h2 style={{
         ...S.cardTitle, color: '#000',
         opacity: hovered ? 0 : 1,
@@ -463,6 +555,7 @@ export default function App() {
         <div style={S.navViewToggle}>
           <button style={S.navViewBtn(cardView === 'titles')} onClick={() => setCardView('titles')}>Titles</button>
           <button style={S.navViewBtn(cardView === 'expanded')} onClick={() => setCardView('expanded')}>Details</button>
+          <button style={S.navViewBtn(cardView === 'reddetails')} onClick={() => setCardView('reddetails')}>Red details hover</button>
           <button style={S.navViewBtn(cardView === 'icons')} onClick={() => setCardView('icons')}>Icons</button>
         </div>
       </nav>
@@ -503,6 +596,7 @@ export default function App() {
             <div style={S.grid}>
               {grid.map((policy, i) => {
                 if (cardView === 'expanded') return <PolicyCardExpanded key={i} policy={policy} index={i} />
+                if (cardView === 'reddetails') return <PolicyCardRedDetails key={i} policy={policy} index={i} />
                 if (cardView === 'icons') return <PolicyCardIcons key={i} policy={policy} index={i} />
                 return <PolicyCard key={i} policy={policy} index={i} />
               })}
