@@ -327,40 +327,47 @@ function HousingIcon({ color = '#000', height = 58 }) {
 // ── Components ────────────────────────────────────────────────────────────────
 
 const TILE_COLOURS = ['#F1ECF2', '#F7F7FF']
+const TILE_HOVER_COLOURS = ['#DDD4E4', '#E8E8F6']
 
 function PolicyCard({ policy, index }) {
   const [hovered, setHovered] = useState(false)
   const { Icon } = policy
   return (
     <div
-      className="policy-card"
-      style={{ ...S.card, background: hovered ? '#FF4B33' : TILE_COLOURS[index % 2], position: 'relative', overflow: 'hidden' }}
+      style={{ ...S.card, background: hovered ? TILE_HOVER_COLOURS[index % 2] : TILE_COLOURS[index % 2], position: 'relative', overflow: 'hidden', transition: 'background-color 0.2s ease' }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
+      {/* Icon: waits for title to leave, then springs in; exits fast */}
       <div style={{
         position: 'absolute', inset: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        opacity: hovered ? 0.45 : 0.07,
-        transition: 'opacity 0.3s ease',
-        pointerEvents: 'none',
-        zIndex: 0,
+        opacity: hovered ? 0.22 : 0.06,
+        transition: hovered ? 'opacity 0.4s ease 0.14s' : 'opacity 0.18s ease',
+        pointerEvents: 'none', zIndex: 0,
       }}>
         <div style={{
           transform: hovered ? 'scale(1)' : 'scale(0.6)',
-          transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          transition: hovered
+            ? 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s'
+            : 'transform 0.22s ease',
         }}>
-          <Icon color="#fff" height={90} />
+          <Icon color="#000" height={90} />
         </div>
       </div>
+      {/* Title + read more: snap out fast, ease back in after icon exits */}
       <h2 style={{
-        ...S.cardTitle,
-        color: '#000',
+        ...S.cardTitle, color: '#000',
         opacity: hovered ? 0 : 1,
-        transition: 'opacity 0.35s ease',
+        transition: hovered ? 'opacity 0.12s ease' : 'opacity 0.2s ease 0.12s',
         position: 'relative', zIndex: 1,
       }}>{policy.title}</h2>
-      <span style={{ ...S.readMore, color: hovered ? '#fff' : '#000', alignSelf: 'flex-end', position: 'relative', zIndex: 1, transition: 'color 0.15s ease' }}>
+      <span style={{
+        ...S.readMore, color: '#000', alignSelf: 'flex-end',
+        position: 'relative', zIndex: 1,
+        opacity: hovered ? 0 : 1,
+        transition: hovered ? 'opacity 0.12s ease' : 'opacity 0.2s ease 0.12s',
+      }}>
         Read more <span style={{ fontSize: 16 }}>›</span>
       </span>
     </div>
@@ -372,39 +379,46 @@ function PolicyCardExpanded({ policy, index }) {
   const { Icon } = policy
   return (
     <div
-      className="policy-card"
-      style={{ ...S.cardExpanded, background: hovered ? '#FF4B33' : TILE_COLOURS[index % 2], position: 'relative', overflow: 'hidden' }}
+      style={{ ...S.cardExpanded, background: hovered ? TILE_HOVER_COLOURS[index % 2] : TILE_COLOURS[index % 2], position: 'relative', overflow: 'hidden', transition: 'background-color 0.2s ease' }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
+      {/* Icon: waits for text to leave, then springs in; exits fast */}
       <div style={{
         position: 'absolute', inset: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        opacity: hovered ? 0.45 : 0.07,
-        transition: 'opacity 0.3s ease',
-        pointerEvents: 'none',
-        zIndex: 0,
+        opacity: hovered ? 0.22 : 0.06,
+        transition: hovered ? 'opacity 0.4s ease 0.14s' : 'opacity 0.18s ease',
+        pointerEvents: 'none', zIndex: 0,
       }}>
         <div style={{
           transform: hovered ? 'scale(1)' : 'scale(0.6)',
-          transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          transition: hovered
+            ? 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s'
+            : 'transform 0.22s ease',
         }}>
-          <Icon color="#fff" height={90} />
+          <Icon color="#000" height={90} />
         </div>
       </div>
+      {/* All text: snaps out fast, eases back in after icon exits */}
       <h2 style={{
         ...S.cardTitle, color: '#000',
         opacity: hovered ? 0 : 1,
-        transition: 'opacity 0.35s ease',
+        transition: hovered ? 'opacity 0.12s ease' : 'opacity 0.2s ease 0.12s',
         position: 'relative', zIndex: 1,
       }}>{policy.title}</h2>
       <p style={{
         ...S.cardBody, color: '#000',
         opacity: hovered ? 0 : 1,
-        transition: 'opacity 0.35s ease',
+        transition: hovered ? 'opacity 0.12s ease' : 'opacity 0.2s ease 0.12s',
         position: 'relative', zIndex: 1,
       }}>{policy.body}</p>
-      <span style={{ ...S.readMore, color: hovered ? '#fff' : '#000', alignSelf: 'flex-end', position: 'relative', zIndex: 1, transition: 'color 0.15s ease' }}>
+      <span style={{
+        ...S.readMore, color: '#000', alignSelf: 'flex-end',
+        position: 'relative', zIndex: 1,
+        opacity: hovered ? 0 : 1,
+        transition: hovered ? 'opacity 0.12s ease' : 'opacity 0.2s ease 0.12s',
+      }}>
         Read more <span style={{ fontSize: 16 }}>›</span>
       </span>
     </div>
