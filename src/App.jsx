@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './index.css'
 
 // ── Data ────────────────────────────────────────────────────────────────────
@@ -342,6 +342,18 @@ function HousingIcon({ color = '#000', height = 58 }) {
   )
 }
 
+// ── Responsive hook ───────────────────────────────────────────────────────────
+
+function useWindowWidth() {
+  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200)
+  useEffect(() => {
+    const handler = () => setWidth(window.innerWidth)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
+  return width
+}
+
 // ── Components ────────────────────────────────────────────────────────────────
 
 const TILE_COLOURS = ['#F1ECF2', '#F7F7FF']
@@ -537,8 +549,10 @@ function PolicyCardRedDetails({ policy, index }) {
 
 function AccordionPolicies() {
   const [openIndex, setOpenIndex] = useState(null)
+  const w = useWindowWidth()
+  const isMobile = w <= 640
   return (
-    <div style={{ maxWidth: 700 }}>
+    <div style={{ maxWidth: isMobile ? '100%' : 700 }}>
       {ACCORDION_POLICIES.map((policy, i) => {
         const isOpen = openIndex === i
         const { Icon } = policy
@@ -550,18 +564,18 @@ function AccordionPolicies() {
                 width: '100%', display: 'flex', alignItems: 'center',
                 justifyContent: 'space-between', gap: 16,
                 background: 'none', border: 'none', cursor: 'pointer',
-                padding: '20px 0', textAlign: 'left',
+                padding: isMobile ? '16px 0' : '20px 0', textAlign: 'left',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-                <Icon height={28} color={isOpen ? '#FF4B33' : '#000'} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 14 : 20 }}>
+                <Icon height={isMobile ? 22 : 28} color={isOpen ? '#FF4B33' : '#000'} />
                 <h2 style={{
-                  fontSize: 22, fontWeight: 800, lineHeight: 1,
+                  fontSize: isMobile ? 17 : 22, fontWeight: 800, lineHeight: 1,
                   fontFamily: "'Work Sans', system-ui, sans-serif",
                   textTransform: 'uppercase', letterSpacing: '0.02em',
                   color: isOpen ? '#FF4B33' : '#000',
                   transition: 'color 0.15s ease',
-                  whiteSpace: 'nowrap',
+                  whiteSpace: 'normal',
                 }}>
                   {policy.title.replace(/\n/g, ' ')}
                 </h2>
@@ -618,6 +632,10 @@ export default function App() {
   const [tab, setTab] = useState('platform')
   const [cardView, setCardView] = useState('titles')
   const [policyLayout, setPolicyLayout] = useState('grid')
+
+  const w = useWindowWidth()
+  const isMobile = w <= 640
+  const isTablet = w <= 1024
 
   const grid = cardView === 'icons' ? POLICY_GRID_ICONS : POLICY_GRID
 
