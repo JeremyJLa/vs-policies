@@ -359,12 +359,219 @@ function useWindowWidth() {
 const TILE_COLOURS = ['#F1ECF2', '#F7F7FF']
 const TILE_HOVER_COLOURS = ['#DDD4E4', '#E8E8F6']
 
+const TILE_DARK = ['#111111', '#1a1a1a']
+
+// Torn paper edge — matches reference: thin warm-coral strip, near-straight outer edge,
+// wildly torn inner edge, wispy fibres, spatter dots, strong multi-scale displacement
+function TornEdge({ side, index, hovered }) {
+  const uid = `te-${side}-${index}`
+  const seed = index * 7 + (side === 'right' ? 17 : 0)
+
+  // Strip is narrow on average (2–6 px) with infrequent wider bulges (up to 15 px)
+  // and sections that almost vanish (1 px). Left boundary stays at x=0.
+  const mainPath =
+    'M0,0 L6,0' +
+    ' L4,6 L9,13 L2,21 L12,29 L3,37' +
+    ' L7,44 L1,52 L13,60 L4,68 L8,75' +
+    ' L2,82 L14,90 L3,98 L6,105 L1,113' +
+    ' L11,121 L4,129 L15,137 L2,145 L7,152' +
+    ' L1,159 L12,167 L3,175 L9,182 L2,190' +
+    ' L13,198 L4,206 L6,213 L1,220 L14,228' +
+    ' L3,236 L8,243 L2,250 L11,258 L4,265' +
+    ' L15,273 L1,281 L9,288 L3,295 L13,303' +
+    ' L2,310 L7,317 L1,325 L12,333 L4,340' +
+    ' L14,348 L2,355 L8,362 L1,369 L11,377' +
+    ' L3,384 L13,392 L2,400' +
+    ' L0,400 Z'
+
+  // Wispy inner fibres — even thinner (0–8 px), different phase
+  const fibrePath =
+    'M0,0 L3,0' +
+    ' L6,9 L1,19 L7,29 L2,39 L5,49' +
+    ' L1,59 L8,69 L2,79 L5,89 L1,99' +
+    ' L7,109 L2,119 L6,129 L1,139 L8,149' +
+    ' L2,159 L5,169 L1,179 L7,189 L2,199' +
+    ' L6,209 L1,219 L8,229 L2,239 L5,249' +
+    ' L1,259 L7,269 L2,279 L6,289 L1,299' +
+    ' L8,309 L2,319 L5,329 L1,339 L7,349' +
+    ' L2,359 L6,369 L1,379 L7,389 L3,400' +
+    ' L0,400 Z'
+
+  // Deterministic spatter dots — 5 dots, y positions seeded per strip
+  const dots = [
+    { cx: 10 + (seed % 5),      cy: 55  + (seed % 38), r: 1.4 },
+    { cx: 14 + ((seed*3) % 4),  cy: 128 + (seed % 42), r: 0.9 },
+    { cx: 9  + ((seed*2) % 6),  cy: 205 + (seed % 36), r: 1.8 },
+    { cx: 12 + (seed % 4),      cy: 288 + (seed % 44), r: 1.1 },
+    { cx: 16 + ((seed*4) % 5),  cy: 355 + (seed % 30), r: 0.7 },
+  ]
+
+  return (
+    <div style={{
+      position: 'absolute', top: 0, bottom: 0,
+      [side]: 0, width: 34,
+      zIndex: 2, pointerEvents: 'none',
+      opacity: hovered ? 1 : 0.88,
+      transition: 'opacity 0.25s ease',
+    }}>
+      <svg
+        width="100%" height="100%"
+        viewBox="0 0 34 400"
+        preserveAspectRatio="none"
+        style={{ display: 'block', ...(side === 'right' ? { transform: 'scaleX(-1)' } : {}) }}
+      >
+        <defs>
+          {/* Primary organic displacement — large slow waves (torn paper macro shape) */}
+          <filter id={`${uid}-a`} x="-120%" y="-2%" width="340%" height="104%">
+            <feTurbulence type="fractalNoise"
+              baseFrequency="0.011 0.05" numOctaves="5"
+              result="n1" seed={seed} />
+            <feDisplacementMap in="SourceGraphic" in2="n1"
+              scale="17" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+          {/* Secondary fine displacement — micro fibre roughness */}
+          <filter id={`${uid}-b`} x="-100%" y="-2%" width="300%" height="104%">
+            <feTurbulence type="fractalNoise"
+              baseFrequency="0.06 0.3" numOctaves="3"
+              result="n2" seed={seed + 4} />
+            <feDisplacementMap in="SourceGraphic" in2="n2"
+              scale="5" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+
+        {/* Main torn body — warm coral matching reference */}
+        <path d={mainPath} fill="#D94535" filter={`url(#${uid}-a)`} />
+
+        {/* Wispy translucent fibres on inner edge */}
+        <path d={fibrePath} fill="#F07060" opacity="0.55" filter={`url(#${uid}-b)`} />
+
+        {/* Paint spatter dots */}
+        {dots.map((d, i) => (
+          <circle key={i} cx={d.cx} cy={d.cy} r={d.r} fill="#C93C2C" opacity="0.65" />
+        ))}
+      </svg>
+    </div>
+  )
+}
+
+// ── Brush stroke variant ─────────────────────────────────────────────────────
+// Large angled paint brush stroke across dark card background
+// viewBox 0 0 300 220 ≈ actual card proportions; slice keeps coverage at all sizes
+function PolicyCardBrush({ policy, index }) {
+  const [hovered, setHovered] = useState(false)
+  const uid = `brush-${index}`
+
+  // Diagonal band: centerline from (-50,280)→(350,−60), ~100px perp-width
+  // Extends beyond all four edges so filter displacement never reveals a gap
+  const mainStroke = 'M -20,320 L -88,238 L 314,-102 L 382,-20 Z'
+  // Thin companion stroke alongside — lighter, adds bristle layering
+  const thinStroke = 'M -55,258 L -78,228 L 308,-92 L 331,-62 Z'
+
+  const accent = hovered ? '#CC1F1F' : '#9E1515'
+
+  return (
+    <div
+      style={{
+        ...S.card,
+        backgroundColor: '#0c0c0c',
+        position: 'relative', overflow: 'hidden',
+        transition: 'background-color 0.28s ease',
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Paint brush stroke SVG */}
+      <svg
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', pointerEvents: 'none', zIndex: 0 }}
+        viewBox="0 0 300 220"
+        preserveAspectRatio="xMidYMid slice"
+      >
+        <defs>
+          {/* Large-scale organic displacement — brush edge roughness */}
+          <filter id={`${uid}-a`} x="-25%" y="-25%" width="150%" height="150%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.013 0.048"
+              numOctaves="5" result="t1" seed={index * 6 + 2} />
+            <feDisplacementMap in="SourceGraphic" in2="t1"
+              scale="26" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+          {/* Fine bristle displacement for companion layer */}
+          <filter id={`${uid}-b`} x="-20%" y="-20%" width="140%" height="140%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.05 0.2"
+              numOctaves="3" result="t2" seed={index * 4 + 9} />
+            <feDisplacementMap in="SourceGraphic" in2="t2"
+              scale="9" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+          {/* Paint texture — feColorMatrix desaturates to vary shade within stroke */}
+          <filter id={`${uid}-c`} x="-25%" y="-25%" width="150%" height="150%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.018 0.06"
+              numOctaves="4" result="t3" seed={index * 5 + 14} />
+            <feDisplacementMap in="SourceGraphic" in2="t3"
+              scale="28" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+            <feColorMatrix type="saturate" values="0.8" in="displaced" />
+          </filter>
+        </defs>
+
+        {/* Main bold stroke — dark red, strong rough edges */}
+        <path d={mainStroke} fill={accent} opacity="0.92" filter={`url(#${uid}-c)`} />
+
+        {/* Thin companion stroke — slightly brighter, fine bristle roughness */}
+        <path d={thinStroke} fill="#E03030" opacity="0.45" filter={`url(#${uid}-b)`} />
+      </svg>
+
+      <h2 style={{
+        ...S.cardTitle, color: '#fff',
+        position: 'relative', zIndex: 1,
+        textShadow: '0 1px 8px rgba(0,0,0,0.8)',
+      }}>{policy.title}</h2>
+
+      <span style={{
+        ...S.readMore, color: 'rgba(255,255,255,0.45)',
+        alignSelf: 'flex-end', position: 'relative', zIndex: 1,
+      }}>
+        Read more <span style={{ fontSize: 16 }}>›</span>
+      </span>
+    </div>
+  )
+}
+
+function PolicyCardEdgy({ policy, index }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <div
+      style={{
+        ...S.card,
+        backgroundColor: hovered ? '#1c0300' : TILE_DARK[index % 2],
+        position: 'relative', overflow: 'hidden',
+        transition: 'background-color 0.28s ease',
+        boxShadow: 'inset 18px 0 22px -10px rgba(0,0,0,0.55), inset -18px 0 22px -10px rgba(0,0,0,0.55)',
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <TornEdge side="left" index={index} hovered={hovered} />
+      <TornEdge side="right" index={index} hovered={hovered} />
+
+      <h2 style={{
+        ...S.cardTitle, color: '#fff',
+        position: 'relative', zIndex: 1,
+      }}>{policy.title}</h2>
+
+      <span style={{
+        ...S.readMore, color: 'rgba(255,255,255,0.4)',
+        alignSelf: 'flex-end', position: 'relative', zIndex: 1,
+      }}>
+        Read more <span style={{ fontSize: 16 }}>›</span>
+      </span>
+    </div>
+  )
+}
+
 function PolicyCard({ policy, index }) {
   const [hovered, setHovered] = useState(false)
   const { Icon } = policy
   return (
     <div
-      style={{ ...S.card, background: hovered ? TILE_HOVER_COLOURS[index % 2] : TILE_COLOURS[index % 2], position: 'relative', overflow: 'hidden', transition: 'background-color 0.2s ease' }}
+      style={{ ...S.card, height: 155, background: hovered ? TILE_HOVER_COLOURS[index % 2] : TILE_COLOURS[index % 2], position: 'relative', overflow: 'hidden', transition: 'background-color 0.2s ease' }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -498,6 +705,28 @@ function PolicyCardExpanded({ policy, index }) {
   )
 }
 
+function PolicyCardExpandedNoIcon({ policy, index }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <div
+      style={{ ...S.card, height: 155, background: hovered ? '#fff' : TILE_COLOURS[index % 2], boxShadow: hovered ? '0 8px 32px rgba(0,0,0,0.14)' : 'none', position: 'relative', overflow: 'hidden', transition: 'background-color 0.3s ease, box-shadow 0.3s ease' }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <h2 style={{
+        ...S.cardTitle,
+        color: hovered ? '#FF4B33' : '#000',
+        fontSize: hovered ? 31 : 30,
+        transition: hovered ? 'font-size 0.25s ease, color 0.25s ease' : 'font-size 0.6s ease, color 0.6s ease',
+        position: 'relative', zIndex: 1,
+      }}>{policy.title}</h2>
+      <span style={{ ...S.readMore, color: hovered ? '#FF4B33' : '#000', fontSize: hovered ? 15 : 14, alignSelf: 'flex-end', position: 'relative', zIndex: 1, transition: hovered ? 'color 0.25s ease, font-size 0.25s ease' : 'color 0.6s ease, font-size 0.6s ease' }}>
+        Read more <span style={{ fontSize: 16 }}>›</span>
+      </span>
+    </div>
+  )
+}
+
 function PolicyCardRedDetails({ policy, index }) {
   const [hovered, setHovered] = useState(false)
   const { Icon } = policy
@@ -549,17 +778,22 @@ function PolicyCardRedDetails({ policy, index }) {
 
 function AccordionPolicies() {
   const [openIndex, setOpenIndex] = useState(null)
+  const [hoveredIndex, setHoveredIndex] = useState(null)
   const w = useWindowWidth()
   const isMobile = w <= 640
   return (
     <div style={{ maxWidth: isMobile ? '100%' : 700 }}>
       {ACCORDION_POLICIES.map((policy, i) => {
         const isOpen = openIndex === i
+        const isHovered = hoveredIndex === i
+        const isRed = isOpen || isHovered
         const { Icon } = policy
         return (
           <div key={i} style={{ borderBottom: '1px solid #C4C4C4', ...(i === 0 ? { borderTop: '1px solid #C4C4C4' } : {}) }}>
             <button
               onClick={() => setOpenIndex(isOpen ? null : i)}
+              onMouseEnter={() => setHoveredIndex(i)}
+              onMouseLeave={() => setHoveredIndex(null)}
               style={{
                 width: '100%', display: 'flex', alignItems: 'center',
                 justifyContent: 'space-between', gap: 16,
@@ -568,12 +802,12 @@ function AccordionPolicies() {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 14 : 20 }}>
-                <Icon height={isMobile ? 22 : 28} color={isOpen ? '#FF4B33' : '#000'} />
+                <Icon height={isMobile ? 22 : 28} color={isRed ? '#FF4B33' : '#000'} />
                 <h2 style={{
                   fontSize: isMobile ? 17 : 22, fontWeight: 800, lineHeight: 1,
                   fontFamily: "'Work Sans', system-ui, sans-serif",
                   textTransform: 'uppercase', letterSpacing: '0.02em',
-                  color: isOpen ? '#FF4B33' : '#000',
+                  color: isRed ? '#FF4B33' : '#000',
                   transition: 'color 0.15s ease',
                   whiteSpace: 'normal',
                 }}>
@@ -582,7 +816,7 @@ function AccordionPolicies() {
               </div>
               <span style={{
                 fontSize: 26, lineHeight: 1, fontWeight: 300, flexShrink: 0,
-                color: isOpen ? '#FF4B33' : '#000',
+                color: isRed ? '#FF4B33' : '#000',
                 transition: 'color 0.15s ease',
               }}>
                 {isOpen ? '−' : '+'}
@@ -644,7 +878,7 @@ export default function App() {
     <div style={S.page}>
 
       <nav style={{ ...S.nav, padding: isMobile ? '0 16px' : '0 24px', position: 'relative' }}>
-        {isMobile ? (
+        {tab === 'policies' && (isMobile ? (
           <button
             onClick={() => setMenuOpen(o => !o)}
             style={{
@@ -658,16 +892,17 @@ export default function App() {
           >⋮</button>
         ) : (
           <div className="nav-toggle" style={S.navViewToggle}>
+            <button style={S.navViewBtn(cardView === 'detailsnoicon')} onClick={() => setCardView('detailsnoicon')}>No icon</button>
             <button style={S.navViewBtn(cardView === 'titles')} onClick={() => setCardView('titles')}>Titles</button>
+            <button style={S.navViewBtn(cardView === 'icons')} onClick={() => setCardView('icons')}>Icons</button>
             <button style={S.navViewBtn(cardView === 'expanded')} onClick={() => setCardView('expanded')}>Details</button>
             <button style={S.navViewBtn(cardView === 'reddetails')} onClick={() => setCardView('reddetails')}>Red details hover</button>
-            <button style={S.navViewBtn(cardView === 'icons')} onClick={() => setCardView('icons')}>Icons</button>
           </div>
-        )}
+        ))}
       </nav>
 
       {/* Kebab dropdown — mobile only */}
-      {isMobile && menuOpen && (
+      {tab === 'policies' && isMobile && menuOpen && (
         <>
           <div onClick={() => setMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 98 }} />
           <div style={{
@@ -697,10 +932,11 @@ export default function App() {
             <div style={{ padding: '6px 20px 4px', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#999', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Tiles</div>
             <div style={{ paddingBottom: 6 }}>
               {[
+                { label: 'No icon', view: 'detailsnoicon' },
                 { label: 'Titles', view: 'titles' },
+                { label: 'Icons', view: 'icons' },
                 { label: 'Details', view: 'expanded' },
                 { label: 'Red details hover', view: 'reddetails' },
-                { label: 'Icons', view: 'icons' },
               ].map(({ label, view }) => {
                 const active = policyLayout === 'grid' && cardView === view
                 return (
@@ -740,14 +976,21 @@ export default function App() {
       <main style={{ ...S.content, padding: isMobile ? '28px 16px 60px' : isTablet ? '48px 40px 60px' : '64px 80px 80px 300px' }}>
         {tab === 'platform' ? (
           <div style={{ ...S.platformText, maxWidth: isMobile ? '100%' : 640 }}>
-            <p style={{ fontSize: isMobile ? 13 : 15, color: '#FF4B33', marginBottom: 24, fontFamily: "'Open Sans', system-ui, sans-serif", fontStyle: 'normal' }}>
-              (Rather than long blocks of text, as shown in the placeholder copy below, breaking the content into smaller sections like this would make it easier to scan and read, particularly on mobile.)
-            </p>
-            {PLATFORM_CONTENT.map((item, i) =>
-              item.type === 'heading'
-                ? <h2 key={i} style={{ ...S.platformHeading, ...(i === 0 ? { marginTop: 0, fontSize: isMobile ? 20 : 26 } : { fontWeight: 600, fontSize: isMobile ? 17 : 21 }) }}>{item.text}</h2>
-                : <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{item.text}</p>
-            )}
+            {PLATFORM_CONTENT.map((item, i) => {
+              if (item.type === 'heading') {
+                return (
+                  <>
+                    <h2 key={i} style={{ ...S.platformHeading, ...(i === 0 ? { marginTop: 0, fontSize: isMobile ? 20 : 26 } : { fontWeight: 600, fontSize: isMobile ? 17 : 21 }) }}>{item.text}</h2>
+                    {i === 0 && (
+                      <p key="notice" style={{ fontSize: isMobile ? 13 : 15, color: '#FF4B33', marginBottom: 24, fontFamily: "'Open Sans', system-ui, sans-serif", fontStyle: 'normal' }}>
+                        (Rather than long blocks of text, as shown in the placeholder copy below, breaking the content into smaller sections like this would make it easier to scan and read, particularly on mobile.)
+                      </p>
+                    )}
+                  </>
+                )
+              }
+              return <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{item.text}</p>
+            })}
           </div>
         ) : (
           <>
@@ -765,7 +1008,10 @@ export default function App() {
             {policyLayout === 'accordion' ? <AccordionPolicies /> : (
             <div style={{ ...S.grid, gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 300px)', gap: isMobile ? 12 : 24 }}>
               {grid.map((policy, i) => {
+                if (cardView === 'edgy') return <PolicyCardEdgy key={i} policy={policy} index={i} />
+                if (cardView === 'brush') return <PolicyCardBrush key={i} policy={policy} index={i} />
                 if (cardView === 'expanded') return <PolicyCardExpanded key={i} policy={policy} index={i} />
+                if (cardView === 'detailsnoicon') return <PolicyCardExpandedNoIcon key={i} policy={policy} index={i} />
                 if (cardView === 'reddetails') return <PolicyCardRedDetails key={i} policy={policy} index={i} />
                 if (cardView === 'icons') return <PolicyCardIcons key={i} policy={policy} index={i} />
                 return <PolicyCard key={i} policy={policy} index={i} />
