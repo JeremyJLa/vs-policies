@@ -966,7 +966,7 @@ export default function App() {
 
       <div style={{ ...S.tabBar, padding: isMobile ? '0 16px' : isTablet ? '0 40px' : '0 300px', gap: isMobile ? 16 : 24 }}>
         <button style={{ ...S.tabBtn(tab === 'platform'), fontSize: isMobile ? 15 : 18 }} onClick={() => setTab('platform')}>
-          Our platform
+          Our vision
         </button>
         <button style={{ ...S.tabBtn(tab === 'policies'), fontSize: isMobile ? 15 : 18 }} onClick={() => setTab('policies')}>
           Our policies
