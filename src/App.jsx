@@ -23,6 +23,20 @@ const PLATFORM_CONTENT = [
   { type: 'para', text: 'Politicians should live on a worker\'s wage and fight to make workers richer and billionaires poorer — not the other way around.' },
 ]
 
+const MANIFESTO_INTRO = [
+  'We are building a movement of working people who refuse to accept a society run for billionaires. Decade after decade, under both major parties, wealth has flowed upward while housing, healthcare and the climate have been left to rot.',
+  'We believe another Victoria is possible — one where the economy works for everyone, not just the few at the top.',
+]
+
+const MANIFESTO_PRINCIPLES = [
+  { label: 'Housing as a human right', text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.' },
+  { label: 'Healthcare free at the point of need', text: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.' },
+  { label: 'A rapid transition to renewables', text: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.' },
+  { label: 'Workers have the right to organise', text: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor.' },
+  { label: 'Solidarity over division', text: 'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis nostrud exercitation ullamco laboris.' },
+  { label: 'Democratic control of the economy', text: 'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt neque porro quisquam.' },
+]
+
 const POLICIES = [
   {
     title: 'HOUSING\nFOR ALL',
@@ -863,10 +877,12 @@ function PolicyCardIcons({ policy, index }) {
 }
 
 export default function App() {
+  const [version, setVersion] = useState('B')
   const [tab, setTab] = useState('platform')
   const [cardView, setCardView] = useState('titles')
   const [policyLayout, setPolicyLayout] = useState('grid')
   const [menuOpen, setMenuOpen] = useState(false)
+  const [manifestoExpanded, setManifestoExpanded] = useState(false)
 
   const w = useWindowWidth()
   const isMobile = w <= 640
@@ -877,8 +893,24 @@ export default function App() {
   return (
     <div style={S.page}>
 
-      <nav style={{ ...S.nav, padding: isMobile ? '0 16px' : '0 24px', position: 'relative' }}>
-        {tab === 'policies' && (isMobile ? (
+      <nav style={{ ...S.nav, padding: isMobile ? '0 16px' : '0 24px', position: 'relative', justifyContent: 'space-between' }}>
+        {/* Version A / B toggle */}
+        <div style={{ display: 'flex', gap: 6 }}>
+          {['A', 'B'].map(v => (
+            <button key={v} onClick={() => setVersion(v)} style={{
+              background: version === v ? 'rgba(255,255,255,0.18)' : 'none',
+              border: '2px solid',
+              borderColor: version === v ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.2)',
+              borderRadius: 4, color: version === v ? '#fff' : 'rgba(255,255,255,0.4)',
+              fontSize: 14, fontFamily: "'Work Sans', system-ui, sans-serif",
+              fontWeight: 800, letterSpacing: '0.04em',
+              padding: '6px 16px', cursor: 'pointer', transition: 'all 0.15s',
+              textTransform: 'uppercase',
+            }}>Version {v}</button>
+          ))}
+        </div>
+
+        {(version === 'A' || tab === 'policies') && (isMobile ? (
           <button
             onClick={() => setMenuOpen(o => !o)}
             style={{
@@ -891,18 +923,21 @@ export default function App() {
             aria-label="View options"
           >⋮</button>
         ) : (
-          <div className="nav-toggle" style={S.navViewToggle}>
-            <button style={S.navViewBtn(cardView === 'detailsnoicon')} onClick={() => setCardView('detailsnoicon')}>No icon</button>
-            <button style={S.navViewBtn(cardView === 'titles')} onClick={() => setCardView('titles')}>Titles</button>
-            <button style={S.navViewBtn(cardView === 'icons')} onClick={() => setCardView('icons')}>Icons</button>
-            <button style={S.navViewBtn(cardView === 'expanded')} onClick={() => setCardView('expanded')}>Details</button>
-            <button style={S.navViewBtn(cardView === 'reddetails')} onClick={() => setCardView('reddetails')}>Red details hover</button>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
+            <span style={{ fontSize: 14, fontWeight: 400, letterSpacing: 'normal', textTransform: 'none', color: '#fff', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Card design variations</span>
+            <div className="nav-toggle" style={S.navViewToggle}>
+              <button style={S.navViewBtn(cardView === 'detailsnoicon')} onClick={() => setCardView('detailsnoicon')}>No icon</button>
+              <button style={S.navViewBtn(cardView === 'titles')} onClick={() => setCardView('titles')}>Titles (icon hover)</button>
+              <button style={S.navViewBtn(cardView === 'icons')} onClick={() => setCardView('icons')}>Icons</button>
+              <button style={S.navViewBtn(cardView === 'expanded')} onClick={() => setCardView('expanded')}>Details</button>
+              <button style={S.navViewBtn(cardView === 'reddetails')} onClick={() => setCardView('reddetails')}>Red details hover</button>
+            </div>
           </div>
         ))}
       </nav>
 
       {/* Kebab dropdown — mobile only */}
-      {tab === 'policies' && isMobile && menuOpen && (
+      {(version === 'A' || tab === 'policies') && isMobile && menuOpen && (
         <>
           <div onClick={() => setMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 98 }} />
           <div style={{
@@ -933,7 +968,7 @@ export default function App() {
             <div style={{ paddingBottom: 6 }}>
               {[
                 { label: 'No icon', view: 'detailsnoicon' },
-                { label: 'Titles', view: 'titles' },
+                { label: 'Titles (icon hover)', view: 'titles' },
                 { label: 'Icons', view: 'icons' },
                 { label: 'Details', view: 'expanded' },
                 { label: 'Red details hover', view: 'reddetails' },
@@ -964,17 +999,72 @@ export default function App() {
         </div>
       </div>
 
-      <div style={{ ...S.tabBar, padding: isMobile ? '0 16px' : isTablet ? '0 40px' : '0 300px', gap: isMobile ? 16 : 24 }}>
-        <button style={{ ...S.tabBtn(tab === 'platform'), fontSize: isMobile ? 15 : 18 }} onClick={() => setTab('platform')}>
-          Our vision
-        </button>
-        <button style={{ ...S.tabBtn(tab === 'policies'), fontSize: isMobile ? 15 : 18 }} onClick={() => setTab('policies')}>
-          Our policies
-        </button>
-      </div>
+      {version === 'B' && (
+        <div style={{ ...S.tabBar, padding: isMobile ? '0 16px' : isTablet ? '0 40px' : '0 300px', gap: isMobile ? 16 : 24 }}>
+          <button style={{ ...S.tabBtn(tab === 'platform'), fontSize: isMobile ? 15 : 18 }} onClick={() => setTab('platform')}>
+            Our vision
+          </button>
+          <button style={{ ...S.tabBtn(tab === 'policies'), fontSize: isMobile ? 15 : 18 }} onClick={() => setTab('policies')}>
+            Our policies
+          </button>
+        </div>
+      )}
 
       <main style={{ ...S.content, padding: isMobile ? '28px 16px 60px' : isTablet ? '48px 40px 60px' : '64px 80px 80px 300px' }}>
-        {tab === 'platform' ? (
+        {version === 'A' ? (
+          <>
+            {/* ── Version A: Manifesto + tiles ─────────────────── */}
+            <div style={{ maxWidth: isMobile ? '100%' : 640, marginBottom: 48 }}>
+              <h2 style={{
+                fontSize: isMobile ? 22 : 30, fontWeight: 900, lineHeight: 1.1,
+                fontFamily: "'Work Sans', system-ui, sans-serif",
+                textTransform: 'uppercase', letterSpacing: '0.02em',
+                color: '#000', marginBottom: 20, marginTop: 0,
+              }}>
+                A Victoria run for working people, not billionaires.
+              </h2>
+              {MANIFESTO_INTRO.map((text, i) => (
+                <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{text}</p>
+              ))}
+
+              {/* Collapsible principles */}
+              <div style={{
+                maxHeight: manifestoExpanded ? 1000 : 0,
+                overflow: 'hidden',
+                transition: 'max-height 0.4s ease',
+              }}>
+                <p style={{ ...S.para, fontWeight: 700, marginTop: 8, marginBottom: 16, fontSize: isMobile ? 15 : 16 }}>Our commitments:</p>
+                {MANIFESTO_PRINCIPLES.map((p, i) => (
+                  <div key={i} style={{ marginBottom: 18 }}>
+                    <p style={{ ...S.para, fontWeight: 700, marginBottom: 4, fontSize: isMobile ? 15 : 16 }}>{p.label}</p>
+                    <p style={{ ...S.para, marginBottom: 0, fontSize: isMobile ? 14 : 15 }}>{p.text}</p>
+                  </div>
+                ))}
+              </div>
+
+              <button onClick={() => setManifestoExpanded(e => !e)} style={{
+                background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                fontSize: isMobile ? 13 : 14, fontWeight: 700,
+                fontFamily: "'Open Sans', system-ui, sans-serif",
+                color: '#FF4B33', marginTop: 8, letterSpacing: '0.02em',
+              }}>
+                {manifestoExpanded ? 'Show less ↑' : 'Read our commitments ↓'}
+              </button>
+            </div>
+
+            {/* Tiles */}
+            <p style={{ ...S.para, fontSize: isMobile ? 13 : 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#999', marginBottom: 24 }}>Our policies</p>
+            <div style={{ ...S.grid, gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 300px)', gap: isMobile ? 12 : 24 }}>
+              {grid.map((policy, i) => {
+                if (cardView === 'expanded') return <PolicyCardExpanded key={i} policy={policy} index={i} />
+                if (cardView === 'detailsnoicon') return <PolicyCardExpandedNoIcon key={i} policy={policy} index={i} />
+                if (cardView === 'reddetails') return <PolicyCardRedDetails key={i} policy={policy} index={i} />
+                if (cardView === 'icons') return <PolicyCardIcons key={i} policy={policy} index={i} />
+                return <PolicyCard key={i} policy={policy} index={i} />
+              })}
+            </div>
+          </>
+        ) : tab === 'platform' ? (
           <div style={{ ...S.platformText, maxWidth: isMobile ? '100%' : 640 }}>
             {PLATFORM_CONTENT.map((item, i) => {
               if (item.type === 'heading') {
