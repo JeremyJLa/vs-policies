@@ -1009,10 +1009,10 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
 
       {version === 'B' && (
         <div style={{ ...S.tabBar, padding: isMobile ? '0 16px' : isTablet ? '0 40px' : '0 300px', gap: isMobile ? 16 : 24, ...(isMobile && { position: 'sticky', top: 30, zIndex: 40, boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }) }}>
-          <button style={{ ...S.tabBtn(tab === 'platform'), fontSize: isMobile ? 15 : 18 }} onClick={() => setTab('platform')}>
+          <button style={{ ...S.tabBtn(tab === 'platform'), fontSize: isMobile ? 15 : 18 }} onClick={() => { setTab('platform'); window.scrollTo(0, 0) }}>
             Our vision
           </button>
-          <button style={{ ...S.tabBtn(tab === 'policies'), fontSize: isMobile ? 15 : 18 }} onClick={() => setTab('policies')}>
+          <button style={{ ...S.tabBtn(tab === 'policies'), fontSize: isMobile ? 15 : 18 }} onClick={() => { setTab('policies'); window.scrollTo(0, 0) }}>
             Our policies
           </button>
         </div>
