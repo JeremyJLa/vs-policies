@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './index.css'
 import HomePage from './HomePage'
 
@@ -882,6 +882,7 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
   const [policyLayout, setPolicyLayout] = useState('grid')
   const [menuOpen, setMenuOpen] = useState(false)
   const [manifestoExpanded, setManifestoExpanded] = useState(false)
+  const tabBarRef = useRef(null)
 
   const w = useWindowWidth()
   const isMobile = w <= 640
@@ -1008,11 +1009,11 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
       </div>
 
       {version === 'B' && (
-        <div style={{ ...S.tabBar, padding: isMobile ? '0 16px' : isTablet ? '0 40px' : '0 300px', gap: isMobile ? 16 : 24, ...(isMobile && { position: 'sticky', top: 30, zIndex: 40, boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }) }}>
-          <button style={{ ...S.tabBtn(tab === 'platform'), fontSize: isMobile ? 15 : 18 }} onClick={() => { setTab('platform'); window.scrollTo(0, 0) }}>
+        <div ref={tabBarRef} style={{ ...S.tabBar, padding: isMobile ? '0 16px' : isTablet ? '0 40px' : '0 300px', gap: isMobile ? 16 : 24, ...(isMobile && { position: 'sticky', top: 30, zIndex: 40, boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }) }}>
+          <button style={{ ...S.tabBtn(tab === 'platform'), fontSize: isMobile ? 15 : 18 }} onClick={() => { setTab('platform'); isMobile && tabBarRef.current && window.scrollTo(0, tabBarRef.current.offsetTop - 30) }}>
             Our vision
           </button>
-          <button style={{ ...S.tabBtn(tab === 'policies'), fontSize: isMobile ? 15 : 18 }} onClick={() => { setTab('policies'); window.scrollTo(0, 0) }}>
+          <button style={{ ...S.tabBtn(tab === 'policies'), fontSize: isMobile ? 15 : 18 }} onClick={() => { setTab('policies'); isMobile && tabBarRef.current && window.scrollTo(0, tabBarRef.current.offsetTop - 30) }}>
             Our policies
           </button>
         </div>
