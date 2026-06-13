@@ -20,14 +20,14 @@ function MobileMenu({ onClose, onNavigateToPolicies, onNavigateToVision }) {
 
   const navItemStyle = {
     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-    color: '#fff', fontSize: 28, fontWeight: 600, fontFamily: FONT,
+    color: '#fff', fontSize: 18, fontWeight: 600, fontFamily: FONT,
     cursor: 'pointer', userSelect: 'none', lineHeight: 1.2,
   }
 
   const subItemStyle = {
     display: 'block', color: '#fff', textDecoration: 'none',
-    fontSize: 20, fontWeight: 500, fontFamily: FONT,
-    paddingLeft: 32, paddingTop: 20, paddingBottom: 4,
+    fontSize: 16, fontWeight: 500, fontFamily: FONT,
+    paddingLeft: 32, paddingTop: 18, paddingBottom: 18,
   }
 
   const chevron = (open) => (

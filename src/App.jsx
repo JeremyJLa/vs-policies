@@ -1107,8 +1107,8 @@ export default function App() {
   if (version === 'home') {
     return (
       <HomePage
-        onNavigateToPolicies={() => { setInitialTab('policies'); setVersion('B') }}
-        onNavigateToVision={() => { setInitialTab('platform'); setVersion('B') }}
+        onNavigateToPolicies={() => { setInitialTab('policies'); setVersion('B'); window.scrollTo(0, 0) }}
+        onNavigateToVision={() => { setInitialTab('platform'); setVersion('B'); window.scrollTo(0, 0) }}
       />
     )
   }
