@@ -16,7 +16,7 @@ function useWindowWidth() {
 // Nav bar spans top 2.5% of image height
 // "State Election 2026" sits at ~35–47% from left, 0–2.5% from top
 
-export default function HomePage({ onNavigateToPolicies }) {
+export default function HomePage({ onNavigateToPolicies, onNavigateToVision }) {
   const [open, setOpen] = useState(false)
   const [openCampaigns, setOpenCampaigns] = useState(false)
   const [openAbout, setOpenAbout] = useState(false)
@@ -53,8 +53,8 @@ export default function HomePage({ onNavigateToPolicies }) {
         >← Back to prototype</button>
       </div>
 
-      {/* Invisible hit area over "State Election 2026" nav item */}
-      <div
+      {/* Nav dropdowns — desktop only (mobile image has no expandable nav) */}
+      {!isMobile && <div
         style={{
           position: 'absolute',
           top: '0%',
@@ -82,6 +82,7 @@ export default function HomePage({ onNavigateToPolicies }) {
           >
             {[
               { label: 'Candidates', onClick: null },
+              { label: 'Our vision', onClick: onNavigateToVision },
               { label: 'Policies', onClick: onNavigateToPolicies },
             ].map(item => (
               <a
@@ -108,10 +109,9 @@ export default function HomePage({ onNavigateToPolicies }) {
             ))}
           </div>
         )}
-      </div>
+      </div>}
 
-      {/* Invisible hit area over "Campaigns" nav item */}
-      <div
+      {!isMobile && <div
         style={{
           position: 'absolute',
           top: '0%',
@@ -169,13 +169,13 @@ export default function HomePage({ onNavigateToPolicies }) {
             ))}
           </div>
         )}
-      </div>
+      </div>}
 
       {/* "View all our policies" link under "We'll fight to" section */}
       <div
         style={{
           position: 'absolute',
-          top: '50.5%',
+          top: isMobile ? '49.5%' : '50.5%',
           left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 10,
@@ -205,7 +205,7 @@ export default function HomePage({ onNavigateToPolicies }) {
       </div>
 
       {/* Invisible hit area over "About" nav item */}
-      <div
+      {!isMobile && <div
         style={{
           position: 'absolute',
           top: '0%',
@@ -260,7 +260,7 @@ export default function HomePage({ onNavigateToPolicies }) {
             ))}
           </div>
         )}
-      </div>
+      </div>}
     </div>
   )
 }

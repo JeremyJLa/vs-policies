@@ -876,8 +876,8 @@ function PolicyCardIcons({ policy, index }) {
   )
 }
 
-function PoliciesPage({ version, onVersionChange, onNavigateHome }) {
-  const [tab, setTab] = useState('platform')
+function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNavigateHome }) {
+  const [tab, setTab] = useState(initialTab)
   const [cardView, setCardView] = useState('titles')
   const [policyLayout, setPolicyLayout] = useState('grid')
   const [menuOpen, setMenuOpen] = useState(false)
@@ -901,9 +901,9 @@ function PoliciesPage({ version, onVersionChange, onNavigateHome }) {
               border: '2px solid',
               borderColor: version === v.key ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.2)',
               borderRadius: 4, color: version === v.key ? '#fff' : 'rgba(255,255,255,0.4)',
-              fontSize: 14, fontFamily: "'Work Sans', system-ui, sans-serif",
+              fontSize: isMobile ? 10 : 14, fontFamily: "'Work Sans', system-ui, sans-serif",
               fontWeight: 800, letterSpacing: '0.04em',
-              padding: '4px 12px', cursor: 'pointer', transition: 'all 0.15s',
+              padding: isMobile ? '3px 7px' : '4px 12px', cursor: 'pointer', transition: 'all 0.15s',
               textTransform: 'uppercase',
             }}>{v.label}</button>
           ))}
@@ -1102,13 +1102,20 @@ function PoliciesPage({ version, onVersionChange, onNavigateHome }) {
 
 export default function App() {
   const [version, setVersion] = useState('B')
+  const [initialTab, setInitialTab] = useState('policies')
 
   if (version === 'home') {
-    return <HomePage onNavigateToPolicies={() => setVersion('B')} />
+    return (
+      <HomePage
+        onNavigateToPolicies={() => { setInitialTab('policies'); setVersion('B') }}
+        onNavigateToVision={() => { setInitialTab('platform'); setVersion('B') }}
+      />
+    )
   }
   return (
     <PoliciesPage
       version={version}
+      initialTab={initialTab}
       onVersionChange={setVersion}
       onNavigateHome={() => setVersion('home')}
     />
