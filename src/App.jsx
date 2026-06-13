@@ -890,7 +890,15 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
   const grid = cardView === 'icons' ? POLICY_GRID_ICONS : POLICY_GRID
 
   return (
-    <div style={S.page}>
+    <div style={{ ...S.page, ...(isMobile && { paddingTop: 30 }) }}>
+
+      {/* Fixed black top strip — mobile only */}
+      {isMobile && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0,
+          height: 30, background: '#111', zIndex: 50,
+        }} />
+      )}
 
       <nav style={{ ...S.nav, padding: isMobile ? '0 16px' : '0 24px', position: 'relative', justifyContent: 'space-between' }}>
         {/* Version toggle — left */}
@@ -1000,7 +1008,7 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
       </div>
 
       {version === 'B' && (
-        <div style={{ ...S.tabBar, padding: isMobile ? '0 16px' : isTablet ? '0 40px' : '0 300px', gap: isMobile ? 16 : 24 }}>
+        <div style={{ ...S.tabBar, padding: isMobile ? '0 16px' : isTablet ? '0 40px' : '0 300px', gap: isMobile ? 16 : 24, ...(isMobile && { position: 'sticky', top: 30, zIndex: 40, boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }) }}>
           <button style={{ ...S.tabBtn(tab === 'platform'), fontSize: isMobile ? 15 : 18 }} onClick={() => setTab('platform')}>
             Our vision
           </button>
