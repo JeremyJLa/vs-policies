@@ -1,26 +1,26 @@
 import { useState, useEffect } from 'react'
 import './index.css'
+import HomePage from './HomePage'
 
 // ── Data ────────────────────────────────────────────────────────────────────
 
 const PLATFORM_CONTENT = [
-  { type: 'heading', text: 'A Victoria run for working people, not billionaires' },
-  { type: 'para', text: 'The billionaires have had it too good for too long. CEO salaries are up more than 40 percent in a year while living standards for everyone else are getting smashed.' },
-  { type: 'para', text: 'Decade after decade, under both major parties, the rich have gotten richer while workers struggle with housing, bills and insecure work.' },
-  { type: 'para', text: 'We need socialists in parliament who will fight to make workers richer and billionaires poorer — not the other way around.' },
-  { type: 'heading', text: 'Billionaires are getting richer while everyone else struggles' },
-  { type: 'para', text: 'CEO salaries are up more than 40 percent in a year while living standards for everyone else are getting smashed.' },
-  { type: 'para', text: 'Decade after decade, under both major parties, the rich have gotten richer while workers struggle to pay rent, mortgages and bills.' },
-  { type: 'heading', text: 'Melbourne has become a segregated city' },
-  { type: 'para', text: 'Working-class areas are starved of resources while wealthy suburbs get the best of everything.' },
-  { type: 'para', text: 'Housing has become a casino for speculators while an entire generation is locked out of home ownership.' },
-  { type: 'heading', text: 'Public assets have been sold off' },
-  { type: 'para', text: 'Our energy system has been privatised in the name of "efficiency".' },
-  { type: 'para', text: 'Now energy corporations squeeze ordinary people for every cent while profits soar.' },
-  { type: 'heading', text: 'Divide and conquer politics keeps people powerless' },
-  { type: 'para', text: 'Whether it\'s attacks on trans people, racist panics about refugees or attacks on Aboriginal sovereignty — these divisions are used to distract from the transfer of wealth to the rich.' },
-  { type: 'heading', text: 'We need socialists in parliament' },
-  { type: 'para', text: 'Politicians should live on a worker\'s wage and fight to make workers richer and billionaires poorer — not the other way around.' },
+  { type: 'heading', text: 'Lorem ipsum dolor sit amet consectetur' },
+  { type: 'para', text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.' },
+  { type: 'para', text: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.' },
+  { type: 'para', text: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.' },
+  { type: 'heading', text: 'Nemo enim ipsam voluptatem quia voluptas' },
+  { type: 'para', text: 'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt neque porro quisquam.' },
+  { type: 'para', text: 'Ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam nisi ut aliquid ex ea commodi consequatur.' },
+  { type: 'heading', text: 'Quis autem vel eum iure reprehenderit' },
+  { type: 'para', text: 'Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur.' },
+  { type: 'para', text: 'At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati.' },
+  { type: 'heading', text: 'Nam libero tempore cum soluta nobis' },
+  { type: 'para', text: 'Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.' },
+  { type: 'heading', text: 'Temporibus autem quibusdam et aut officiis' },
+  { type: 'para', text: 'Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae itaque earum rerum hic tenetur.' },
+  { type: 'heading', text: 'Itaque earum rerum hic tenetur a sapiente' },
+  { type: 'para', text: 'Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat et harum quidem rerum facilis.' },
 ]
 
 const MANIFESTO_INTRO = [
@@ -157,7 +157,7 @@ const S = {
   tabBtn: (active) => ({
     background: 'none',
     border: 'none',
-    padding: '16px 0',
+    padding: '16px 0 4px',
     fontSize: 18,
     fontWeight: active ? 800 : 600,
     cursor: 'pointer',
@@ -876,8 +876,7 @@ function PolicyCardIcons({ policy, index }) {
   )
 }
 
-export default function App() {
-  const [version, setVersion] = useState('B')
+function PoliciesPage({ version, onVersionChange, onNavigateHome }) {
   const [tab, setTab] = useState('platform')
   const [cardView, setCardView] = useState('titles')
   const [policyLayout, setPolicyLayout] = useState('grid')
@@ -894,23 +893,24 @@ export default function App() {
     <div style={S.page}>
 
       <nav style={{ ...S.nav, padding: isMobile ? '0 16px' : '0 24px', position: 'relative', justifyContent: 'space-between' }}>
-        {/* Version A / B toggle */}
+        {/* Version toggle — left */}
         <div style={{ display: 'flex', gap: 6 }}>
-          {['A', 'B'].map(v => (
-            <button key={v} onClick={() => setVersion(v)} style={{
-              background: version === v ? 'rgba(255,255,255,0.18)' : 'none',
+          {[{ key: 'A', label: 'Version A' }, { key: 'B', label: 'Version B' }, { key: 'home', label: 'Start from home' }].map(v => (
+            <button key={v.key} onClick={() => onVersionChange(v.key)} style={{
+              background: version === v.key ? 'rgba(255,255,255,0.18)' : 'none',
               border: '2px solid',
-              borderColor: version === v ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.2)',
-              borderRadius: 4, color: version === v ? '#fff' : 'rgba(255,255,255,0.4)',
+              borderColor: version === v.key ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.2)',
+              borderRadius: 4, color: version === v.key ? '#fff' : 'rgba(255,255,255,0.4)',
               fontSize: 14, fontFamily: "'Work Sans', system-ui, sans-serif",
               fontWeight: 800, letterSpacing: '0.04em',
-              padding: '6px 16px', cursor: 'pointer', transition: 'all 0.15s',
+              padding: '4px 12px', cursor: 'pointer', transition: 'all 0.15s',
               textTransform: 'uppercase',
-            }}>Version {v}</button>
+            }}>{v.label}</button>
           ))}
         </div>
 
-        {(version === 'A' || tab === 'policies') && (isMobile ? (
+        {/* Card design buttons — right */}
+        {tab === 'policies' && (isMobile ? (
           <button
             onClick={() => setMenuOpen(o => !o)}
             style={{
@@ -924,7 +924,7 @@ export default function App() {
           >⋮</button>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
-            <span style={{ fontSize: 14, fontWeight: 400, letterSpacing: 'normal', textTransform: 'none', color: '#fff', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Card design variations</span>
+            <span style={{ fontSize: 14, fontWeight: 400, color: '#fff', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Card design variations</span>
             <div className="nav-toggle" style={S.navViewToggle}>
               <button style={S.navViewBtn(cardView === 'detailsnoicon')} onClick={() => setCardView('detailsnoicon')}>No icon</button>
               <button style={S.navViewBtn(cardView === 'titles')} onClick={() => setCardView('titles')}>Titles (icon hover)</button>
@@ -937,7 +937,7 @@ export default function App() {
       </nav>
 
       {/* Kebab dropdown — mobile only */}
-      {(version === 'A' || tab === 'policies') && isMobile && menuOpen && (
+      {tab === 'policies' && isMobile && menuOpen && (
         <>
           <div onClick={() => setMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 98 }} />
           <div style={{
@@ -1013,26 +1013,18 @@ export default function App() {
       <main style={{ ...S.content, padding: isMobile ? '28px 16px 60px' : isTablet ? '48px 40px 60px' : '64px 80px 80px 300px' }}>
         {version === 'A' ? (
           <>
-            {/* ── Version A: Manifesto + tiles ─────────────────── */}
             <div style={{ maxWidth: isMobile ? '100%' : 640, marginBottom: 48 }}>
               <h2 style={{
-                fontSize: isMobile ? 22 : 30, fontWeight: 900, lineHeight: 1.1,
+                fontSize: isMobile ? 20 : 28, fontWeight: 900, lineHeight: 1.1,
                 fontFamily: "'Work Sans', system-ui, sans-serif",
-                textTransform: 'uppercase', letterSpacing: '0.02em',
-                color: '#000', marginBottom: 20, marginTop: 0,
+                letterSpacing: '0.02em', color: '#000', marginBottom: 20, marginTop: 0,
               }}>
-                A Victoria run for working people, not billionaires.
+                A Victoria run for working people,<br />not billionaires.
               </h2>
               {MANIFESTO_INTRO.map((text, i) => (
                 <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{text}</p>
               ))}
-
-              {/* Collapsible principles */}
-              <div style={{
-                maxHeight: manifestoExpanded ? 1000 : 0,
-                overflow: 'hidden',
-                transition: 'max-height 0.4s ease',
-              }}>
+              <div style={{ maxHeight: manifestoExpanded ? 1000 : 0, overflow: 'hidden', transition: 'max-height 0.4s ease' }}>
                 <p style={{ ...S.para, fontWeight: 700, marginTop: 8, marginBottom: 16, fontSize: isMobile ? 15 : 16 }}>Our commitments:</p>
                 {MANIFESTO_PRINCIPLES.map((p, i) => (
                   <div key={i} style={{ marginBottom: 18 }}>
@@ -1041,7 +1033,6 @@ export default function App() {
                   </div>
                 ))}
               </div>
-
               <button onClick={() => setManifestoExpanded(e => !e)} style={{
                 background: 'none', border: 'none', padding: 0, cursor: 'pointer',
                 fontSize: isMobile ? 13 : 14, fontWeight: 700,
@@ -1051,8 +1042,6 @@ export default function App() {
                 {manifestoExpanded ? 'Show less ↑' : 'Read our commitments ↓'}
               </button>
             </div>
-
-            {/* Tiles */}
             <p style={{ ...S.para, fontSize: isMobile ? 13 : 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#999', marginBottom: 24 }}>Our policies</p>
             <div style={{ ...S.grid, gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 300px)', gap: isMobile ? 12 : 24 }}>
               {grid.map((policy, i) => {
@@ -1069,14 +1058,7 @@ export default function App() {
             {PLATFORM_CONTENT.map((item, i) => {
               if (item.type === 'heading') {
                 return (
-                  <>
-                    <h2 key={i} style={{ ...S.platformHeading, ...(i === 0 ? { marginTop: 0, fontSize: isMobile ? 20 : 26 } : { fontWeight: 600, fontSize: isMobile ? 17 : 21 }) }}>{item.text}</h2>
-                    {i === 0 && (
-                      <p key="notice" style={{ fontSize: isMobile ? 13 : 15, color: '#FF4B33', marginBottom: 24, fontFamily: "'Open Sans', system-ui, sans-serif", fontStyle: 'normal' }}>
-                        (Rather than long blocks of text, as shown in the placeholder copy below, breaking the content into smaller sections like this would make it easier to scan and read, particularly on mobile.)
-                      </p>
-                    )}
-                  </>
+                  <h2 key={i} style={{ ...S.platformHeading, ...(i === 0 ? { marginTop: 0, fontSize: isMobile ? 20 : 26 } : { fontWeight: 600, fontSize: isMobile ? 17 : 21 }) }}>{item.text}</h2>
                 )
               }
               return <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{item.text}</p>
@@ -1085,7 +1067,7 @@ export default function App() {
         ) : (
           <>
             <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 32, gap: isMobile ? 16 : 0 }}>
-              <p style={{ ...S.para, maxWidth: isMobile ? '100%' : 500, fontSize: isMobile ? 15 : 16 }}>
+              <p style={{ ...S.para, maxWidth: isMobile ? '100%' : 620, fontSize: isMobile ? 15 : 16 }}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
               </p>
               {!isMobile && (
@@ -1112,7 +1094,23 @@ export default function App() {
         )}
       </main>
 
+
       <footer style={S.footer} />
     </div>
+  )
+}
+
+export default function App() {
+  const [version, setVersion] = useState('B')
+
+  if (version === 'home') {
+    return <HomePage onNavigateToPolicies={() => setVersion('B')} />
+  }
+  return (
+    <PoliciesPage
+      version={version}
+      onVersionChange={setVersion}
+      onNavigateHome={() => setVersion('home')}
+    />
   )
 }
