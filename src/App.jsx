@@ -904,7 +904,7 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
       <nav style={{ ...S.nav, padding: isMobile ? '0 16px' : '0 24px', position: 'relative', justifyContent: 'space-between' }}>
         {/* Version toggle — left */}
         <div style={{ display: 'flex', gap: 6 }}>
-          {[{ key: 'A', label: 'Version A' }, { key: 'B', label: 'Version B' }, { key: 'home', label: 'Start from home' }].map(v => (
+          {[{ key: 'B', label: 'Policy page' }, { key: 'home', label: 'Start from home' }].map(v => (
             <button key={v.key} onClick={() => onVersionChange(v.key)} style={{
               background: version === v.key ? 'rgba(255,255,255,0.18)' : 'none',
               border: '2px solid',
