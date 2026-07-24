@@ -48,7 +48,7 @@ const VISION_CONTENT = [
   { type: 'para', text: 'Winning the change we need requires much more of this kind of action and activism, particularly within the workers’ movement. So a big part of the job of a socialist MP would be to encourage and help organise it. They would use their public profile and the resources that come with their office to provide support to striking workers and others fighting for progressive change. Not only because it’s the right thing to do, but because building more powerful movements for change outside parliament is the only way change can be won inside parliament.' },
   { type: 'para', text: 'This kind of work is also necessary because it’s the key to building a socialist society: a society run by and for working-class people. Truly revolutionary change cannot be handed down from on high. It must be built from below. Every strike, every protest, every small act of resistance is like a school in which people learn to lead, learn to organise, learn to fight collectively—and learn how to win.' },
   { type: 'heading', level: 2, matchIntro: true, text: 'Join us and get involved!' },
-  { type: 'para', text: 'If you agree with the vision outlined in this manifesto and you’re not yet a Victorian Socialists member, join us and get involved. A regular membership is $84 annually (that’s just $1.60 a week). Once you’ve joined and your membership application has been approved, a local coordinator in your area will get in touch.' },
+  { type: 'para', link: 'https://www.victoriansocialists.org.au/join', text: 'If you agree with the vision outlined in this manifesto and you’re not yet a Victorian Socialists member, join us and get involved. A regular membership is $84 annually (that’s just $1.60 a week). Once you’ve joined and your membership application has been approved, a local coordinator in your area will get in touch.' },
   { type: 'para', text: 'As a member, you can participate in party discussions, preselections and other internal elections from the local level to statewide and national levels. You can help shape the party’s policies, campaigns and future directions.' },
   { type: 'para', text: 'There are local branches in many areas of Melbourne and regional Victoria, many of which have regular monthly in-person branch meetings. At these meetings, members discuss current issues in Australian and international politics and the campaigns we’re involved in. We also discuss the organising and planning of branch activities. In areas where we’re only just becoming established, members are connected through WhatsApp chats and other channels.' },
   { type: 'para', text: 'Between now and November, much of this local work will be devoted to campaigning for the state election. We’ll be doing a lot of letterboxing, door knocking, phone banking and delivering yard signs. We’ll be organising campaign meetings and volunteer training sessions. And once polling opens—during the week and a half of pre-polling and on election day, Saturday, 28 November—we will be handing out how-to-vote cards and talking to voters at polling stations across the state.' },
@@ -1286,7 +1286,24 @@ function VisionContent({ isMobile, isTablet, skipCandidates, groups, showSidebar
           }
           if (item.emphasis) {
             const text = isMobile ? 'Capitalism is killing\nour future. For real change,\nvote socialist.' : item.text
-            return <p key={i} style={{ ...S.paraEmphasis, fontSize: isMobile ? 24 : 38 }}>{text}</p>
+            return <p key={i} style={{ ...S.paraEmphasis, fontSize: isMobile ? 24 : 38, marginTop: isMobile ? 8 : 38 }}>{text}</p>
+          }
+          if (item.link) {
+            return (
+              <a
+                key={i}
+                href={item.link}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  ...S.para, fontSize: isMobile ? 15 : 16,
+                  fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: '2px',
+                  color: '#000', display: 'block',
+                }}
+              >
+                {item.text}
+              </a>
+            )
           }
           return <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{item.text}</p>
         }
