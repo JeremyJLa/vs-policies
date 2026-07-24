@@ -1166,12 +1166,15 @@ function BreakoutBox({ heading, imagePlaceholder, imageSrc, imageAlt, paragraphs
     <div style={{
       ...S.breakoutPanel,
       background: bg || S.breakoutPanel.background,
-      padding: `${vPad}px ${right}px ${vPad + (angledBottom ? (isMobile ? 32 : 56) : 0)}px ${left}px`,
-      ...(angledBottom && { clipPath: 'polygon(0 0, 100% 0, 100% 84%, 0 100%)' }),
+      padding: `${vPad}px ${right}px ${vPad + (angledBottom ? (isMobile ? 90 : 130) : 0)}px ${left}px`,
+      // Fixed pixel drop (not a %) so the diagonal's slope stays constant
+      // no matter how tall the box grows with content — only the box's
+      // height changes, never the angle.
+      ...(angledBottom && { clipPath: `polygon(0 0, 100% 0, 100% calc(100% - ${isMobile ? 70 : 100}px), 0 100%)` }),
       ...(extraMarginTop && { marginTop: 40 + extraMarginTop }),
       ...(flushBottom && { marginBottom: 0 }),
     }}>
-      {imageSrc && (zoomOnScroll && !isMobile ? (
+      {imageSrc && (zoomOnScroll ? (
         <ZoomImage
           src={imageSrc}
           alt={imageAlt || ''}
@@ -1282,7 +1285,8 @@ function VisionContent({ isMobile, isTablet, skipCandidates, groups, showSidebar
             )
           }
           if (item.emphasis) {
-            return <p key={i} style={{ ...S.paraEmphasis, fontSize: isMobile ? 24 : 38 }}>{item.text}</p>
+            const text = isMobile ? 'Capitalism is killing\nour future. For real change,\nvote socialist.' : item.text
+            return <p key={i} style={{ ...S.paraEmphasis, fontSize: isMobile ? 24 : 38 }}>{text}</p>
           }
           return <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{item.text}</p>
         }
