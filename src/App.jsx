@@ -1223,6 +1223,7 @@ function HoverLink({ style, children, ...props }) {
 }
 
 function ManifestoSidebar({ isMobile }) {
+  const [imgHovered, setImgHovered] = useState(false)
   const linkStyle = {
     display: 'block', fontSize: 14, fontWeight: 700,
     color: '#000', textDecoration: 'underline', letterSpacing: '0.02em',
@@ -1234,11 +1235,24 @@ function ManifestoSidebar({ isMobile }) {
       display: 'flex', flexDirection: isMobile ? 'row' : 'column',
       gap: isMobile ? 16 : 10, alignItems: isMobile ? 'flex-start' : 'stretch',
     }}>
-      <img
-        src="/manifesto.jpeg"
-        alt="A Socialist Manifesto for real change"
-        style={{ width: isMobile ? 108 : '100%', flexShrink: 0, display: 'block', borderRadius: 3 }}
-      />
+      <a
+        href="/manifesto-booklet.pdf"
+        target="_blank"
+        rel="noreferrer"
+        style={{ display: 'block', flexShrink: 0, width: isMobile ? 108 : '100%', overflow: 'hidden', borderRadius: 3 }}
+        onMouseEnter={() => setImgHovered(true)}
+        onMouseLeave={() => setImgHovered(false)}
+      >
+        <img
+          src="/manifesto.jpeg"
+          alt="A Socialist Manifesto for real change"
+          style={{
+            width: '100%', display: 'block', borderRadius: 3,
+            transform: imgHovered ? 'scale(1.05)' : 'scale(1)',
+            transition: 'transform 0.2s ease',
+          }}
+        />
+      </a>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <HoverLink href="/manifesto-booklet.pdf" target="_blank" rel="noreferrer" style={linkStyle}>
           View or download full manifesto booklet (PDF 18 MB)
