@@ -366,7 +366,7 @@ const S = {
   breakoutPanel: {
     width: '100%',
     boxSizing: 'border-box',
-    background: '#EC5941',
+    background: '#E9533A',
     margin: '40px 0',
   },
   breakoutInner: {
@@ -1138,14 +1138,14 @@ function BreakoutBox({ heading, imagePlaceholder, imageSrc, imageAlt, paragraphs
         />
       )}
       <div style={S.breakoutInner}>
-        <h3 style={{ ...S.breakoutHeading, color: headingColor || '#000', ...headingStyle }}>{heading}</h3>
+        <h3 style={{ ...S.breakoutHeading, color: headingColor || '#fff', ...headingStyle }}>{heading}</h3>
         {imagePlaceholder && !imageSrc && (
           <div style={S.breakoutImagePlaceholder}>
             Candidates group photo + montage of action shots
           </div>
         )}
         {paragraphs && paragraphs.map((text, i) => (
-          <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16, marginBottom: i === paragraphs.length - 1 ? 0 : 18, color: paragraphColor || '#000', fontWeight: (paragraphColor || '#000') === '#000' ? 600 : 400 }}>{text}</p>
+          <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16, marginBottom: i === paragraphs.length - 1 ? 0 : 18, color: paragraphColor || '#fff', fontWeight: paragraphColor === '#000' ? 600 : 400 }}>{text}</p>
         ))}
         {children}
       </div>
