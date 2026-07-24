@@ -31,6 +31,7 @@ const VISION_CONTENT = [
     type: 'breakout',
     heading: 'A people-powered campaign',
     angledBottom: true,
+    extraMarginTop: 30,
     paragraphs: [
       'The challenge for the Victorian Socialists is to make our voice heard above the clamour of propaganda from more established parties and the right-wing media. Unlike the major parties, we can’t spend millions on paid advertising to get our message out. We depend on people power—on the time and energy of our members and supporters.',
       'We need an army of people to deliver letters, knock on doors and have discussions with tens of thousands of voters, put up yard signs, staff community outreach stalls and phone banks, and hand out how to vote cards at polling booths. We’ll win people to vote for us, and to embrace the socialist vision of society we’re putting forward, only if they know we exist!',
@@ -1112,7 +1113,7 @@ function hPad(isMobile, isTablet) {
   return { left: 300, right: 80 }
 }
 
-function BreakoutBox({ heading, imagePlaceholder, imageSrc, imageAlt, paragraphs, paragraphColor, headingColor, headingStyle, bg, angledBottom, imageGap, children, isMobile, isTablet, flushBottom, padY }) {
+function BreakoutBox({ heading, imagePlaceholder, imageSrc, imageAlt, paragraphs, paragraphColor, headingColor, headingStyle, bg, angledBottom, imageGap, extraMarginTop, children, isMobile, isTablet, flushBottom, padY }) {
   const { left, right } = hPad(isMobile, isTablet)
   const vPad = padY ?? (isMobile ? 24 : isTablet ? 32 : 36)
   return (
@@ -1121,6 +1122,7 @@ function BreakoutBox({ heading, imagePlaceholder, imageSrc, imageAlt, paragraphs
       background: bg || S.breakoutPanel.background,
       padding: `${vPad}px ${right}px ${vPad + (angledBottom ? (isMobile ? 32 : 56) : 0)}px ${left}px`,
       ...(angledBottom && { clipPath: 'polygon(0 0, 100% 0, 100% 84%, 0 100%)' }),
+      ...(extraMarginTop && { marginTop: 40 + extraMarginTop }),
       ...(flushBottom && { marginBottom: 0 }),
     }}>
       {imageSrc && (
@@ -1172,7 +1174,7 @@ function ManifestoSidebar({ isMobile }) {
           View or download full manifesto booklet (PDF 18 MB)
         </a>
         <a href="#" style={linkStyle}>
-          Purchase booklet ($10)
+          Purchase printed booklet ($10)
         </a>
       </div>
     </div>
@@ -1186,7 +1188,7 @@ function VisionContent({ isMobile, isTablet, skipCandidates, groups, showSidebar
       {list.map((g, gi) => {
         if (g.kind === 'breakout') {
           if (skipCandidates && g.item.heading === 'Our candidates') return null
-          return <BreakoutBox key={gi} heading={g.item.heading} imagePlaceholder={g.item.imagePlaceholder} imageSrc={g.item.imageSrc} imageAlt={g.item.imageAlt} paragraphs={g.item.paragraphs} paragraphColor={g.item.paragraphColor} headingColor={g.item.headingColor} headingStyle={{ fontSize: isMobile ? 20 : 26, fontWeight: 800 }} angledBottom={g.item.angledBottom} isMobile={isMobile} isTablet={isTablet} />
+          return <BreakoutBox key={gi} heading={g.item.heading} imagePlaceholder={g.item.imagePlaceholder} imageSrc={g.item.imageSrc} imageAlt={g.item.imageAlt} paragraphs={g.item.paragraphs} paragraphColor={g.item.paragraphColor} headingColor={g.item.headingColor} headingStyle={{ fontSize: isMobile ? 20 : 26, fontWeight: 800 }} angledBottom={g.item.angledBottom} extraMarginTop={g.item.extraMarginTop} isMobile={isMobile} isTablet={isTablet} />
         }
         const { left, right } = hPad(isMobile, isTablet)
         const renderItem = (item, i) => {
@@ -1417,7 +1419,7 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
 
       <div style={{ ...S.heroSection, height: isMobile ? 190 : 280 }}>
         <div style={{ ...S.heroPurple, clipPath: isMobile ? 'polygon(0 0, 100% 0, 100% 90%, 0 70%)' : 'polygon(0 0, 100% 0, 100% 86%, 0 63%)' }} />
-        <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 290, top: isMobile ? 127 : 178, ...(isMobile && { padding: '4px 7px 16px' }) }}>
+        <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 276, top: isMobile ? 127 : 178, ...(isMobile && { padding: '4px 7px 16px' }) }}>
           <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36 }}>What we'll fight for</h1>
         </div>
       </div>
@@ -1461,7 +1463,7 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
               </div>
             </div>
 
-            <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right, marginTop: 60, marginBottom: 40 }}>
+            <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right, marginTop: 90, marginBottom: 40 }}>
               <h2 style={{ ...S.breakoutHeading, fontSize: isMobile ? 20 : 26, fontWeight: 800, marginBottom: 16 }}>How we'll pay for it</h2>
               <div style={{ maxWidth: isMobile ? '100%' : 760 }}>
                 <p style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{FUNDING_INTRO}</p>
@@ -1477,7 +1479,9 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
 
             <BreakoutBox heading={CANDIDATES_BREAKOUT.heading} imageSrc={CANDIDATES_BREAKOUT.imageSrc} imageAlt={CANDIDATES_BREAKOUT.imageAlt} paragraphs={CANDIDATES_BREAKOUT.paragraphs} headingStyle={{ fontSize: isMobile ? 20 : 26, fontWeight: 800 }} imageGap={60} padY={60} isMobile={isMobile} isTablet={isTablet} />
 
-            <VisionContent isMobile={isMobile} isTablet={isTablet} groups={VISION_GROUPS.slice(1)} skipCandidates showSidebar={false} />
+            <div style={{ marginTop: -50 }}>
+              <VisionContent isMobile={isMobile} isTablet={isTablet} groups={VISION_GROUPS.slice(1)} skipCandidates showSidebar={false} />
+            </div>
           </>
         ) : version === 'A' ? (
           <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right, paddingTop: isMobile ? 28 : isTablet ? 48 : 64, paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
@@ -1562,7 +1566,7 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
               )}
             </div>
 
-            <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right, marginTop: 60 }}>
+            <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right, marginTop: 90 }}>
               <h2 style={{ ...S.breakoutHeading, fontSize: isMobile ? 20 : 26, fontWeight: 800, marginBottom: 16 }}>How we'll pay for it</h2>
               <div style={{ maxWidth: isMobile ? '100%' : 760 }}>
                 <p style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{FUNDING_INTRO}</p>
