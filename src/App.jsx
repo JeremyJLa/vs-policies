@@ -4,24 +4,69 @@ import HomePage from './HomePage'
 
 // ── Data ────────────────────────────────────────────────────────────────────
 
-const PLATFORM_CONTENT = [
-  { type: 'heading', text: 'Lorem ipsum dolor sit amet consectetur' },
-  { type: 'para', text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.' },
-  { type: 'para', text: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.' },
-  { type: 'para', text: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.' },
-  { type: 'heading', text: 'Nemo enim ipsam voluptatem quia voluptas' },
-  { type: 'para', text: 'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt neque porro quisquam.' },
-  { type: 'para', text: 'Ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam nisi ut aliquid ex ea commodi consequatur.' },
-  { type: 'heading', text: 'Quis autem vel eum iure reprehenderit' },
-  { type: 'para', text: 'Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur.' },
-  { type: 'para', text: 'At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati.' },
-  { type: 'heading', text: 'Nam libero tempore cum soluta nobis' },
-  { type: 'para', text: 'Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.' },
-  { type: 'heading', text: 'Temporibus autem quibusdam et aut officiis' },
-  { type: 'para', text: 'Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae itaque earum rerum hic tenetur.' },
-  { type: 'heading', text: 'Itaque earum rerum hic tenetur a sapiente' },
-  { type: 'para', text: 'Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat et harum quidem rerum facilis.' },
+const VISION_CONTENT = [
+  { type: 'heading', level: 1, text: 'Our vision for a better, fairer Victoria' },
+  { type: 'para', text: 'A vote for Victorian Socialists is a vote for something radically different to the major parties. Our vision is summed up by our slogan: “People before profit”. We want to pull the emergency brake on capitalism’s out of control drive to private profit and instead move towards a socialist economy and society in which working-class people, our communities and the environment we all depend on for survival come first.' },
+  { type: 'para', text: 'At the centre of our election campaign is the push for a system of lifelong support, a Universal Living Guarantee to ensure that everyone, no matter their circumstances, has the things they need to live a good life. In one of the wealthiest countries on Earth, blessed with an abundance of land, resources and technology, and with a highly educated and skilled workforce, no-one should have to struggle to keep a roof over their head and food on the table. No-one should be denied a quality education, health care, aged care or other public services.' },
+  { type: 'para', text: 'The main reason people are struggling today is that more and more of the wealth produced by workers is being hoarded by the class of capitalists and their hangers-on. And much of what does flow to the government in the form of taxes is spent on things like subsidies for fossil fuel companies and funding for elite private schools, the military, police and prisons and so on.' },
+  { type: 'para', text: 'The right-wing media complains about the “socialist” policies of Labor in Victoria. That’s a joke. Big businesses are getting richer and workers are getting poorer—that’s Labor’s capitalist policies at work. Socialists have totally different priorities. We would increase taxes on the billionaires, big corporations, property investors and other elites. We would cut back all the tax breaks, subsidies and other forms of government support currently flowing to the wealthiest sections of society. And we would devote all our efforts to improving the lives of workers, the poor and oppressed. That’s what socialism is really about: for the many, not the few.' },
+  {
+    type: 'breakout',
+    heading: 'Our candidates',
+    imagePlaceholder: true,
+    paragraphs: [
+      'Victorian Socialists candidates aren’t professional politicians. They’re working-class people with a track record of organising and fighting for real change both locally, in their workplaces and communities, and globally, through their participation in the Palestine solidarity campaign, the fight for climate justice, anti-racist and anti-fascist movements and more. They don’t want to get into parliament to make friends with the elites. They want to get in there to fight like hell against the major party politicians and the billionaire and corporate interests they serve.',
+    ],
+  },
+  { type: 'heading', level: 2, text: 'Building a movement for real change (in this election and beyond)' },
+  { type: 'para', text: 'Amid the darkness of the global far-right surge, there are glimmers of hope. In many countries, socialists are gaining ground. Millions of people in recent years have voted for parties like the Victorian Socialists—parties that want to break from the status quo of capitalism. And many of those people are joining those socialist parties and committing themselves to our movement.' },
+  { type: 'para', text: 'More and more people are recognising that the big social problems aren’t accidents, and that they’re not going to be fixed with a bit of tinkering. Whether it’s growing inequality, social dislocation, loneliness and mental ill-health, the destruction of the environment or the genocide in Gaza and the growing threat of global war—the multiplying crises of our society are crises of capitalism.' },
+  { type: 'para', text: 'No other Australian political party is prepared to point out this reality. Labor, the Liberals and One Nation are unabashed servants of the capitalist class. But even the Greens, who have at times adopted some radical-sounding rhetoric, have never gone beyond arguing for this or that progressive change within the existing system. Victorian Socialists is the only anti-capitalist party running in this election. Our entire approach to politics is informed by that. Running in elections on a left-wing policy program is just one part of the broader project of building a mass socialist movement with the power to overcome the entire rotten system and replace it with a socialist society.' },
+  { type: 'para', text: 'Elections are of course important. But the idiotic circus that passes for political debate in parliament means that most people think that there’s little point following it closely. That every few years we’re expected to play our part in the democratic process by voting, however, provides a small opening. People stop to think about what sort of society they’d like to live in and which parties best reflect their values, their wants and their needs. It’s at this moment that a socialist message of hope, solidarity and collective struggle for a better world can get a hearing that we are regularly denied in the corporate media.' },
+  { type: 'para', text: 'Even if we don’t succeed in getting any socialists elected to parliament, the exercise is worthwhile. The more people we can inspire with and win to a socialist vision of society, the more we can increase the number of organised socialists in our party, the better placed we’ll be to continue to fight and build the power of our movement in the years ahead.' },
+  {
+    type: 'breakout',
+    heading: 'A people-powered campaign',
+    paragraphs: [
+      'The challenge for the Victorian Socialists is to make our voice heard above the clamour of propaganda from more established parties and the right-wing media. Unlike the major parties, we can’t spend millions on paid advertising to get our message out. We depend on people power—on the time and energy of our members and supporters.',
+      'We need an army of people to deliver letters, knock on doors and have discussions with tens of thousands of voters, put up yard signs, staff community outreach stalls and phone banks, and hand out how to vote cards at polling booths. We’ll win people to vote for us, and to embrace the socialist vision of society we’re putting forward, only if they know we exist!',
+      'In areas where we do all these things, we always find people who will not only vote for us but who will join our movement. Many people are politically inactive not because they like and accept the way things are. They just lack the confidence to get involved or think that real change is impossible.',
+      'Every letter we deliver, every conversation we have and every vote we win, challenges that sentiment. On election day, if we achieve the kind of breakthrough result we believe is possible, we will shake up the entire political setup in Victoria by showing that when you fight, you can win.',
+    ],
+  },
+  { type: 'para', text: 'How does this election fit within the struggle for a socialist society? Parliament is just one of many institutions that help the capitalists dominate our economy and society. To break with the capitalist system, we need to take back control from the capitalist class not only via the “official channels” of parliamentary democracy, but also through organising real democracy in workplaces, local communities and on the streets.' },
+  { type: 'para', text: 'The US socialist historian Howard Zinn wrote: “What matters most is not who is sitting in the White House, but ‘who is sitting in’—and who is marching outside the White House, pushing for change”. Australian history shows this to be true, too. It’s no accident that the most progressive period of politics in Australia, the early 1970s, coincided with a high-point of working-class organisation and union militancy (for example, the Builders Labourers’ Federation’s Green Bans) and of mass social movements like the campaign against the war in Vietnam.' },
+  { type: 'para', text: 'The capitalist class own and control the most important sections of our economy—the banks, the supermarkets, the telecommunications and transport infrastructure, the factories and mines and office towers, most of the farmland and so on. They own the media and they buy the politicians. As long as their power is left undisturbed, we will never win the kind of change we need.' },
+  { type: 'para', text: 'A socialist MP would, from day one, face a barrage of criticism from the major parties and the corporate media. Their work would be hampered, at every turn, by the state bureaucracy. Our solution to this isn’t merely to elect socialist parliamentarians who will fight the establishment no matter what. It’s to have those parliamentarians do everything they can to build the socialist movement outside the parliament to back up their efforts within it.' },
+  { type: 'para', text: 'That’s why the Victorian Socialists don’t focus just on elections. We’re also active—year in, year out—rebuilding cultures of resistance in our trade unions, helping to organise progressive campaigns like the Palestine solidarity movement, organising our local communities to take on greedy developers and polluters and much more. An example is the work that socialist public school teachers and support staff—organised in the VS-backed Socialists in Schools rank-and-file union group—have been doing to fight for a fair contract from the Labor government.' },
+  { type: 'para', text: 'Winning the change we need requires much more of this kind of action and activism, particularly within the workers’ movement. So a big part of the job of a socialist MP would be to encourage and help organise it. They would use their public profile and the resources that come with their office to provide support to striking workers and others fighting for progressive change. Not only because it’s the right thing to do, but because building more powerful movements for change outside parliament is the only way change can be won inside parliament.' },
+  { type: 'para', text: 'This kind of work is also necessary because it’s the key to building a socialist society: a society run by and for working-class people. Truly revolutionary change cannot be handed down from on high. It must be built from below. Every strike, every protest, every small act of resistance is like a school in which people learn to lead, learn to organise, learn to fight collectively—and learn how to win.' },
+  { type: 'heading', level: 2, text: 'Join us and get involved!' },
+  { type: 'para', text: 'If you agree with the vision outlined in this manifesto and you’re not yet a Victorian Socialists member, join us and get involved. A regular membership is $84 annually (that’s just $1.60 a week). Once you’ve joined and your membership application has been approved, a local coordinator in your area will get in touch.' },
+  { type: 'para', text: 'As a member, you can participate in party discussions, preselections and other internal elections from the local level to statewide and national levels. You can help shape the party’s policies, campaigns and future directions.' },
+  { type: 'para', text: 'There are local branches in many areas of Melbourne and regional Victoria, many of which have regular monthly in-person branch meetings. At these meetings, members discuss current issues in Australian and international politics and the campaigns we’re involved in. We also discuss the organising and planning of branch activities. In areas where we’re only just becoming established, members are connected through WhatsApp chats and other channels.' },
+  { type: 'para', text: 'Between now and November, much of this local work will be devoted to campaigning for the state election. We’ll be doing a lot of letterboxing, door knocking, phone banking and delivering yard signs. We’ll be organising campaign meetings and volunteer training sessions. And once polling opens—during the week and a half of pre-polling and on election day, Saturday, 28 November—we will be handing out how-to-vote cards and talking to voters at polling stations across the state.' },
+  { type: 'para', text: 'No matter what your background, experience or level of confidence, everyone is welcome. There’s a wide range of activities in which you can make a valuable contribution to our campaign. Unlike the major parties, which get big donations from corporations and other wealthy backers, we depend on our members and supporters to get the message out. And the bigger the base of active members we can build, the stronger we’ll become!' },
+  { type: 'para', emphasis: true, text: 'Capitalism is killing our future. For real change, vote socialist.' },
 ]
+
+// Groups consecutive heading/para items into single blocks, keeping each
+// breakout as its own group — lets breakouts render full-bleed as siblings
+// instead of nesting inside the padded text column.
+function groupContent(content) {
+  const groups = []
+  for (const item of content) {
+    if (item.type === 'breakout') {
+      groups.push({ kind: 'breakout', item })
+    } else {
+      const last = groups[groups.length - 1]
+      if (last && last.kind === 'text') last.items.push(item)
+      else groups.push({ kind: 'text', items: [item] })
+    }
+  }
+  return groups
+}
+const VISION_GROUPS = groupContent(VISION_CONTENT)
 
 const MANIFESTO_INTRO = [
   'We are building a movement of working people who refuse to accept a society run for billionaires. Decade after decade, under both major parties, wealth has flowed upward while housing, healthcare and the climate have been left to rot.',
@@ -37,48 +82,52 @@ const MANIFESTO_PRINCIPLES = [
   { label: 'Democratic control of the economy', text: 'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt neque porro quisquam.' },
 ]
 
+const ULG_INTRO = 'Nobody should have to choose between eating or paying the bills. In Victoria, thousands of parents skip meals so they can feed their kids and keep the lights on. Victorian Socialists will fight for a Universal Living Guarantee—a set of economic and social supports at all stages of life to ensure everyone in the state can live comfortably.'
+
+const ULG_LEAD = 'The following are some of the key planks of the guarantee.'
+
+const ULG_BULLETS = [
+  'Free, publicly owned and operated child care, five days a week',
+  '150,000 new public housing units over ten years',
+  'A 25 percent rent cut for all residential tenancies, followed by a rent freeze for five years',
+  'Free public transport with increased services and availability across Melbourne and regional Victoria',
+  '$100 price-cap trolleys at supermarkets and local cost-price food hubs in every community',
+  'Expanded and publicly run aged care with increased places and in-home services',
+]
+
+const FUNDING_TEXT = "We'll increase taxes on the billionaires, big corporations, property investors and other elites, and cut back the tax breaks, subsidies and other government support currently flowing to the wealthiest sections of society—redirecting that wealth to fund a Universal Living Guarantee for all Victorians."
+
 const POLICIES = [
   {
-    title: 'HOUSING\nFOR ALL',
-    body: "Melbourne's housing market has become a casino for speculators. We will introduce rent controls, end negative gearing, build public housing at scale, and ensure every Victorian has a safe, secure and affordable home to call their own.",
+    title: 'HOMES\nFOR ALL',
+    body: "Melbourne's housing market has become a casino for speculators. We'll build 150,000 new public housing units over ten years, cut rents by 25 percent and then freeze them for five years, so every Victorian has a safe, secure and affordable home.",
     Icon: HousingIcon,
   },
   {
-    title: 'FIX THE\nHEALTH CRISIS',
-    body: "Our public health system is in permanent crisis from decades of deliberate underfunding. We will hire more nurses and doctors, fully fund our hospitals, cut waiting times, and guarantee free healthcare for all Victorians.",
+    title: 'MAKING\nEVERYDAY LIFE\nBETTER',
+    body: "From free, publicly owned child care five days a week, to free public transport and $100 price-cap trolleys and cost-price food hubs in every community, we want to make the basics of daily life easier and more affordable for everyone.",
+    Icon: EverydayIcon,
+  },
+  {
+    title: 'INVESTING IN\nBETTER SERVICES',
+    body: "Everyone deserves quality education, health care, aged care and other public services—not a system run down by decades of underfunding. We'll expand publicly run aged care with more places and in-home support as part of our Universal Living Guarantee.",
     Icon: HealthIcon,
   },
   {
-    title: 'CLIMATE\nCHANGE AND\nENVIRONMENT',
-    body: "The climate emergency is getting worse every year. We will drive a rapid transition to 100% renewable energy, stop new fossil fuel projects, protect our forests and rivers, and create thousands of secure green jobs.",
+    title: 'IMPROVING\nLIVABILITY AND\nSUSTAINABILITY',
+    body: "The climate emergency is getting worse every year. We'll drive a rapid transition to renewable energy, stop new fossil fuel projects, and build a Victoria that's more liveable and sustainable for everyone—including through our energy policy.",
     Icon: ClimateIcon,
+  },
+  {
+    title: 'FIGHTING\nOPPRESSION &\nSOLIDARITY',
+    body: "Victorian Socialists stand with the Palestine solidarity movement, the fight for climate justice, and anti-racist and anti-fascist campaigns. We're building solidarity between everyone fighting oppression, at home and around the world.",
+    Icon: WorkersIcon,
   },
 ]
 
-const WORKERS_POLICY = {
-  title: 'WORKERS\nAND UNIONS',
-  body: "Workers have the right to organise, to strike, and to win. We will repeal anti-union laws, defend the right to strike, fight for better wages and conditions, and put workers back in charge of their own unions.",
-  Icon: WorkersIcon,
-}
-
-const ACCORDION_BASE = [WORKERS_POLICY, ...POLICIES]
-const ACCORDION_POLICIES = Array.from({ length: 15 }, (_, i) => ACCORDION_BASE[i % ACCORDION_BASE.length])
-
-const POLICY_GRID = Array.from({ length: 30 }, (_, i) => {
-  const row = Math.floor(i / 3)
-  const col = i % 3
-  return POLICIES[(col + (row % 2)) % 3]
-})
-
-function buildIconsGrid(count) {
-  const result = []
-  let pi = 0
-  for (let i = 0; i < count; i++) {
-    result.push(i % 4 === 3 ? WORKERS_POLICY : POLICIES[pi++ % 3])
-  }
-  return result
-}
-const POLICY_GRID_ICONS = buildIconsGrid(28)
+const ACCORDION_POLICIES = POLICIES
+const POLICY_GRID = POLICIES
+const POLICY_GRID_ICONS = POLICIES
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 
@@ -169,10 +218,9 @@ const S = {
   }),
   content: {
     flex: 1,
-    padding: '64px 80px 80px 300px',
   },
   platformText: {
-    maxWidth: 640,
+    maxWidth: 760,
   },
   platformHeading: {
     fontSize: 22,
@@ -188,6 +236,61 @@ const S = {
     lineHeight: '20px',
     color: '#111',
     marginBottom: 18,
+    fontFamily: "'Open Sans', system-ui, sans-serif",
+    fontWeight: 400,
+  },
+  paraEmphasis: {
+    fontSize: 20,
+    lineHeight: '26px',
+    color: '#000',
+    marginTop: 8,
+    marginBottom: 0,
+    fontFamily: "'Work Sans', system-ui, sans-serif",
+    fontWeight: 800,
+  },
+  breakoutPanel: {
+    width: '100%',
+    boxSizing: 'border-box',
+    background: '#F1ECF2',
+    margin: '40px 0',
+  },
+  breakoutInner: {
+    maxWidth: 760,
+  },
+  breakoutHeading: {
+    fontSize: 20,
+    fontWeight: 800,
+    color: '#000',
+    fontFamily: "'Work Sans', system-ui, sans-serif",
+    textTransform: 'uppercase',
+    letterSpacing: '0.02em',
+    marginTop: 0,
+    marginBottom: 14,
+  },
+  breakoutImagePlaceholder: {
+    height: 200,
+    border: '1px dashed rgba(0,0,0,0.25)',
+    borderRadius: 3,
+    background: '#fff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    color: '#999',
+    fontSize: 13,
+    fontFamily: "'Open Sans', system-ui, sans-serif",
+    marginBottom: 18,
+    padding: '0 24px',
+  },
+  bulletList: {
+    margin: '0 0 18px',
+    paddingLeft: 20,
+  },
+  bulletItem: {
+    fontSize: 16,
+    lineHeight: '22px',
+    color: '#111',
+    marginBottom: 8,
     fontFamily: "'Open Sans', system-ui, sans-serif",
     fontWeight: 400,
   },
@@ -352,6 +455,16 @@ function HousingIcon({ color = '#000', height = 58 }) {
           <rect width="67.8356" height="55.2734" fill="white"/>
         </clipPath>
       </defs>
+    </svg>
+  )
+}
+
+function EverydayIcon({ color = '#000', height = 58 }) {
+  return (
+    <svg width={height} height={height} viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+      <circle cx="29" cy="34" r="20" fill={color} />
+      <rect x="27" y="6" width="4" height="10" rx="2" fill={color} />
+      <path d="M31 10c6-4 12-2 14 4-6 2-11 0-14-4z" fill={color} />
     </svg>
   )
 }
@@ -876,9 +989,68 @@ function PolicyCardIcons({ policy, index }) {
   )
 }
 
+// Horizontal inset matching the page's text column at each breakpoint —
+// used both for padded text sections and for breakout-box padding, so
+// everything lines up without nesting a full-bleed panel inside a padded
+// ancestor (which breaks percentage/vw-based full-bleed tricks).
+function hPad(isMobile, isTablet) {
+  if (isMobile) return { left: 16, right: 16 }
+  if (isTablet) return { left: 40, right: 40 }
+  return { left: 300, right: 80 }
+}
+
+function BreakoutBox({ heading, imagePlaceholder, paragraphs, children, isMobile, isTablet, flushBottom, padY }) {
+  const { left, right } = hPad(isMobile, isTablet)
+  const vPad = padY ?? (isMobile ? 24 : isTablet ? 32 : 36)
+  return (
+    <div style={{ ...S.breakoutPanel, padding: `${vPad}px ${right}px ${vPad}px ${left}px`, ...(flushBottom && { marginBottom: 0 }) }}>
+      <div style={S.breakoutInner}>
+        <h3 style={{ ...S.breakoutHeading, fontSize: isMobile ? 18 : 20 }}>{heading}</h3>
+        {imagePlaceholder && (
+          <div style={S.breakoutImagePlaceholder}>
+            Candidates group photo + montage of action shots
+          </div>
+        )}
+        {paragraphs && paragraphs.map((text, i) => (
+          <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16, marginBottom: i === paragraphs.length - 1 ? 0 : 18 }}>{text}</p>
+        ))}
+        {children}
+      </div>
+    </div>
+  )
+}
+
+function ManifestoSidebar({ isMobile }) {
+  return (
+    <div style={{ width: isMobile ? '100%' : 240, maxWidth: isMobile ? 240 : 240, flexShrink: 0 }}>
+      <img
+        src="/manifesto.jpeg"
+        alt="A Socialist Manifesto for real change"
+        style={{ width: '100%', display: 'block', borderRadius: 3 }}
+      />
+      <a
+        href="/manifesto.jpeg"
+        target="_blank"
+        rel="noreferrer"
+        style={{
+          display: 'block', marginTop: 10, fontSize: 14, fontWeight: 700,
+          color: '#000', textDecoration: 'underline', letterSpacing: '0.02em',
+          fontFamily: "'Open Sans', system-ui, sans-serif",
+        }}
+      >
+        View or download full manifesto
+      </a>
+    </div>
+  )
+}
+
 function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNavigateHome }) {
+  // ?clean=1 in the URL hides the "Card design variations" picker and locks
+  // cards to the No icon style — a shareable link for showing the final
+  // design without exposing the in-progress style options.
+  const [clean] = useState(() => new URLSearchParams(window.location.search).get('clean') === '1')
   const [tab, setTab] = useState(initialTab)
-  const [cardView, setCardView] = useState('titles')
+  const [cardView, setCardView] = useState(clean ? 'detailsnoicon' : 'titles')
   const [policyLayout, setPolicyLayout] = useState('grid')
   const [menuOpen, setMenuOpen] = useState(false)
   const [manifestoExpanded, setManifestoExpanded] = useState(false)
@@ -919,7 +1091,7 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
         </div>
 
         {/* Card design buttons — right */}
-        {tab === 'policies' && (isMobile ? (
+        {!clean && tab === 'policies' && (isMobile ? (
           <button
             onClick={() => setMenuOpen(o => !o)}
             style={{
@@ -946,7 +1118,7 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
       </nav>
 
       {/* Kebab dropdown — mobile only */}
-      {tab === 'policies' && isMobile && menuOpen && (
+      {!clean && tab === 'policies' && isMobile && menuOpen && (
         <>
           <div onClick={() => setMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 98 }} />
           <div style={{
@@ -1019,9 +1191,9 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
         </div>
       )}
 
-      <main style={{ ...S.content, padding: isMobile ? '28px 16px 60px' : isTablet ? '48px 40px 60px' : '64px 80px 80px 300px' }}>
+      <main style={S.content}>
         {version === 'A' ? (
-          <>
+          <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right, paddingTop: isMobile ? 28 : isTablet ? 48 : 64, paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
             <div style={{ maxWidth: isMobile ? '100%' : 640, marginBottom: 48 }}>
               <h2 style={{
                 fontSize: isMobile ? 20 : 28, fontWeight: 900, lineHeight: 1.1,
@@ -1061,45 +1233,84 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
                 return <PolicyCard key={i} policy={policy} index={i} />
               })}
             </div>
-          </>
+          </div>
         ) : tab === 'platform' ? (
-          <div style={{ ...S.platformText, maxWidth: isMobile ? '100%' : 640 }}>
-            {PLATFORM_CONTENT.map((item, i) => {
-              if (item.type === 'heading') {
-                return (
-                  <h2 key={i} style={{ ...S.platformHeading, ...(i === 0 ? { marginTop: 0, fontSize: isMobile ? 20 : 26 } : { fontWeight: 600, fontSize: isMobile ? 17 : 21 }) }}>{item.text}</h2>
-                )
+          <div style={{ paddingTop: isMobile ? 28 : isTablet ? 48 : 64, paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
+            {VISION_GROUPS.map((g, gi) => {
+              if (g.kind === 'breakout') {
+                return <BreakoutBox key={gi} heading={g.item.heading} imagePlaceholder={g.item.imagePlaceholder} paragraphs={g.item.paragraphs} isMobile={isMobile} isTablet={isTablet} />
               }
-              return <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{item.text}</p>
+              const { left, right } = hPad(isMobile, isTablet)
+              const renderItem = (item, i) => {
+                if (item.type === 'heading') {
+                  return (
+                    <h2 key={i} style={{ ...S.platformHeading, ...(item.level === 1 ? { marginTop: 0, fontSize: isMobile ? 20 : 26 } : { fontWeight: 600, fontSize: isMobile ? 17 : 21 }) }}>{item.text}</h2>
+                  )
+                }
+                if (item.emphasis) {
+                  return <p key={i} style={{ ...S.paraEmphasis, fontSize: isMobile ? 17 : 20 }}>{item.text}</p>
+                }
+                return <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{item.text}</p>
+              }
+              return (
+                <div key={gi} style={{ paddingLeft: left, paddingRight: right }}>
+                  {gi === 0 ? (
+                    <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? 24 : 48, alignItems: 'flex-start' }}>
+                      <div style={{ ...S.platformText, maxWidth: isMobile ? '100%' : 760, minWidth: 0 }}>
+                        {g.items.map(renderItem)}
+                      </div>
+                      <ManifestoSidebar isMobile={isMobile} />
+                    </div>
+                  ) : (
+                    <div style={{ ...S.platformText, maxWidth: isMobile ? '100%' : 760 }}>
+                      {g.items.map(renderItem)}
+                    </div>
+                  )}
+                </div>
+              )
             })}
           </div>
         ) : (
-          <>
-            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 32, gap: isMobile ? 16 : 0 }}>
-              <p style={{ ...S.para, maxWidth: isMobile ? '100%' : 620, fontSize: isMobile ? 15 : 16 }}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-              </p>
-              {!isMobile && (
-                <div style={{ display: 'flex', gap: 6, flexShrink: 0, marginLeft: 24 }}>
-                  <button style={S.layoutBtn(policyLayout === 'grid')} onClick={() => setPolicyLayout('grid')}>Grid</button>
-                  <button style={S.layoutBtn(policyLayout === 'accordion')} onClick={() => setPolicyLayout('accordion')}>Accordion</button>
-                </div>
+          <div style={{ paddingTop: isMobile ? 28 : isTablet ? 48 : 64 }}>
+            <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right, marginBottom: 32 }}>
+              <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', marginBottom: 16, gap: isMobile ? 12 : 0 }}>
+                <h2 style={{ ...S.breakoutHeading, fontSize: isMobile ? 18 : 20, marginBottom: 0 }}>Universal Living Guarantee</h2>
+                {!isMobile && (
+                  <div style={{ display: 'flex', gap: 6, flexShrink: 0, marginLeft: 24 }}>
+                    <button style={S.layoutBtn(policyLayout === 'grid')} onClick={() => setPolicyLayout('grid')}>Grid</button>
+                    <button style={S.layoutBtn(policyLayout === 'accordion')} onClick={() => setPolicyLayout('accordion')}>Accordion</button>
+                  </div>
+                )}
+              </div>
+              <div style={{ maxWidth: isMobile ? '100%' : 760 }}>
+                <p style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{ULG_INTRO}</p>
+                <p style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{ULG_LEAD}</p>
+                <ul style={S.bulletList}>
+                  {ULG_BULLETS.map((text, i) => (
+                    <li key={i} style={{ ...S.bulletItem, fontSize: isMobile ? 15 : 16 }}>{text}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right }}>
+              {policyLayout === 'accordion' ? <AccordionPolicies /> : (
+              <div style={{ ...S.grid, gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 300px)', gap: isMobile ? 12 : 24 }}>
+                {grid.map((policy, i) => {
+                  if (cardView === 'edgy') return <PolicyCardEdgy key={i} policy={policy} index={i} />
+                  if (cardView === 'brush') return <PolicyCardBrush key={i} policy={policy} index={i} />
+                  if (cardView === 'expanded') return <PolicyCardExpanded key={i} policy={policy} index={i} />
+                  if (cardView === 'detailsnoicon') return <PolicyCardExpandedNoIcon key={i} policy={policy} index={i} />
+                  if (cardView === 'reddetails') return <PolicyCardRedDetails key={i} policy={policy} index={i} />
+                  if (cardView === 'icons') return <PolicyCardIcons key={i} policy={policy} index={i} />
+                  return <PolicyCard key={i} policy={policy} index={i} />
+                })}
+              </div>
               )}
             </div>
-            {policyLayout === 'accordion' ? <AccordionPolicies /> : (
-            <div style={{ ...S.grid, gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 300px)', gap: isMobile ? 12 : 24 }}>
-              {grid.map((policy, i) => {
-                if (cardView === 'edgy') return <PolicyCardEdgy key={i} policy={policy} index={i} />
-                if (cardView === 'brush') return <PolicyCardBrush key={i} policy={policy} index={i} />
-                if (cardView === 'expanded') return <PolicyCardExpanded key={i} policy={policy} index={i} />
-                if (cardView === 'detailsnoicon') return <PolicyCardExpandedNoIcon key={i} policy={policy} index={i} />
-                if (cardView === 'reddetails') return <PolicyCardRedDetails key={i} policy={policy} index={i} />
-                if (cardView === 'icons') return <PolicyCardIcons key={i} policy={policy} index={i} />
-                return <PolicyCard key={i} policy={policy} index={i} />
-              })}
-            </div>
-            )}
-          </>
+
+            <BreakoutBox heading="How we'll pay for it" paragraphs={[FUNDING_TEXT]} isMobile={isMobile} isTablet={isTablet} flushBottom padY={100} />
+          </div>
         )}
       </main>
 

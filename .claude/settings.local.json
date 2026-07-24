@@ -11,7 +11,28 @@
       "Bash(curl -s http://localhost:5176/)",
       "Bash(curl -s http://localhost:5176/src/App.jsx)",
       "WebSearch",
-      "WebFetch(domain:unsplash.com)"
+      "WebFetch(domain:unsplash.com)",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5176)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(vercel --prod)",
+      "Bash(npx vercel *)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'cd /Users/jeremylaycock/Documents/AI/VS-policies && AHEAD=$(git rev-list origin/main..HEAD --count 2>/dev/null); if [ \"$AHEAD\" -gt \"0\" ]; then git push origin main && npx vercel --prod --yes 2>&1; fi'",
+            "timeout": 120,
+            "statusMessage": "Deploying to Vercel..."
+          }
+        ]
+      }
     ]
   }
 }
