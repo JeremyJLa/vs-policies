@@ -32,6 +32,7 @@ const VISION_CONTENT = [
     heading: 'A people-powered campaign',
     angledBottom: true,
     extraMarginTop: 30,
+    extraPadY: 30,
     paragraphs: [
       'The challenge for the Victorian Socialists is to make our voice heard above the clamour of propaganda from more established parties and the right-wing media. Unlike the major parties, we can’t spend millions on paid advertising to get our message out. We depend on people power—on the time and energy of our members and supporters.',
       'We need an army of people to deliver letters, knock on doors and have discussions with tens of thousands of voters, put up yard signs, staff community outreach stalls and phone banks, and hand out how to vote cards at polling booths. We’ll win people to vote for us, and to embrace the socialist vision of society we’re putting forward, only if they know we exist!',
@@ -365,7 +366,7 @@ const S = {
   breakoutPanel: {
     width: '100%',
     boxSizing: 'border-box',
-    background: '#C93C28',
+    background: '#EC5941',
     margin: '40px 0',
   },
   breakoutInner: {
@@ -1137,14 +1138,14 @@ function BreakoutBox({ heading, imagePlaceholder, imageSrc, imageAlt, paragraphs
         />
       )}
       <div style={S.breakoutInner}>
-        <h3 style={{ ...S.breakoutHeading, color: headingColor || '#fff', ...headingStyle }}>{heading}</h3>
+        <h3 style={{ ...S.breakoutHeading, color: headingColor || '#000', ...headingStyle }}>{heading}</h3>
         {imagePlaceholder && !imageSrc && (
           <div style={S.breakoutImagePlaceholder}>
             Candidates group photo + montage of action shots
           </div>
         )}
         {paragraphs && paragraphs.map((text, i) => (
-          <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16, marginBottom: i === paragraphs.length - 1 ? 0 : 18, color: paragraphColor || '#fff', fontWeight: paragraphColor === '#000' ? 600 : 400 }}>{text}</p>
+          <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16, marginBottom: i === paragraphs.length - 1 ? 0 : 18, color: paragraphColor || '#000', fontWeight: (paragraphColor || '#000') === '#000' ? 600 : 400 }}>{text}</p>
         ))}
         {children}
       </div>
@@ -1188,7 +1189,7 @@ function VisionContent({ isMobile, isTablet, skipCandidates, groups, showSidebar
       {list.map((g, gi) => {
         if (g.kind === 'breakout') {
           if (skipCandidates && g.item.heading === 'Our candidates') return null
-          return <BreakoutBox key={gi} heading={g.item.heading} imagePlaceholder={g.item.imagePlaceholder} imageSrc={g.item.imageSrc} imageAlt={g.item.imageAlt} paragraphs={g.item.paragraphs} paragraphColor={g.item.paragraphColor} headingColor={g.item.headingColor} headingStyle={{ fontSize: isMobile ? 20 : 26, fontWeight: 800 }} angledBottom={g.item.angledBottom} extraMarginTop={g.item.extraMarginTop} isMobile={isMobile} isTablet={isTablet} />
+          return <BreakoutBox key={gi} heading={g.item.heading} imagePlaceholder={g.item.imagePlaceholder} imageSrc={g.item.imageSrc} imageAlt={g.item.imageAlt} paragraphs={g.item.paragraphs} paragraphColor={g.item.paragraphColor} headingColor={g.item.headingColor} headingStyle={{ fontSize: isMobile ? 20 : 26, fontWeight: 800 }} angledBottom={g.item.angledBottom} extraMarginTop={g.item.extraMarginTop} padY={g.item.extraPadY ? (isMobile ? 24 : isTablet ? 32 : 36) + g.item.extraPadY : undefined} isMobile={isMobile} isTablet={isTablet} />
         }
         const { left, right } = hPad(isMobile, isTablet)
         const renderItem = (item, i) => {
