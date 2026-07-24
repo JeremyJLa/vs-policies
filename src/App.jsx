@@ -48,7 +48,7 @@ const VISION_CONTENT = [
   { type: 'para', text: 'Winning the change we need requires much more of this kind of action and activism, particularly within the workers’ movement. So a big part of the job of a socialist MP would be to encourage and help organise it. They would use their public profile and the resources that come with their office to provide support to striking workers and others fighting for progressive change. Not only because it’s the right thing to do, but because building more powerful movements for change outside parliament is the only way change can be won inside parliament.' },
   { type: 'para', text: 'This kind of work is also necessary because it’s the key to building a socialist society: a society run by and for working-class people. Truly revolutionary change cannot be handed down from on high. It must be built from below. Every strike, every protest, every small act of resistance is like a school in which people learn to lead, learn to organise, learn to fight collectively—and learn how to win.' },
   { type: 'heading', level: 2, matchIntro: true, text: 'Join us and get involved!' },
-  { type: 'para', link: 'https://www.victoriansocialists.org.au/join', text: 'If you agree with the vision outlined in this manifesto and you’re not yet a Victorian Socialists member, join us and get involved. A regular membership is $84 annually (that’s just $1.60 a week). Once you’ve joined and your membership application has been approved, a local coordinator in your area will get in touch.' },
+  { type: 'para', link: 'https://www.victoriansocialists.org.au/join', linkText: 'join us and get involved', text: 'If you agree with the vision outlined in this manifesto and you’re not yet a Victorian Socialists member, join us and get involved. A regular membership is $84 annually (that’s just $1.60 a week). Once you’ve joined and your membership application has been approved, a local coordinator in your area will get in touch.' },
   { type: 'para', text: 'As a member, you can participate in party discussions, preselections and other internal elections from the local level to statewide and national levels. You can help shape the party’s policies, campaigns and future directions.' },
   { type: 'para', text: 'There are local branches in many areas of Melbourne and regional Victoria, many of which have regular monthly in-person branch meetings. At these meetings, members discuss current issues in Australian and international politics and the campaigns we’re involved in. We also discuss the organising and planning of branch activities. In areas where we’re only just becoming established, members are connected through WhatsApp chats and other channels.' },
   { type: 'para', text: 'Between now and November, much of this local work will be devoted to campaigning for the state election. We’ll be doing a lot of letterboxing, door knocking, phone banking and delivering yard signs. We’ll be organising campaign meetings and volunteer training sessions. And once polling opens—during the week and a half of pre-polling and on election day, Saturday, 28 November—we will be handing out how-to-vote cards and talking to voters at polling stations across the state.' },
@@ -1258,7 +1258,7 @@ function ManifestoSidebar({ isMobile }) {
       </a>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <HoverLink href="/manifesto-booklet.pdf" target="_blank" rel="noreferrer" style={linkStyle}>
-          View or download full manifesto booklet (PDF 18 MB)
+          View or download manifesto booklet (PDF 18 MB)
         </HoverLink>
         <HoverLink href="#" style={linkStyle}>
           Purchase printed booklet ($10)
@@ -1289,20 +1289,22 @@ function VisionContent({ isMobile, isTablet, skipCandidates, groups, showSidebar
             return <p key={i} style={{ ...S.paraEmphasis, fontSize: isMobile ? 24 : 38, marginTop: isMobile ? 8 : 38 }}>{text}</p>
           }
           if (item.link) {
+            const idx = item.linkText ? item.text.indexOf(item.linkText) : -1
+            if (idx === -1) {
+              return (
+                <a key={i} href={item.link} target="_blank" rel="noreferrer" style={{ ...S.para, fontSize: isMobile ? 15 : 16, textDecoration: 'underline', textUnderlineOffset: '2px', color: '#000', display: 'block' }}>
+                  {item.text}
+                </a>
+              )
+            }
+            const before = item.text.slice(0, idx)
+            const after = item.text.slice(idx + item.linkText.length)
             return (
-              <a
-                key={i}
-                href={item.link}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  ...S.para, fontSize: isMobile ? 15 : 16,
-                  fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: '2px',
-                  color: '#000', display: 'block',
-                }}
-              >
-                {item.text}
-              </a>
+              <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>
+                {before}
+                <a href={item.link} target="_blank" rel="noreferrer" style={{ color: '#000', fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: '2px' }}>{item.linkText}</a>
+                {after}
+              </p>
             )
           }
           return <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{item.text}</p>
@@ -1333,45 +1335,62 @@ function VisionContent({ isMobile, isTablet, skipCandidates, groups, showSidebar
 function PolicyAccordionChevron({ policies, isMobile }) {
   const [openIndex, setOpenIndex] = useState(null)
   const [hoveredIndex, setHoveredIndex] = useState(null)
+  const headingRefs = useRef([])
+  const [headerWidth, setHeaderWidth] = useState(null)
+
+  useEffect(() => {
+    const widths = headingRefs.current.map(el => el ? el.scrollWidth : 0)
+    const max = Math.max(...widths, 0)
+    const chevronW = isMobile ? 13 : 17
+    setHeaderWidth(max > 0 ? max + 20 + chevronW : null)
+  }, [isMobile, policies])
+
   return (
     <div style={{ maxWidth: 760 }}>
       {policies.map((policy, i) => {
         const isOpen = openIndex === i
         const isRed = isOpen || hoveredIndex === i
         return (
-          <div key={i} style={{ borderBottom: '1px solid #C4C4C4', ...(i === 0 ? { borderTop: '1px solid #C4C4C4' } : {}) }}>
-            <button
-              onClick={() => setOpenIndex(isOpen ? null : i)}
-              onMouseEnter={() => setHoveredIndex(i)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              style={{
-                width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
-                background: 'none', border: 'none', cursor: 'pointer',
-                padding: isMobile ? '16px 0' : '20px 0', textAlign: 'left',
-              }}
-            >
-              <h3 style={{
-                fontSize: isMobile ? 17 : 22, fontWeight: 800, lineHeight: 1.2,
-                fontFamily: "'Work Sans', system-ui, sans-serif",
-                textDecoration: 'underline', textUnderlineOffset: '3px',
-                color: isRed ? '#FF4B33' : '#000', transition: 'color 0.15s ease',
-                margin: 0, whiteSpace: 'normal',
-              }}>
-                {policy.heading}
-              </h3>
-              <span style={{
-                flexShrink: 0, display: 'inline-block',
-                width: isMobile ? 13 : 17, height: isMobile ? 7 : 9,
-                backgroundColor: isRed ? '#FF4B33' : '#000',
-                WebkitMaskImage: 'url(/accordion-chevron.png)',
-                maskImage: 'url(/accordion-chevron.png)',
-                WebkitMaskSize: 'contain', maskSize: 'contain',
-                WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
-                WebkitMaskPosition: 'center', maskPosition: 'center',
-                transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                transition: 'transform 0.25s ease, background-color 0.15s ease',
-              }} />
-            </button>
+          <div key={i}>
+            {/* Header row shrinks to fit the longest heading (desktop/tablet
+                only — mobile keeps full-width wrapping so long headings
+                can't overflow the viewport). Border only spans that width. */}
+            <div style={{ width: isMobile ? '100%' : (headerWidth || 'fit-content'), maxWidth: '100%', borderBottom: '1px solid #C4C4C4', ...(i === 0 ? { borderTop: '1px solid #C4C4C4' } : {}) }}>
+              <button
+                onClick={() => setOpenIndex(isOpen ? null : i)}
+                onMouseEnter={() => setHoveredIndex(i)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 20,
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  padding: isMobile ? '16px 0' : '20px 0', textAlign: 'left',
+                }}
+              >
+                <span style={{
+                  flexShrink: 0, display: 'inline-block',
+                  width: isMobile ? 13 : 17, height: isMobile ? 7 : 9,
+                  backgroundColor: isRed ? '#FF4B33' : '#000',
+                  WebkitMaskImage: 'url(/accordion-chevron.png)',
+                  maskImage: 'url(/accordion-chevron.png)',
+                  WebkitMaskSize: 'contain', maskSize: 'contain',
+                  WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
+                  WebkitMaskPosition: 'center', maskPosition: 'center',
+                  transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 0.25s ease, background-color 0.15s ease',
+                }} />
+                <h3
+                  ref={el => { headingRefs.current[i] = el }}
+                  style={{
+                    fontSize: isMobile ? 17 : 22, fontWeight: 800, lineHeight: 1.2,
+                    fontFamily: "'Work Sans', system-ui, sans-serif",
+                    color: isRed ? '#FF4B33' : '#000', transition: 'color 0.15s ease',
+                    margin: 0, whiteSpace: isMobile ? 'normal' : 'nowrap',
+                  }}
+                >
+                  {policy.heading}
+                </h3>
+              </button>
+            </div>
             <div style={{ maxHeight: isOpen ? 2600 : 0, overflow: 'hidden', transition: 'max-height 0.4s ease' }}>
               <div style={{ paddingBottom: isMobile ? 16 : 24 }}>
                 {policy.sections.map((s, si) => (
@@ -1571,8 +1590,7 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
               <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right, marginBottom: 40 }}>
                 <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Our key policies</h2>
                 <p style={{ ...S.para, maxWidth: isMobile ? '100%' : 660, fontSize: isMobile ? 15 : 16, marginBottom: 0 }}>
-                  Below are some of the key policies we're taking to this election. They form part of a broader and more detailed platform developed in recent months with input from Victorian Socialists members.{' '}
-                  <a href="https://www.victoriansocialists.org.au/policies" target="_blank" rel="noreferrer" style={{ color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px' }}>View the full platform.</a>
+                  Below are some of the key policies we're taking to this election. They form part of a broader and more detailed platform developed in recent months with input from Victorian Socialists members.
                 </p>
               </div>
 
