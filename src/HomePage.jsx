@@ -13,7 +13,7 @@ function useWindowWidth() {
   return w
 }
 
-function MobileMenu({ onClose, onNavigateToPolicies, onNavigateToVision }) {
+function MobileMenu({ onClose, onNavigateToVision }) {
   const [expanded, setExpanded] = useState(null)
 
   const toggle = (key) => setExpanded(prev => prev === key ? null : key)
@@ -81,9 +81,7 @@ function MobileMenu({ onClose, onNavigateToPolicies, onNavigateToVision }) {
           {expanded === 'election' && (
             <div style={{ paddingBottom: 16, paddingLeft: 28 }}>
               {[
-                { label: 'Candidates', onClick: null },
                 { label: 'Our vision', onClick: () => { onNavigateToVision(); onClose() } },
-                { label: 'Policies', onClick: () => { onNavigateToPolicies(); onClose() } },
               ].map(item => (
                 <a
                   key={item.label}
@@ -201,7 +199,6 @@ export default function HomePage({ onNavigateToPolicies, onNavigateToVision }) {
       {isMobile && mobileMenuOpen && (
         <MobileMenu
           onClose={() => setMobileMenuOpen(false)}
-          onNavigateToPolicies={onNavigateToPolicies}
           onNavigateToVision={onNavigateToVision}
         />
       )}
@@ -223,9 +220,7 @@ export default function HomePage({ onNavigateToPolicies, onNavigateToVision }) {
               minWidth: 180, boxShadow: '0 8px 32px rgba(0,0,0,0.4)', zIndex: 20,
             }}>
               {[
-                { label: 'Candidates', onClick: null },
                 { label: 'Our vision', onClick: onNavigateToVision },
-                { label: 'Our Policies', onClick: onNavigateToPolicies },
               ].map(item => (
                 <a key={item.label} href="#"
                   onClick={e => { e.preventDefault(); item.onClick && item.onClick() }}
