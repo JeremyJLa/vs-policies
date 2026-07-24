@@ -1118,18 +1118,20 @@ function hPad(isMobile, isTablet) {
 // clipped by an overflow:hidden wrapper so the zoom never breaks layout.
 function ZoomImage({ src, alt, wrapperStyle }) {
   const imgRef = useRef(null)
+  const wrapRef = useRef(null)
   useEffect(() => {
     let raf = null
     const onScroll = () => {
       if (raf) return
       raf = requestAnimationFrame(() => {
         raf = null
-        const el = imgRef.current
-        if (!el) return
-        const rect = el.getBoundingClientRect()
+        const wrap = wrapRef.current
+        const img = imgRef.current
+        if (!wrap || !img) return
+        const rect = wrap.getBoundingClientRect()
         const vh = window.innerHeight || 1
         const progress = Math.min(1, Math.max(0, (vh - rect.top) / (vh + rect.height)))
-        el.style.transform = `scale(${1 + progress * 0.15})`
+        img.style.transform = `scale(${1 + progress * 0.25})`
       })
     }
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -1140,12 +1142,18 @@ function ZoomImage({ src, alt, wrapperStyle }) {
     }
   }, [])
   return (
-    <div style={{ overflow: 'hidden', ...wrapperStyle }}>
+    // Fixed aspect-ratio + overflow:hidden guarantees this box never
+    // resizes — only the <img> inside (object-fit: cover) scales up.
+    <div ref={wrapRef} style={{ position: 'relative', overflow: 'hidden', aspectRatio: '2702 / 810', ...wrapperStyle }}>
       <img
         ref={imgRef}
         src={src}
         alt={alt}
-        style={{ display: 'block', width: '100%', transform: 'scale(1)', transition: 'transform 0.1s linear', willChange: 'transform' }}
+        style={{
+          position: 'absolute', inset: 0, width: '100%', height: '100%',
+          objectFit: 'cover', transform: 'scale(1)',
+          transition: 'transform 0.1s linear', willChange: 'transform',
+        }}
       />
     </div>
   )
@@ -1275,14 +1283,18 @@ function VisionContent({ isMobile, isTablet, skipCandidates, groups, showSidebar
 // right that rotates open, full multi-section policy text revealed on click.
 function PolicyAccordionChevron({ policies, isMobile }) {
   const [openIndex, setOpenIndex] = useState(null)
+  const [hoveredIndex, setHoveredIndex] = useState(null)
   return (
     <div style={{ maxWidth: 760 }}>
       {policies.map((policy, i) => {
         const isOpen = openIndex === i
+        const isRed = isOpen || hoveredIndex === i
         return (
           <div key={i} style={{ borderBottom: '1px solid #C4C4C4', ...(i === 0 ? { borderTop: '1px solid #C4C4C4' } : {}) }}>
             <button
               onClick={() => setOpenIndex(isOpen ? null : i)}
+              onMouseEnter={() => setHoveredIndex(i)}
+              onMouseLeave={() => setHoveredIndex(null)}
               style={{
                 width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
                 background: 'none', border: 'none', cursor: 'pointer',
@@ -1293,7 +1305,7 @@ function PolicyAccordionChevron({ policies, isMobile }) {
                 fontSize: isMobile ? 17 : 22, fontWeight: 800, lineHeight: 1.2,
                 fontFamily: "'Work Sans', system-ui, sans-serif",
                 textDecoration: 'underline', textUnderlineOffset: '3px',
-                color: isOpen ? '#FF4B33' : '#000', transition: 'color 0.15s ease',
+                color: isRed ? '#FF4B33' : '#000', transition: 'color 0.15s ease',
                 margin: 0, whiteSpace: 'normal',
               }}>
                 {policy.heading}
@@ -1301,7 +1313,7 @@ function PolicyAccordionChevron({ policies, isMobile }) {
               <span style={{
                 flexShrink: 0, display: 'inline-block',
                 width: isMobile ? 13 : 17, height: isMobile ? 7 : 9,
-                backgroundColor: isOpen ? '#FF4B33' : '#000',
+                backgroundColor: isRed ? '#FF4B33' : '#000',
                 WebkitMaskImage: 'url(/accordion-chevron.png)',
                 maskImage: 'url(/accordion-chevron.png)',
                 WebkitMaskSize: 'contain', maskSize: 'contain',
