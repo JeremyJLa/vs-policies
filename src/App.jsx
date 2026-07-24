@@ -1529,7 +1529,7 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
               cursor: 'pointer',
             }}
           >
-            Jump to our policies <span style={{ fontSize: 14 }}>↓</span>
+            Jump to our key policies <span style={{ fontSize: 14 }}>↓</span>
           </button>
         </div>
       )}
