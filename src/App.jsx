@@ -1208,6 +1208,20 @@ function BreakoutBox({ heading, imagePlaceholder, imageSrc, imageAlt, paragraphs
   )
 }
 
+function HoverLink({ style, children, ...props }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <a
+      {...props}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{ ...style, color: hovered ? '#FF4B33' : style.color, transition: 'color 0.15s ease' }}
+    >
+      {children}
+    </a>
+  )
+}
+
 function ManifestoSidebar({ isMobile }) {
   const linkStyle = {
     display: 'block', fontSize: 14, fontWeight: 700,
@@ -1226,12 +1240,12 @@ function ManifestoSidebar({ isMobile }) {
         style={{ width: isMobile ? 108 : '100%', flexShrink: 0, display: 'block', borderRadius: 3 }}
       />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <a href="/manifesto-booklet.pdf" target="_blank" rel="noreferrer" style={linkStyle}>
+        <HoverLink href="/manifesto-booklet.pdf" target="_blank" rel="noreferrer" style={linkStyle}>
           View or download full manifesto booklet (PDF 18 MB)
-        </a>
-        <a href="#" style={linkStyle}>
+        </HoverLink>
+        <HoverLink href="#" style={linkStyle}>
           Purchase printed booklet ($10)
-        </a>
+        </HoverLink>
       </div>
     </div>
   )
