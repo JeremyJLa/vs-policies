@@ -81,6 +81,7 @@ function MobileMenu({ onClose, onNavigateToVision }) {
           {expanded === 'election' && (
             <div style={{ paddingBottom: 16, paddingLeft: 28 }}>
               {[
+                { label: 'Candidates', onClick: null },
                 { label: 'Our vision', onClick: () => { onNavigateToVision(); onClose() } },
               ].map(item => (
                 <a
@@ -220,6 +221,7 @@ export default function HomePage({ onNavigateToPolicies, onNavigateToVision }) {
               minWidth: 180, boxShadow: '0 8px 32px rgba(0,0,0,0.4)', zIndex: 20,
             }}>
               {[
+                { label: 'Candidates', onClick: null },
                 { label: 'Our vision', onClick: onNavigateToVision },
               ].map(item => (
                 <a key={item.label} href="#"
