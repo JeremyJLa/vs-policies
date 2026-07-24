@@ -1571,7 +1571,8 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
               <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right, marginBottom: 40 }}>
                 <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Our key policies</h2>
                 <p style={{ ...S.para, maxWidth: isMobile ? '100%' : 660, fontSize: isMobile ? 15 : 16, marginBottom: 0 }}>
-                  Below are some of the key policies we're taking to this election.
+                  Below are some of the key policies we're taking to this election. They form part of a broader and more detailed platform developed in recent months with input from Victorian Socialists members.{' '}
+                  <a href="https://www.victoriansocialists.org.au/policies" target="_blank" rel="noreferrer" style={{ color: '#000', fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: '2px' }}>View the full platform.</a>
                 </p>
               </div>
 
