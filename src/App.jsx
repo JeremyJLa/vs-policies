@@ -1114,7 +1114,44 @@ function hPad(isMobile, isTablet) {
   return { left: 300, right: 80 }
 }
 
-function BreakoutBox({ heading, imagePlaceholder, imageSrc, imageAlt, paragraphs, paragraphColor, headingColor, headingStyle, bg, angledBottom, imageGap, extraMarginTop, children, isMobile, isTablet, flushBottom, padY }) {
+// Scales up slowly as the image scrolls through the viewport (desktop only),
+// clipped by an overflow:hidden wrapper so the zoom never breaks layout.
+function ZoomImage({ src, alt, wrapperStyle }) {
+  const imgRef = useRef(null)
+  useEffect(() => {
+    let raf = null
+    const onScroll = () => {
+      if (raf) return
+      raf = requestAnimationFrame(() => {
+        raf = null
+        const el = imgRef.current
+        if (!el) return
+        const rect = el.getBoundingClientRect()
+        const vh = window.innerHeight || 1
+        const progress = Math.min(1, Math.max(0, (vh - rect.top) / (vh + rect.height)))
+        el.style.transform = `scale(${1 + progress * 0.15})`
+      })
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [])
+  return (
+    <div style={{ overflow: 'hidden', ...wrapperStyle }}>
+      <img
+        ref={imgRef}
+        src={src}
+        alt={alt}
+        style={{ display: 'block', width: '100%', transform: 'scale(1)', transition: 'transform 0.1s linear', willChange: 'transform' }}
+      />
+    </div>
+  )
+}
+
+function BreakoutBox({ heading, imagePlaceholder, imageSrc, imageAlt, paragraphs, paragraphColor, headingColor, headingStyle, bg, angledBottom, imageGap, extraMarginTop, zoomOnScroll, children, isMobile, isTablet, flushBottom, padY }) {
   const { left, right } = hPad(isMobile, isTablet)
   const vPad = padY ?? (isMobile ? 24 : isTablet ? 32 : 36)
   return (
@@ -1126,7 +1163,17 @@ function BreakoutBox({ heading, imagePlaceholder, imageSrc, imageAlt, paragraphs
       ...(extraMarginTop && { marginTop: 40 + extraMarginTop }),
       ...(flushBottom && { marginBottom: 0 }),
     }}>
-      {imageSrc && (
+      {imageSrc && (zoomOnScroll && !isMobile ? (
+        <ZoomImage
+          src={imageSrc}
+          alt={imageAlt || ''}
+          wrapperStyle={{
+            width: `calc(100% + ${left + right}px)`,
+            marginLeft: -left, marginRight: -right,
+            marginBottom: imageGap ?? 16, marginTop: -vPad,
+          }}
+        />
+      ) : (
         <img
           src={imageSrc}
           alt={imageAlt || ''}
@@ -1136,7 +1183,7 @@ function BreakoutBox({ heading, imagePlaceholder, imageSrc, imageAlt, paragraphs
             marginBottom: imageGap ?? 16, marginTop: -vPad,
           }}
         />
-      )}
+      ))}
       <div style={S.breakoutInner}>
         <h3 style={{ ...S.breakoutHeading, color: headingColor || '#fff', ...headingStyle }}>{heading}</h3>
         {imagePlaceholder && !imageSrc && (
@@ -1189,7 +1236,7 @@ function VisionContent({ isMobile, isTablet, skipCandidates, groups, showSidebar
       {list.map((g, gi) => {
         if (g.kind === 'breakout') {
           if (skipCandidates && g.item.heading === 'Our candidates') return null
-          return <BreakoutBox key={gi} heading={g.item.heading} imagePlaceholder={g.item.imagePlaceholder} imageSrc={g.item.imageSrc} imageAlt={g.item.imageAlt} paragraphs={g.item.paragraphs} paragraphColor={g.item.paragraphColor} headingColor={g.item.headingColor} headingStyle={{ fontSize: isMobile ? 20 : 26, fontWeight: 800 }} angledBottom={g.item.angledBottom} extraMarginTop={g.item.extraMarginTop} padY={g.item.extraPadY ? (isMobile ? 24 : isTablet ? 32 : 36) + g.item.extraPadY : undefined} isMobile={isMobile} isTablet={isTablet} />
+          return <BreakoutBox key={gi} heading={g.item.heading} imagePlaceholder={g.item.imagePlaceholder} imageSrc={g.item.imageSrc} imageAlt={g.item.imageAlt} paragraphs={g.item.paragraphs} paragraphColor={g.item.paragraphColor} headingColor={g.item.headingColor} headingStyle={{ fontSize: isMobile ? 20 : 26, fontWeight: 800 }} angledBottom={g.item.angledBottom} extraMarginTop={g.item.extraMarginTop} padY={g.item.extraPadY ? (isMobile ? 24 : isTablet ? 32 : 36) + g.item.extraPadY : undefined} zoomOnScroll={!!g.item.imageSrc} isMobile={isMobile} isTablet={isTablet} />
         }
         const { left, right } = hPad(isMobile, isTablet)
         const renderItem = (item, i) => {
@@ -1292,6 +1339,7 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
   const [menuOpen, setMenuOpen] = useState(false)
   const [manifestoExpanded, setManifestoExpanded] = useState(false)
   const tabBarRef = useRef(null)
+  const policiesRef = useRef(null)
 
   const w = useWindowWidth()
   const isMobile = w <= 640
@@ -1425,6 +1473,23 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
         </div>
       </div>
 
+      {combined && isMobile && (
+        <div style={{ padding: '14px 16px 0' }}>
+          <button
+            onClick={() => policiesRef.current && window.scrollTo({ top: policiesRef.current.getBoundingClientRect().top + window.scrollY - 40, behavior: 'smooth' })}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              background: 'none', border: '1px solid rgba(0,0,0,0.25)', borderRadius: 20,
+              padding: '8px 14px', fontSize: 13, fontWeight: 700,
+              color: '#000', fontFamily: "'Open Sans', system-ui, sans-serif",
+              cursor: 'pointer',
+            }}
+          >
+            Jump to our policies <span style={{ fontSize: 14 }}>↓</span>
+          </button>
+        </div>
+      )}
+
       {!combined && (
         <div ref={tabBarRef} style={{ ...S.tabBar, padding: isMobile ? '0 16px' : isTablet ? '0 40px' : '0 300px', gap: isMobile ? 16 : 24, ...(isMobile && { position: 'sticky', top: 30, zIndex: 40, boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }) }}>
           <button style={{ ...S.tabBtn(tab === 'platform'), fontSize: isMobile ? 15 : 18 }} onClick={() => { setTab('platform'); isMobile && tabBarRef.current && window.scrollTo(0, tabBarRef.current.offsetTop - 30) }}>
@@ -1441,7 +1506,7 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
           <>
             <VisionContent isMobile={isMobile} isTablet={isTablet} groups={VISION_GROUPS.slice(0, 1)} noPaddingBottom />
 
-            <div style={{ paddingTop: isMobile ? 24 : 32 }}>
+            <div ref={policiesRef} style={{ paddingTop: isMobile ? 24 : 32 }}>
               <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right, marginBottom: 40 }}>
                 <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Our key policies</h2>
                 <p style={{ ...S.para, maxWidth: isMobile ? '100%' : 660, fontSize: isMobile ? 15 : 16, marginBottom: 0 }}>
@@ -1478,7 +1543,7 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
               </div>
             </div>
 
-            <BreakoutBox heading={CANDIDATES_BREAKOUT.heading} imageSrc={CANDIDATES_BREAKOUT.imageSrc} imageAlt={CANDIDATES_BREAKOUT.imageAlt} paragraphs={CANDIDATES_BREAKOUT.paragraphs} headingStyle={{ fontSize: isMobile ? 20 : 26, fontWeight: 800 }} imageGap={60} padY={60} isMobile={isMobile} isTablet={isTablet} />
+            <BreakoutBox heading={CANDIDATES_BREAKOUT.heading} imageSrc={CANDIDATES_BREAKOUT.imageSrc} imageAlt={CANDIDATES_BREAKOUT.imageAlt} paragraphs={CANDIDATES_BREAKOUT.paragraphs} headingStyle={{ fontSize: isMobile ? 20 : 26, fontWeight: 800 }} imageGap={60} padY={60} zoomOnScroll isMobile={isMobile} isTablet={isTablet} />
 
             <div style={{ marginTop: -50 }}>
               <VisionContent isMobile={isMobile} isTablet={isTablet} groups={VISION_GROUPS.slice(1)} skipCandidates showSidebar={false} />
