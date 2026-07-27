@@ -266,6 +266,15 @@ const PLACEHOLDER_POLICY_GRID_WITH_CONTENT = PLACEHOLDER_POLICY_GRID.map((policy
   return policy
 })
 
+// "No icon" / "Titles (icon hover)" / "Icons": these views never show body
+// text, so just the first 3 headings are swapped in (no body needed).
+const PLACEHOLDER_POLICY_GRID_TITLES = PLACEHOLDER_POLICY_GRID.map((policy, i) => {
+  if (i === 0) return { ...policy, title: 'HOUSING\nFOR ALL' }
+  if (i === 1) return { ...policy, title: 'HEALTH\nFOR ALL' }
+  if (i === 2) return { ...policy, title: "WORKERS'\nPOWER" }
+  return policy
+})
+
 // ── Styles ────────────────────────────────────────────────────────────────────
 
 const S = {
@@ -1711,7 +1720,9 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
             </div>
             <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right }}>
               <div style={{ ...S.grid, gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 300px)', gap: isMobile ? 12 : 24 }}>
-                {((cardView === 'reddetails' || cardView === 'expanded') ? PLACEHOLDER_POLICY_GRID_WITH_CONTENT : PLACEHOLDER_POLICY_GRID).map((policy, i) => {
+                {((cardView === 'reddetails' || cardView === 'expanded') ? PLACEHOLDER_POLICY_GRID_WITH_CONTENT
+                  : (cardView === 'detailsnoicon' || cardView === 'titles' || cardView === 'icons') ? PLACEHOLDER_POLICY_GRID_TITLES
+                  : PLACEHOLDER_POLICY_GRID).map((policy, i) => {
                   if (cardView === 'edgy') return <PolicyCardEdgy key={i} policy={policy} index={i} />
                   if (cardView === 'brush') return <PolicyCardBrush key={i} policy={policy} index={i} />
                   if (cardView === 'expanded') return <PolicyCardExpanded key={i} policy={policy} index={i} height={258} />
