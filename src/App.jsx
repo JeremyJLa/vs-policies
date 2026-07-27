@@ -242,6 +242,15 @@ const ACCORDION_POLICIES = POLICIES
 const POLICY_GRID = POLICIES
 const POLICY_GRID_ICONS = POLICIES
 
+// Design-exploration grid: placeholder cards (not real policy content) used
+// to preview the card style variations at scale on the "Policies" nav link.
+const PLACEHOLDER_ICONS = [HousingIcon, HealthIcon, ClimateIcon, WorkersIcon, EverydayIcon]
+const PLACEHOLDER_POLICY_GRID = Array.from({ length: 22 }, (_, i) => ({
+  title: `POLICY\nHEADING ${i + 1}`,
+  body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+  Icon: PLACEHOLDER_ICONS[i % PLACEHOLDER_ICONS.length],
+}))
+
 // ── Styles ────────────────────────────────────────────────────────────────────
 
 const S = {
@@ -1413,6 +1422,10 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
   // ?clean=1 in the URL shows the full "Card design variations" picker and
   // all the in-progress style options, for internal review.
   const [showVariations] = useState(() => new URLSearchParams(window.location.search).get('clean') === '1')
+  // Plain-URL only: lets you flip between the finished single-page layout
+  // ("Vision") and a placeholder card grid for previewing card styles
+  // ("Policies"), without needing ?clean=1.
+  const [plainView, setPlainView] = useState('vision')
   const [tab, setTab] = useState(initialTab)
   const [cardView, setCardView] = useState(showVariations ? 'titles' : 'detailsnoicon')
   const [policyLayout, setPolicyLayout] = useState('grid')
@@ -1461,10 +1474,29 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
               textTransform: 'uppercase',
             }}>{v.label}</button>
           ))}
+          {!showVariations && version === 'B' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 10 : 16, marginLeft: isMobile ? 4 : 10 }}>
+              {[{ key: 'vision', label: 'Vision' }, { key: 'policies', label: 'Policies' }].map(v => (
+                <button
+                  key={v.key}
+                  onClick={() => setPlainView(v.key)}
+                  style={{
+                    background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                    fontSize: isMobile ? 12 : 14, fontFamily: "'Open Sans', system-ui, sans-serif",
+                    fontWeight: plainView === v.key ? 700 : 400,
+                    color: plainView === v.key ? '#fff' : 'rgba(255,255,255,0.6)',
+                    textDecoration: 'underline', textUnderlineOffset: '3px',
+                  }}
+                >
+                  {v.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Card design buttons — right */}
-        {showVariations && version === 'B' && tab === 'policies' && (isMobile ? (
+        {((showVariations && tab === 'policies') || (!showVariations && plainView === 'policies')) && version === 'B' && (isMobile ? (
           <button
             onClick={() => setMenuOpen(o => !o)}
             style={{
@@ -1491,7 +1523,7 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
       </nav>
 
       {/* Kebab dropdown — mobile only */}
-      {showVariations && version === 'B' && tab === 'policies' && isMobile && menuOpen && (
+      {((showVariations && tab === 'policies') || (!showVariations && plainView === 'policies')) && version === 'B' && isMobile && menuOpen && (
         <>
           <div onClick={() => setMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 98 }} />
           <div style={{
@@ -1582,7 +1614,26 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
       )}
 
       <main style={S.content}>
-        {combined ? (
+        {(!showVariations && version === 'B' && plainView === 'policies') ? (
+          <div style={{ paddingTop: isMobile ? 28 : isTablet ? 48 : 64, paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
+            <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right, marginBottom: 32 }}>
+              <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Our policies</h2>
+            </div>
+            <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right }}>
+              <div style={{ ...S.grid, gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 300px)', gap: isMobile ? 12 : 24 }}>
+                {PLACEHOLDER_POLICY_GRID.map((policy, i) => {
+                  if (cardView === 'edgy') return <PolicyCardEdgy key={i} policy={policy} index={i} />
+                  if (cardView === 'brush') return <PolicyCardBrush key={i} policy={policy} index={i} />
+                  if (cardView === 'expanded') return <PolicyCardExpanded key={i} policy={policy} index={i} />
+                  if (cardView === 'detailsnoicon') return <PolicyCardExpandedNoIcon key={i} policy={policy} index={i} />
+                  if (cardView === 'reddetails') return <PolicyCardRedDetails key={i} policy={policy} index={i} />
+                  if (cardView === 'icons') return <PolicyCardIcons key={i} policy={policy} index={i} />
+                  return <PolicyCard key={i} policy={policy} index={i} />
+                })}
+              </div>
+            </div>
+          </div>
+        ) : combined ? (
           <>
             <VisionContent isMobile={isMobile} isTablet={isTablet} groups={VISION_GROUPS.slice(0, 1)} noPaddingBottom />
 
