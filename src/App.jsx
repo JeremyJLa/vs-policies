@@ -244,18 +244,25 @@ const POLICY_GRID_ICONS = POLICIES
 
 // Design-exploration grid: placeholder cards (not real policy content) used
 // to preview the card style variations at scale on the "Policies" nav link.
-const PLACEHOLDER_ICONS = [HousingIcon, HealthIcon, ClimateIcon, WorkersIcon, EverydayIcon]
+const PLACEHOLDER_ICONS = [HousingIcon, HealthIcon, ClimateIcon, WorkersUnionsIcon, CivilRightsIcon]
 const PLACEHOLDER_POLICY_GRID = Array.from({ length: 22 }, (_, i) => ({
   title: `POLICY\nHEADING ${i + 1}`,
   body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
   Icon: PLACEHOLDER_ICONS[i % PLACEHOLDER_ICONS.length],
 }))
 
-// "Red details hover" only: first 3 cards swapped in with real content.
-const PLACEHOLDER_POLICY_GRID_REDDETAILS = PLACEHOLDER_POLICY_GRID.map((policy, i) => {
-  if (i === 0) return { ...policy, title: 'HOUSING\nFOR ALL', body: "Everyone deserves a safe, affordable home. We believe housing should serve people, not investors, developers or property speculation." }
-  if (i === 1) return { ...policy, title: "WORKERS'\nPOWER", body: 'Workers deserve secure jobs, fair wages and safe conditions, with the collective power to improve their working lives.' }
-  if (i === 2) return { ...policy, title: 'ARTS AND\nCULTURE FOR\nTHE ENJOYMENT', body: 'Art and culture should reflect working-class life and be accessible to everyone, not controlled by wealth or corporate power.' }
+// "Red details hover" and "Details" only: first 3 cards swapped in with
+// real content (each view keeps its own existing hover/colour style).
+// Every card sharing the same icon as one of the first 3 gets that same
+// real title/body too, instead of the generic lorem-ipsum placeholder.
+const PLACEHOLDER_POLICY_GRID_WITH_CONTENT = PLACEHOLDER_POLICY_GRID.map((policy, i) => {
+  const cyclePos = i % PLACEHOLDER_ICONS.length
+  // Card 2 keeps its dedicated Workers' power icon/text even though its
+  // natural cycle position (icon index 1) would otherwise be HealthIcon.
+  if (i === 1) return { ...policy, title: "WORKERS'\nPOWER", body: 'Workers deserve secure jobs, fair wages and safe conditions, with the collective power to improve their working lives.', Icon: WorkersUnionsIcon }
+  if (cyclePos === 0) return { ...policy, title: 'HOUSING\nFOR ALL', body: "Everyone deserves a safe, affordable home. We believe housing should serve people, not investors, developers or property speculation." }
+  if (cyclePos === 3) return { ...policy, title: "WORKERS'\nPOWER", body: 'Workers deserve secure jobs, fair wages and safe conditions, with the collective power to improve their working lives.' }
+  if (cyclePos === 2) return { ...policy, title: 'ARTS AND\nCULTURE FOR\nTHE ENJOYMENT', body: 'Art and culture should reflect working-class life and be accessible to everyone, not controlled by wealth or corporate power.' }
   return policy
 })
 
@@ -308,7 +315,6 @@ const S = {
       'linear-gradient(rgba(196, 178, 212, 0.15), rgba(196, 178, 212, 0.15))',
       'url("/imageA.jpeg") center / cover no-repeat',
     ].join(', '),
-    clipPath: 'polygon(0 0, 100% 0, 100% 86%, 0 63%)',
   },
   pageTitleBox: {
     position: 'absolute',
@@ -464,7 +470,7 @@ const S = {
     flexDirection: 'column',
   },
   cardTitle: {
-    fontSize: 30,
+    fontSize: 28,
     fontWeight: 800,
     lineHeight: '24px',
     whiteSpace: 'pre-line',
@@ -598,6 +604,40 @@ function EverydayIcon({ color = '#000', height = 58 }) {
       <rect x="27" y="6" width="4" height="10" rx="2" fill={color} />
       <path d="M31 10c6-4 12-2 14 4-6 2-11 0-14-4z" fill={color} />
     </svg>
+  )
+}
+
+function CivilRightsIcon({ color = '#000', height = 58 }) {
+  const width = Math.round(height * 79 / 62)
+  return (
+    <span
+      style={{
+        display: 'inline-block', flexShrink: 0, width, height,
+        backgroundColor: color,
+        WebkitMaskImage: 'url(/civil-rights-icon.svg)',
+        maskImage: 'url(/civil-rights-icon.svg)',
+        WebkitMaskSize: 'contain', maskSize: 'contain',
+        WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
+        WebkitMaskPosition: 'center', maskPosition: 'center',
+      }}
+    />
+  )
+}
+
+function WorkersUnionsIcon({ color = '#000', height = 58 }) {
+  const width = Math.round(height * 99 / 96)
+  return (
+    <span
+      style={{
+        display: 'inline-block', flexShrink: 0, width, height,
+        backgroundColor: color,
+        WebkitMaskImage: 'url(/workers-unions.png)',
+        maskImage: 'url(/workers-unions.png)',
+        WebkitMaskSize: 'contain', maskSize: 'contain',
+        WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
+        WebkitMaskPosition: 'center', maskPosition: 'center',
+      }}
+    />
   )
 }
 
@@ -845,7 +885,7 @@ function PolicyCard({ policy, index }) {
         <div style={{
           transform: hovered ? 'scale(1)' : 'scale(0.6)',
           transition: hovered
-            ? 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s'
+            ? 'transform 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s'
             : 'transform 0.22s ease',
         }}>
           <Icon color="#000" height={90} />
@@ -889,7 +929,7 @@ function PolicyCardGhost({ policy, index }) {
         <div style={{
           transform: hovered ? 'scale(1)' : 'scale(0.6)',
           transition: hovered
-            ? 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s'
+            ? 'transform 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s'
             : 'transform 0.22s ease',
         }}>
           <Icon color="#000" height={90} />
@@ -913,12 +953,12 @@ function PolicyCardGhost({ policy, index }) {
   )
 }
 
-function PolicyCardExpanded({ policy, index }) {
+function PolicyCardExpanded({ policy, index, height }) {
   const [hovered, setHovered] = useState(false)
   const { Icon } = policy
   return (
     <div
-      style={{ ...S.cardExpanded, background: hovered ? TILE_HOVER_COLOURS[index % 2] : TILE_COLOURS[index % 2], position: 'relative', overflow: 'hidden', transition: 'background-color 0.2s ease' }}
+      style={{ ...S.cardExpanded, ...(height ? { height } : {}), background: hovered ? TILE_HOVER_COLOURS[index % 2] : TILE_COLOURS[index % 2], position: 'relative', overflow: 'hidden', transition: 'background-color 0.2s ease' }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -933,7 +973,7 @@ function PolicyCardExpanded({ policy, index }) {
         <div style={{
           transform: hovered ? 'scale(1)' : 'scale(0.6)',
           transition: hovered
-            ? 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s'
+            ? 'transform 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s'
             : 'transform 0.22s ease',
         }}>
           <Icon color="#000" height={90} />
@@ -986,12 +1026,12 @@ function PolicyCardExpandedNoIcon({ policy, index }) {
   )
 }
 
-function PolicyCardRedDetails({ policy, index }) {
+function PolicyCardRedDetails({ policy, index, height }) {
   const [hovered, setHovered] = useState(false)
   const { Icon } = policy
   return (
     <div
-      style={{ ...S.cardExpanded, background: hovered ? '#FF4B33' : TILE_COLOURS[index % 2], position: 'relative', overflow: 'hidden', transition: 'background-color 0.18s ease' }}
+      style={{ ...S.cardExpanded, ...(height ? { height } : {}), background: hovered ? '#FF4B33' : TILE_COLOURS[index % 2], position: 'relative', overflow: 'hidden', transition: 'background-color 0.18s ease' }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -1005,7 +1045,7 @@ function PolicyCardRedDetails({ policy, index }) {
         <div style={{
           transform: hovered ? 'scale(1)' : 'scale(0.6)',
           transition: hovered
-            ? 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s'
+            ? 'transform 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s'
             : 'transform 0.22s ease',
         }}>
           <Icon color="#fff" height={90} />
@@ -1109,7 +1149,7 @@ function PolicyCardIcons({ policy, index }) {
     >
       {/* 92px zone: icon sits at bottom with 15px gap to heading */}
       <div style={{ height: 92, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', paddingBottom: 15 }}>
-        <div style={{ transition: 'transform 0.18s ease', transform: hovered ? 'scale(1.15)' : 'scale(1)', transformOrigin: 'bottom left' }}>
+        <div style={{ transition: 'transform 0.4s ease', transform: hovered ? 'scale(1.15)' : 'scale(1)', transformOrigin: 'bottom left' }}>
           <Icon color={fg} />
         </div>
       </div>
@@ -1441,10 +1481,32 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
   const [manifestoExpanded, setManifestoExpanded] = useState(false)
   const tabBarRef = useRef(null)
   const policiesRef = useRef(null)
+  const heroImgRef = useRef(null)
 
   const w = useWindowWidth()
   const isMobile = w <= 640
   const isTablet = w <= 1024
+
+  // Hero background photo slowly zooms in as the page scrolls away from it.
+  useEffect(() => {
+    let raf = null
+    const onScroll = () => {
+      if (raf) return
+      raf = requestAnimationFrame(() => {
+        raf = null
+        const el = heroImgRef.current
+        if (!el) return
+        const progress = Math.min(1, Math.max(0, window.scrollY / 500))
+        el.style.transform = `scale(${1 + progress * 0.12})`
+      })
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [])
 
   // Single continuous page, no tab bar: the default (plain-URL) experience,
   // and always for Option B. Only ?clean=1's Option A keeps the old tabbed
@@ -1587,9 +1649,24 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
       )}
 
       <div style={{ ...S.heroSection, height: isMobile ? 190 : 280 }}>
-        <div style={{ ...S.heroPurple, clipPath: isMobile ? 'polygon(0 0, 100% 0, 100% 90%, 0 70%)' : 'polygon(0 0, 100% 0, 100% 86%, 0 63%)' }} />
+        {/* Fixed frame: the diagonal clip shape never changes size. */}
+        <div
+          style={{
+            position: 'absolute', inset: 0, overflow: 'hidden',
+            clipPath: isMobile ? 'polygon(0 0, 100% 0, 100% 90%, 0 70%)' : 'polygon(0 0, 100% 0, 100% 86%, 0 63%)',
+          }}
+        >
+          {/* Only this image layer zooms, clipped to the fixed frame above. */}
+          <div
+            ref={heroImgRef}
+            style={{
+              ...S.heroPurple,
+              transform: 'scale(1)', transition: 'transform 0.1s linear', willChange: 'transform',
+            }}
+          />
+        </div>
         <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 276, top: isMobile ? 127 : 178, ...(isMobile && { padding: '4px 7px 16px' }) }}>
-          <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36 }}>What we'll fight for</h1>
+          <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36 }}>{(!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : "What we'll fight for"}</h1>
         </div>
       </div>
 
@@ -1623,18 +1700,23 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
 
       <main style={S.content}>
         {(!showVariations && version === 'B' && plainView === 'policies') ? (
-          <div style={{ paddingTop: isMobile ? 28 : isTablet ? 48 : 64, paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
+          <div style={{ paddingTop: 15, paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
             <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right, marginBottom: 32 }}>
-              <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Our policies</h2>
+              <p style={{ ...S.para, maxWidth: isMobile ? '100%' : 660, fontSize: isMobile ? 15 : 16 }}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate.
+              </p>
+              <p style={{ ...S.para, maxWidth: isMobile ? '100%' : 660, fontSize: isMobile ? 15 : 16, marginBottom: 0 }}>
+                Velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
+              </p>
             </div>
             <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right }}>
               <div style={{ ...S.grid, gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 300px)', gap: isMobile ? 12 : 24 }}>
-                {(cardView === 'reddetails' ? PLACEHOLDER_POLICY_GRID_REDDETAILS : PLACEHOLDER_POLICY_GRID).map((policy, i) => {
+                {((cardView === 'reddetails' || cardView === 'expanded') ? PLACEHOLDER_POLICY_GRID_WITH_CONTENT : PLACEHOLDER_POLICY_GRID).map((policy, i) => {
                   if (cardView === 'edgy') return <PolicyCardEdgy key={i} policy={policy} index={i} />
                   if (cardView === 'brush') return <PolicyCardBrush key={i} policy={policy} index={i} />
-                  if (cardView === 'expanded') return <PolicyCardExpanded key={i} policy={policy} index={i} />
+                  if (cardView === 'expanded') return <PolicyCardExpanded key={i} policy={policy} index={i} height={258} />
                   if (cardView === 'detailsnoicon') return <PolicyCardExpandedNoIcon key={i} policy={policy} index={i} />
-                  if (cardView === 'reddetails') return <PolicyCardRedDetails key={i} policy={policy} index={i} />
+                  if (cardView === 'reddetails') return <PolicyCardRedDetails key={i} policy={policy} index={i} height={258} />
                   if (cardView === 'icons') return <PolicyCardIcons key={i} policy={policy} index={i} />
                   return <PolicyCard key={i} policy={policy} index={i} />
                 })}
