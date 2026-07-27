@@ -275,6 +275,19 @@ const PLACEHOLDER_POLICY_GRID_TITLES = PLACEHOLDER_POLICY_GRID.map((policy, i) =
   return policy
 })
 
+// "Accordion" card variation: full-width rows cycling Workers' power /
+// Fix the health crisis / Housing for all, matching the reference mock.
+// Icon assets aren't visually pre-cropped to match: Health/Housing render
+// noticeably bigger than Workers at the same height, so scale them down to
+// look consistent in the accordion row.
+const ACCORDION_ROW_BASE = [
+  { title: "Workers' power", Icon: WorkersUnionsIcon, iconScale: 1 },
+  { title: 'Fix the health crisis', Icon: HealthIcon, iconScale: 0.72 },
+  { title: 'Housing for all', Icon: HousingIcon, iconScale: 0.78 },
+]
+const ACCORDION_ROW_BODY = "Lorem ipsum dolor sit amet consectetur. Cras lorem vivamus justo tempor at. Nec nec neque quam molestie tincidunt vel. Netus in aenean mi eleifend tellus rhoncus. Ut fames neque eget cras mi et amet non quisque. Lorem blandit vestibulum ut sollicitudin nibh diam ante in. Curabitur eget scelerisque sit porttitor tempor adipiscing lorem arcu sit."
+const ACCORDION_ROWS = Array.from({ length: 22 }, (_, i) => ACCORDION_ROW_BASE[i % ACCORDION_ROW_BASE.length])
+
 // ── Styles ────────────────────────────────────────────────────────────────────
 
 const S = {
@@ -886,13 +899,15 @@ function PolicyCard({ policy, index }) {
       {/* Icon: waits for title to leave, then springs in; exits fast */}
       <div style={{
         position: 'absolute', inset: 0,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        display: 'flex', alignItems: 'center', justifyContent: 'flex-start',
         opacity: hovered ? 0.22 : 0,
         transition: hovered ? 'opacity 0.4s ease 0.14s' : 'opacity 0.18s ease',
         pointerEvents: 'none', zIndex: 0,
       }}>
         <div style={{
+          marginLeft: 20,
           transform: hovered ? 'scale(1)' : 'scale(0.6)',
+          transformOrigin: 'left center',
           transition: hovered
             ? 'transform 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s'
             : 'transform 0.22s ease',
@@ -900,7 +915,7 @@ function PolicyCard({ policy, index }) {
           <Icon color="#000" height={90} />
         </div>
       </div>
-      {/* Title + read more: snap out fast, ease back in after icon exits */}
+      {/* Title: snaps out fast, eases back in after icon exits */}
       <h2 style={{
         ...S.cardTitle, color: '#000',
         opacity: hovered ? 0 : 1,
@@ -910,10 +925,10 @@ function PolicyCard({ policy, index }) {
       <span style={{
         ...S.readMore, color: '#000', alignSelf: 'flex-end',
         position: 'relative', zIndex: 1,
-        opacity: hovered ? 0 : 1,
-        transition: hovered ? 'opacity 0.12s ease' : 'opacity 0.2s ease 0.12s',
+        opacity: hovered ? 0.22 : 1,
+        transition: 'opacity 0.2s ease',
       }}>
-        Read more <span style={{ fontSize: 16 }}>›</span>
+        View policy <span style={{ fontSize: 16 }}>›</span>
       </span>
     </div>
   )
@@ -1004,10 +1019,10 @@ function PolicyCardExpanded({ policy, index, height }) {
       <span style={{
         ...S.readMore, color: '#000', alignSelf: 'flex-end',
         position: 'relative', zIndex: 1,
-        opacity: hovered ? 0 : 1,
-        transition: hovered ? 'opacity 0.12s ease' : 'opacity 0.2s ease 0.12s',
+        opacity: hovered ? 0.22 : 1,
+        transition: 'opacity 0.2s ease',
       }}>
-        Read more <span style={{ fontSize: 16 }}>›</span>
+        View policy <span style={{ fontSize: 16 }}>›</span>
       </span>
     </div>
   )
@@ -1024,8 +1039,7 @@ function PolicyCardExpandedNoIcon({ policy, index }) {
       <h2 style={{
         ...S.cardTitle,
         color: hovered ? '#FF4B33' : '#000',
-        fontSize: hovered ? 31 : 30,
-        transition: hovered ? 'font-size 0.25s ease, color 0.25s ease' : 'font-size 0.6s ease, color 0.6s ease',
+        transition: hovered ? 'color 0.25s ease' : 'color 0.6s ease',
         position: 'relative', zIndex: 1,
       }}>{policy.title}</h2>
       <span style={{ ...S.readMore, color: hovered ? '#FF4B33' : '#000', fontSize: hovered ? 15 : 14, alignSelf: 'flex-end', position: 'relative', zIndex: 1, transition: hovered ? 'color 0.25s ease, font-size 0.25s ease' : 'color 0.6s ease, font-size 0.6s ease' }}>
@@ -1073,13 +1087,87 @@ function PolicyCardRedDetails({ policy, index, height }) {
         position: 'relative', zIndex: 1,
       }}>{policy.body}</p>
       <span style={{
-        ...S.readMore, color: '#000', alignSelf: 'flex-end',
+        ...S.readMore, alignSelf: 'flex-end',
         position: 'relative', zIndex: 1,
-        opacity: hovered ? 0 : 1,
-        transition: hovered ? 'opacity 0.12s ease' : 'opacity 0.2s ease 0.12s',
+        color: hovered ? '#fff' : '#000',
+        opacity: hovered ? 0.65 : 1,
+        transition: 'color 0.2s ease, opacity 0.2s ease',
       }}>
-        Read more <span style={{ fontSize: 16 }}>›</span>
+        View policy <span style={{ fontSize: 16 }}>›</span>
       </span>
+    </div>
+  )
+}
+
+// "Accordion" card variation — full-bleed rows, alternating tint background,
+// icon + heading + chevron; expands in place to show body + "View policy".
+function PolicyRowAccordion({ rows, isMobile, isTablet }) {
+  const [openIndex, setOpenIndex] = useState(null)
+  const [hoveredIndex, setHoveredIndex] = useState(null)
+  const { left, right } = hPad(isMobile, isTablet)
+  // Mobile stays full-bleed edge-to-edge; desktop/tablet is capped to the
+  // same width as the intro text container above (660px), starting at the
+  // same left inset instead of spanning the full viewport.
+  const rowLeftPad = isMobile ? left : 24
+  const rowRightPad = isMobile ? right : 24
+  return (
+    <div style={{ marginLeft: isMobile ? 0 : left, width: isMobile ? '100%' : 660, maxWidth: isMobile ? '100%' : `calc(100% - ${left}px)` }}>
+      {rows.map((row, i) => {
+        const isOpen = openIndex === i
+        const isRed = isOpen || (!isMobile && hoveredIndex === i)
+        const { Icon } = row
+        return (
+          <div
+            key={i}
+            style={{ background: isRed ? '#FF4B33' : TILE_COLOURS[i % 2], marginBottom: 2, transition: 'background-color 0.18s ease' }}
+            onMouseEnter={() => setHoveredIndex(i)}
+            onMouseLeave={() => setHoveredIndex(null)}
+          >
+            <button
+              onClick={() => setOpenIndex(isOpen ? null : i)}
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center', gap: 16,
+                background: 'none', border: 'none', cursor: 'pointer',
+                padding: `${isMobile ? 16 : 20}px ${rowRightPad}px ${isMobile ? 16 : 20}px ${rowLeftPad}px`,
+                textAlign: 'left',
+              }}
+            >
+              <span style={{
+                flexShrink: 0, width: isMobile ? 30 : 36,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <Icon color="#000" height={(isMobile ? 30 : 36) * (row.iconScale ?? 1)} />
+              </span>
+              <h3 style={{
+                flex: 1, margin: 0, fontSize: isMobile ? 16 : 20, fontWeight: 800,
+                lineHeight: 1.2, fontFamily: "'Work Sans', system-ui, sans-serif",
+                textTransform: 'uppercase', letterSpacing: '0.02em', color: '#000',
+              }}>
+                {row.title}
+              </h3>
+              <span style={{
+                flexShrink: 0, display: 'inline-block',
+                width: isMobile ? 13 : 17, height: isMobile ? 7 : 9,
+                backgroundColor: '#000',
+                WebkitMaskImage: 'url(/accordion-chevron.png)',
+                maskImage: 'url(/accordion-chevron.png)',
+                WebkitMaskSize: 'contain', maskSize: 'contain',
+                WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
+                WebkitMaskPosition: 'center', maskPosition: 'center',
+                transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.25s ease',
+              }} />
+            </button>
+            <div style={{ maxHeight: isOpen ? 600 : 0, overflow: 'hidden', transition: 'max-height 0.4s ease' }}>
+              <div style={{ padding: `0 ${rowRightPad}px ${isMobile ? 20 : 24}px ${rowLeftPad + (isMobile ? 46 : 52)}px` }}>
+                <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 16 }}>{ACCORDION_ROW_BODY}</p>
+                <a href="#" style={{ display: 'block', textAlign: 'right', fontSize: isMobile ? 14 : 15, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px' }}>
+                  View policy
+                </a>
+              </div>
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -1474,6 +1562,133 @@ function PolicyAccordionChevron({ policies, isMobile }) {
   )
 }
 
+// Prototype-only navigation: lets a reviewer switch between Option A/B,
+// Vision/Policies, and the card design variations. Kept visually separate
+// from the real black header/hero so the header stays clean, per the
+// reference layout in IMAGES/controls.png (a strip above the header and a
+// matching strip below the page content).
+function ControlsBar({ showVariations, tab, plainView, version, cardView, policyLayout, setCardView, setPolicyLayout, setPlainView, onVersionChange, isMobile, isTablet }) {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const { left, right } = hPad(isMobile, isTablet)
+  const showCardOptions = ((showVariations && tab === 'policies') || (!showVariations && plainView === 'policies')) && version === 'B'
+
+  const linkStyle = (active) => ({
+    background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+    fontSize: isMobile ? 11 : 12, fontFamily: "'Open Sans', system-ui, sans-serif",
+    fontWeight: active ? 700 : 400,
+    color: active ? '#000' : '#666',
+  })
+
+  return (
+    <div style={{ background: '#DDDDDD', flexShrink: 0 }}>
+      <div style={{
+        position: 'relative',
+        display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12,
+        padding: `10px ${right}px 10px ${left}px`,
+      }}>
+        {/* Version / page links — left */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 12 : 20 }}>
+          {(showVariations
+            ? [{ key: 'B', label: 'Option A' }, { key: 'C', label: 'Option B' }, { key: 'home', label: 'Start from home' }]
+            : [{ key: 'home', label: 'Start from home' }]
+          ).map(v => (
+            <button key={v.key} onClick={() => onVersionChange(v.key)} style={linkStyle(version === v.key)}>{v.label}</button>
+          ))}
+          {!showVariations && version === 'B' && (
+            <>
+              <button onClick={() => setPlainView('vision')} style={linkStyle(plainView === 'vision')}>Vision</button>
+              <button onClick={() => setPlainView('policies')} style={linkStyle(plainView === 'policies')}>Policies</button>
+            </>
+          )}
+        </div>
+
+        {/* Card design variations — right */}
+        {showCardOptions && (isMobile ? (
+          <button
+            onClick={() => setMenuOpen(o => !o)}
+            style={{
+              background: 'none', border: '1px solid',
+              borderColor: menuOpen ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.2)',
+              borderRadius: 3, color: '#000', fontSize: 18, lineHeight: 1,
+              width: 32, height: 32, cursor: 'pointer', display: 'flex',
+              alignItems: 'center', justifyContent: 'center',
+            }}
+            aria-label="View options"
+          >⋮</button>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#000', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Card design variations</span>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
+              <button style={linkStyle(cardView === 'detailsnoicon')} onClick={() => setCardView('detailsnoicon')}>No icon</button>
+              <button style={linkStyle(cardView === 'titles')} onClick={() => setCardView('titles')}>Titles (icon hover)</button>
+              <button style={linkStyle(cardView === 'icons')} onClick={() => setCardView('icons')}>Icons</button>
+              <button style={linkStyle(cardView === 'expanded')} onClick={() => setCardView('expanded')}>Details</button>
+              <button style={linkStyle(cardView === 'reddetails')} onClick={() => setCardView('reddetails')}>Red details hover</button>
+              <button style={linkStyle(cardView === 'rowaccordion')} onClick={() => setCardView('rowaccordion')}>Accordion</button>
+            </div>
+          </div>
+        ))}
+
+        {/* Kebab dropdown — mobile only */}
+        {showCardOptions && isMobile && menuOpen && (
+          <>
+            <div onClick={() => setMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 98 }} />
+            <div style={{
+              position: 'absolute', top: '100%', right: right, zIndex: 99, marginTop: 4,
+              background: '#fff', border: '1px solid #E8E8E8',
+              minWidth: 230, boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+            }}>
+              {/* Accordion option (Grid/Accordion layout toggle) */}
+              <div style={{ padding: '6px 0' }}>
+                {[{ label: 'Accordion', action: () => { setPolicyLayout('accordion'); setMenuOpen(false) }, active: policyLayout === 'accordion' }].map(item => (
+                  <button key="acc" onClick={item.action} style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    width: '100%', padding: '13px 20px', background: 'none', border: 'none',
+                    fontSize: 15, fontWeight: item.active ? 700 : 400, cursor: 'pointer',
+                    fontFamily: "'Open Sans', system-ui, sans-serif",
+                    color: item.active ? '#FF4B33' : '#000', textAlign: 'left',
+                  }}>
+                    {item.label}
+                    {item.active && <span style={{ fontSize: 13 }}>✓</span>}
+                  </button>
+                ))}
+              </div>
+
+              <div style={{ height: 1, background: '#EBEBEB', margin: '0 20px' }} />
+
+              <div style={{ padding: '6px 20px 4px', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#999', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Tiles</div>
+              <div style={{ paddingBottom: 6 }}>
+                {[
+                  { label: 'No icon', view: 'detailsnoicon' },
+                  { label: 'Titles (icon hover)', view: 'titles' },
+                  { label: 'Icons', view: 'icons' },
+                  { label: 'Details', view: 'expanded' },
+                  { label: 'Red details hover', view: 'reddetails' },
+                  { label: 'Accordion', view: 'rowaccordion' },
+                ].map(({ label, view }) => {
+                  const active = policyLayout === 'grid' && cardView === view
+                  return (
+                    <button key={view} onClick={() => { setPolicyLayout('grid'); setCardView(view); setMenuOpen(false) }} style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      width: '100%', padding: '13px 20px', background: 'none', border: 'none',
+                      fontSize: 15, fontWeight: active ? 700 : 400, cursor: 'pointer',
+                      fontFamily: "'Open Sans', system-ui, sans-serif",
+                      color: active ? '#FF4B33' : '#000', textAlign: 'left',
+                    }}>
+                      {label}
+                      {active && <span style={{ fontSize: 13 }}>✓</span>}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
 function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vision', onVersionChange, onNavigateHome }) {
   // Default view is the clean "No icon" style with no variations picker.
   // ?clean=1 in the URL shows the full "Card design variations" picker and
@@ -1486,7 +1701,6 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
   const [tab, setTab] = useState(initialTab)
   const [cardView, setCardView] = useState(showVariations ? 'titles' : 'detailsnoicon')
   const [policyLayout, setPolicyLayout] = useState('grid')
-  const [menuOpen, setMenuOpen] = useState(false)
   const [manifestoExpanded, setManifestoExpanded] = useState(false)
   const tabBarRef = useRef(null)
   const policiesRef = useRef(null)
@@ -1525,137 +1739,27 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
   const grid = cardView === 'icons' ? POLICY_GRID_ICONS : POLICY_GRID
 
   return (
-    <div style={{ ...S.page, ...(isMobile && { paddingTop: 30 }) }}>
+    <div style={{ background: '#DDDDDD' }}>
+      <ControlsBar
+        showVariations={showVariations} tab={tab} plainView={plainView} version={version}
+        cardView={cardView} policyLayout={policyLayout}
+        setCardView={setCardView} setPolicyLayout={setPolicyLayout} setPlainView={setPlainView}
+        onVersionChange={onVersionChange} isMobile={isMobile} isTablet={isTablet}
+      />
 
-      {/* Fixed black top strip — mobile only */}
+      <div style={S.page}>
+
+      {/* Sticky black top strip — mobile only. Sticky (not fixed) so it
+          takes up its own space right below the ControlsBar above, instead
+          of overlapping it at scroll position 0. */}
       {isMobile && (
         <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0,
+          position: 'sticky', top: 0, left: 0, right: 0,
           height: 30, background: '#111', zIndex: 50,
         }} />
       )}
 
-      <nav style={{ ...S.nav, padding: isMobile ? '0 16px' : '0 24px', position: 'relative', justifyContent: 'space-between' }}>
-        {/* Version toggle — left */}
-        <div style={{ display: 'flex', gap: 6 }}>
-          {(showVariations
-            ? [{ key: 'B', label: 'Option A' }, { key: 'C', label: 'Option B' }, { key: 'home', label: 'Start from home' }]
-            : [{ key: 'home', label: 'Start from home' }]
-          ).map(v => (
-            <button key={v.key} onClick={() => onVersionChange(v.key)} style={{
-              background: version === v.key ? 'rgba(255,255,255,0.18)' : 'none',
-              border: '2px solid',
-              borderColor: version === v.key ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.2)',
-              borderRadius: 4, color: version === v.key ? '#fff' : 'rgba(255,255,255,0.4)',
-              fontSize: isMobile ? 10 : 14, fontFamily: "'Work Sans', system-ui, sans-serif",
-              fontWeight: 800, letterSpacing: '0.04em',
-              padding: isMobile ? '3px 7px' : '4px 12px', cursor: 'pointer', transition: 'all 0.15s',
-              textTransform: 'uppercase',
-            }}>{v.label}</button>
-          ))}
-          {!showVariations && version === 'B' && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 10 : 16, marginLeft: isMobile ? 4 : 10 }}>
-              {[{ key: 'vision', label: 'Vision' }, { key: 'policies', label: 'Policies' }].map(v => (
-                <button
-                  key={v.key}
-                  onClick={() => setPlainView(v.key)}
-                  style={{
-                    background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-                    fontSize: isMobile ? 12 : 14, fontFamily: "'Open Sans', system-ui, sans-serif",
-                    fontWeight: plainView === v.key ? 700 : 400,
-                    color: plainView === v.key ? '#fff' : 'rgba(255,255,255,0.6)',
-                    textDecoration: 'underline', textUnderlineOffset: '3px',
-                  }}
-                >
-                  {v.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Card design buttons — right */}
-        {((showVariations && tab === 'policies') || (!showVariations && plainView === 'policies')) && version === 'B' && (isMobile ? (
-          <button
-            onClick={() => setMenuOpen(o => !o)}
-            style={{
-              background: 'none', border: '1px solid',
-              borderColor: menuOpen ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.25)',
-              borderRadius: 3, color: '#fff', fontSize: 20, lineHeight: 1,
-              width: 36, height: 36, cursor: 'pointer', display: 'flex',
-              alignItems: 'center', justifyContent: 'center',
-            }}
-            aria-label="View options"
-          >⋮</button>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
-            <span style={{ fontSize: 14, fontWeight: 400, color: '#fff', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Card design variations</span>
-            <div className="nav-toggle" style={S.navViewToggle}>
-              <button style={S.navViewBtn(cardView === 'detailsnoicon')} onClick={() => setCardView('detailsnoicon')}>No icon</button>
-              <button style={S.navViewBtn(cardView === 'titles')} onClick={() => setCardView('titles')}>Titles (icon hover)</button>
-              <button style={S.navViewBtn(cardView === 'icons')} onClick={() => setCardView('icons')}>Icons</button>
-              <button style={S.navViewBtn(cardView === 'expanded')} onClick={() => setCardView('expanded')}>Details</button>
-              <button style={S.navViewBtn(cardView === 'reddetails')} onClick={() => setCardView('reddetails')}>Red details hover</button>
-            </div>
-          </div>
-        ))}
-      </nav>
-
-      {/* Kebab dropdown — mobile only */}
-      {((showVariations && tab === 'policies') || (!showVariations && plainView === 'policies')) && version === 'B' && isMobile && menuOpen && (
-        <>
-          <div onClick={() => setMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 98 }} />
-          <div style={{
-            position: 'fixed', top: 82, right: 0, zIndex: 99,
-            background: '#fff', borderLeft: '1px solid #E8E8E8', borderBottom: '1px solid #E8E8E8',
-            minWidth: 230, boxShadow: '-4px 8px 24px rgba(0,0,0,0.12)',
-          }}>
-            {/* Accordion option */}
-            <div style={{ padding: '6px 0' }}>
-              {[{ label: 'Accordion', action: () => { setPolicyLayout('accordion'); setMenuOpen(false) }, active: policyLayout === 'accordion' }].map(item => (
-                <button key="acc" onClick={item.action} style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  width: '100%', padding: '13px 20px', background: 'none', border: 'none',
-                  fontSize: 15, fontWeight: item.active ? 700 : 400, cursor: 'pointer',
-                  fontFamily: "'Open Sans', system-ui, sans-serif",
-                  color: item.active ? '#FF4B33' : '#000', textAlign: 'left',
-                }}>
-                  {item.label}
-                  {item.active && <span style={{ fontSize: 13 }}>✓</span>}
-                </button>
-              ))}
-            </div>
-
-            <div style={{ height: 1, background: '#EBEBEB', margin: '0 20px' }} />
-
-            {/* Tile options */}
-            <div style={{ padding: '6px 20px 4px', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#999', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Tiles</div>
-            <div style={{ paddingBottom: 6 }}>
-              {[
-                { label: 'No icon', view: 'detailsnoicon' },
-                { label: 'Titles (icon hover)', view: 'titles' },
-                { label: 'Icons', view: 'icons' },
-                { label: 'Details', view: 'expanded' },
-                { label: 'Red details hover', view: 'reddetails' },
-              ].map(({ label, view }) => {
-                const active = policyLayout === 'grid' && cardView === view
-                return (
-                  <button key={view} onClick={() => { setPolicyLayout('grid'); setCardView(view); setMenuOpen(false) }} style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    width: '100%', padding: '13px 20px', background: 'none', border: 'none',
-                    fontSize: 15, fontWeight: active ? 700 : 400, cursor: 'pointer',
-                    fontFamily: "'Open Sans', system-ui, sans-serif",
-                    color: active ? '#FF4B33' : '#000', textAlign: 'left',
-                  }}>
-                    {label}
-                    {active && <span style={{ fontSize: 13 }}>✓</span>}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        </>
-      )}
+      <nav style={{ ...S.nav, padding: isMobile ? '0 16px' : '0 24px' }} />
 
       <div style={{ ...S.heroSection, height: isMobile ? 190 : 280 }}>
         {/* Fixed frame: the diagonal clip shape never changes size. */}
@@ -1679,22 +1783,6 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
         </div>
       </div>
 
-      {combined && isMobile && (
-        <div style={{ padding: '14px 16px 0' }}>
-          <button
-            onClick={() => policiesRef.current && window.scrollTo({ top: policiesRef.current.getBoundingClientRect().top + window.scrollY - 40, behavior: 'smooth' })}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              background: 'none', border: '1px solid rgba(0,0,0,0.25)', borderRadius: 20,
-              padding: '8px 14px', fontSize: 13, fontWeight: 700,
-              color: '#000', fontFamily: "'Open Sans', system-ui, sans-serif",
-              cursor: 'pointer',
-            }}
-          >
-            Jump to our key policies <span style={{ fontSize: 14 }}>↓</span>
-          </button>
-        </div>
-      )}
 
       {!combined && (
         <div ref={tabBarRef} style={{ ...S.tabBar, padding: isMobile ? '0 16px' : isTablet ? '0 40px' : '0 300px', gap: isMobile ? 16 : 24, ...(isMobile && { position: 'sticky', top: 30, zIndex: 40, boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }) }}>
@@ -1718,6 +1806,9 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
                 Velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
               </p>
             </div>
+            {cardView === 'rowaccordion' ? (
+              <PolicyRowAccordion rows={ACCORDION_ROWS} isMobile={isMobile} isTablet={isTablet} />
+            ) : (
             <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right }}>
               <div style={{ ...S.grid, gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 300px)', gap: isMobile ? 12 : 24 }}>
                 {((cardView === 'reddetails' || cardView === 'expanded') ? PLACEHOLDER_POLICY_GRID_WITH_CONTENT
@@ -1733,6 +1824,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
                 })}
               </div>
             </div>
+            )}
           </div>
         ) : combined ? (
           <>
@@ -1883,6 +1975,14 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
 
 
       <footer style={S.footer} />
+      </div>
+
+      <ControlsBar
+        showVariations={showVariations} tab={tab} plainView={plainView} version={version}
+        cardView={cardView} policyLayout={policyLayout}
+        setCardView={setCardView} setPolicyLayout={setPolicyLayout} setPlainView={setPlainView}
+        onVersionChange={onVersionChange} isMobile={isMobile} isTablet={isTablet}
+      />
     </div>
   )
 }
