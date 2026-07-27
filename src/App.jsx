@@ -251,6 +251,14 @@ const PLACEHOLDER_POLICY_GRID = Array.from({ length: 22 }, (_, i) => ({
   Icon: PLACEHOLDER_ICONS[i % PLACEHOLDER_ICONS.length],
 }))
 
+// "Red details hover" only: first 3 cards swapped in with real content.
+const PLACEHOLDER_POLICY_GRID_REDDETAILS = PLACEHOLDER_POLICY_GRID.map((policy, i) => {
+  if (i === 0) return { ...policy, title: 'HOUSING\nFOR ALL', body: "Everyone deserves a safe, affordable home. We believe housing should serve people, not investors, developers or property speculation." }
+  if (i === 1) return { ...policy, title: "WORKERS'\nPOWER", body: 'Workers deserve secure jobs, fair wages and safe conditions, with the collective power to improve their working lives.' }
+  if (i === 2) return { ...policy, title: 'ARTS AND\nCULTURE FOR\nTHE ENJOYMENT', body: 'Art and culture should reflect working-class life and be accessible to everyone, not controlled by wealth or corporate power.' }
+  return policy
+})
+
 // ── Styles ────────────────────────────────────────────────────────────────────
 
 const S = {
@@ -1417,7 +1425,7 @@ function PolicyAccordionChevron({ policies, isMobile }) {
   )
 }
 
-function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNavigateHome }) {
+function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vision', onVersionChange, onNavigateHome }) {
   // Default view is the clean "No icon" style with no variations picker.
   // ?clean=1 in the URL shows the full "Card design variations" picker and
   // all the in-progress style options, for internal review.
@@ -1425,7 +1433,7 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
   // Plain-URL only: lets you flip between the finished single-page layout
   // ("Vision") and a placeholder card grid for previewing card styles
   // ("Policies"), without needing ?clean=1.
-  const [plainView, setPlainView] = useState('vision')
+  const [plainView, setPlainView] = useState(initialPlainView)
   const [tab, setTab] = useState(initialTab)
   const [cardView, setCardView] = useState(showVariations ? 'titles' : 'detailsnoicon')
   const [policyLayout, setPolicyLayout] = useState('grid')
@@ -1621,7 +1629,7 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
             </div>
             <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right }}>
               <div style={{ ...S.grid, gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 300px)', gap: isMobile ? 12 : 24 }}>
-                {PLACEHOLDER_POLICY_GRID.map((policy, i) => {
+                {(cardView === 'reddetails' ? PLACEHOLDER_POLICY_GRID_REDDETAILS : PLACEHOLDER_POLICY_GRID).map((policy, i) => {
                   if (cardView === 'edgy') return <PolicyCardEdgy key={i} policy={policy} index={i} />
                   if (cardView === 'brush') return <PolicyCardBrush key={i} policy={policy} index={i} />
                   if (cardView === 'expanded') return <PolicyCardExpanded key={i} policy={policy} index={i} />
@@ -1789,12 +1797,13 @@ function PoliciesPage({ version, initialTab = 'policies', onVersionChange, onNav
 export default function App() {
   const [version, setVersion] = useState('B')
   const [initialTab, setInitialTab] = useState('policies')
+  const [initialPlainView, setInitialPlainView] = useState('vision')
 
   if (version === 'home') {
     return (
       <HomePage
-        onNavigateToPolicies={() => { setInitialTab('policies'); setVersion('B'); window.scrollTo(0, 0) }}
-        onNavigateToVision={() => { setInitialTab('platform'); setVersion('B'); window.scrollTo(0, 0) }}
+        onNavigateToPolicies={() => { setInitialTab('policies'); setInitialPlainView('policies'); setVersion('B'); window.scrollTo(0, 0) }}
+        onNavigateToVision={() => { setInitialTab('platform'); setInitialPlainView('vision'); setVersion('B'); window.scrollTo(0, 0) }}
       />
     )
   }
@@ -1802,6 +1811,7 @@ export default function App() {
     <PoliciesPage
       version={version}
       initialTab={initialTab}
+      initialPlainView={initialPlainView}
       onVersionChange={setVersion}
       onNavigateHome={() => setVersion('home')}
     />

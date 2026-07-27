@@ -13,7 +13,7 @@ function useWindowWidth() {
   return w
 }
 
-function MobileMenu({ onClose, onNavigateToVision }) {
+function MobileMenu({ onClose, onNavigateToPolicies, onNavigateToVision }) {
   const [expanded, setExpanded] = useState(null)
 
   const toggle = (key) => setExpanded(prev => prev === key ? null : key)
@@ -82,6 +82,7 @@ function MobileMenu({ onClose, onNavigateToVision }) {
             <div style={{ paddingBottom: 16, paddingLeft: 28 }}>
               {[
                 { label: 'Candidates', onClick: null },
+                { label: 'Our policies', onClick: () => { onNavigateToPolicies(); onClose() } },
                 { label: 'Our vision', onClick: () => { onNavigateToVision(); onClose() } },
               ].map(item => (
                 <a
@@ -200,6 +201,7 @@ export default function HomePage({ onNavigateToPolicies, onNavigateToVision }) {
       {isMobile && mobileMenuOpen && (
         <MobileMenu
           onClose={() => setMobileMenuOpen(false)}
+          onNavigateToPolicies={onNavigateToPolicies}
           onNavigateToVision={onNavigateToVision}
         />
       )}
@@ -222,6 +224,7 @@ export default function HomePage({ onNavigateToPolicies, onNavigateToVision }) {
             }}>
               {[
                 { label: 'Candidates', onClick: null },
+                { label: 'Our policies', onClick: onNavigateToPolicies },
                 { label: 'Our vision', onClick: onNavigateToVision },
               ].map(item => (
                 <a key={item.label} href="#"
