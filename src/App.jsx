@@ -2149,13 +2149,13 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
           <HousingSideNav areas={p.areas} locked={sideNavLocked} lockedTop={sideNavLockTop} opacity={sideNavOpacity} />
         )}
 
-        <div style={{ paddingLeft: left, paddingRight: right, marginTop: -35 }}>
+        <div style={{ paddingLeft: left, paddingRight: right, marginTop: -2 }}>
           {/* Introductory summary panel — bordered, no fill, matching the
               Figma frame (title isn't repeated here; the hero above covers it) */}
           <div style={{
             ...(SUMMARY_BOX_BORDER_ENABLED && { border: '1px solid #cecece' }), borderRadius: 8,
             padding: '20px 20px 20px 0',
-            marginBottom: isMobile ? 28 : 36, maxWidth: 680,
+            marginBottom: isMobile ? 0 : 8, maxWidth: 680,
           }}>
             <p style={{ ...S.para, color: '#FF4B33', fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 24 }}>{p.summary}</p>
             <div style={{
@@ -2188,7 +2188,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         {/* Soft diagonal wash behind Preamble only, matching the Figma
             frame's background panel — full-bleed, angled bottom edge. */}
         <div style={{
-          background: '#FAF9FB', borderRadius: '8px 8px 0 0',
+          background: '#F8F5FA', borderRadius: '8px 8px 0 0',
           clipPath: `polygon(0 0, 100% 0, 100% calc(100% - ${isMobile ? 40 : 60}px), 0 100%)`,
           paddingTop: isMobile ? 24 : 32,
           paddingBottom: (isMobile ? 24 : 32) + (isMobile ? 40 : 60),
@@ -2396,6 +2396,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
   const tabBarRef = useRef(null)
   const policiesRef = useRef(null)
   const heroImgRef = useRef(null)
+  const housingHeroImgRef = useRef(null)
 
   const w = useWindowWidth()
   const isMobile = w <= 640
@@ -2420,6 +2421,24 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
       window.removeEventListener('scroll', onScroll)
       if (raf) cancelAnimationFrame(raf)
     }
+  }, [])
+
+  // Housing photo header: scrolling triggers a slow zoom, but — unlike the
+  // hero above — the zoom's speed is fixed (a long CSS transition) rather
+  // than tracking scroll position, so it doesn't matter how fast the user
+  // scrolls; it always eases in at the same steady pace.
+  useEffect(() => {
+    let triggered = false
+    const onScroll = () => {
+      if (triggered) return
+      if (window.scrollY <= 0) return
+      const el = housingHeroImgRef.current
+      if (!el) return
+      triggered = true
+      el.style.transform = 'scale(1.15)'
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   // Single continuous page, no tab bar: the default (plain-URL) experience,
@@ -2455,7 +2474,10 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
       {(() => {
         const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3')
         const fullHeight = isMobile ? 190 : 280
-        const heroHeight = isHousing ? fullHeight / 2 : fullHeight
+        // The photo header (housing3) gets more height than the solid-colour
+        // Housing pages so more of the image is visible, not just a thin
+        // cropped sliver.
+        const heroHeight = plainView === 'housing3' ? (isMobile ? 150 : fullHeight * 0.8) : isHousing ? fullHeight / 2 : fullHeight
         // Fixed pixel drops (not percentages) so the diagonal's angle stays
         // identical even when the container's height is halved for Housing.
         const rightDrop = isMobile ? 19 : 39.2
@@ -2471,7 +2493,20 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
             >
               {/* Only this image layer zooms, clipped to the fixed frame above. */}
               {plainView === 'housing3' ? (
-                <div style={{ position: 'absolute', inset: 0, background: 'url(/housing-header.jpg) center / cover no-repeat' }} />
+                <div style={{ position: 'absolute', inset: 0, filter: 'saturate(1.6)' }}>
+                  <div
+                    ref={housingHeroImgRef}
+                    style={{
+                      position: 'absolute', inset: 0,
+                      background: 'url(/housing-header.jpg) center / cover no-repeat',
+                      filter: 'grayscale(1) brightness(0.9) contrast(1.1)',
+                      transform: 'scale(1)', transition: 'transform 3.5s ease-out', willChange: 'transform',
+                    }}
+                  />
+                  {/* Duotone: a solid red overlay blended over the grayscale
+                      photo gives a sepia-like tint using red instead of brown. */}
+                  <div style={{ position: 'absolute', inset: 0, background: '#FF4B33', mixBlendMode: 'color', opacity: 0.12, pointerEvents: 'none' }} />
+                </div>
               ) : isHousing ? (
                 <div style={{ position: 'absolute', inset: 0, background: '#E9E4EB' }} />
               ) : (
