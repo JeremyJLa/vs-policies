@@ -2042,7 +2042,9 @@ function HousingSideNav({ areas, locked, lockedTop, opacity = 1 }) {
   return (
     <div style={{
       position: locked ? 'fixed' : 'absolute',
-      top: locked ? lockedTop : 30,
+      // Resting position sits in the white gap just above the Preamble
+      // wash panel, not inside it (the panel starts at top:0 here).
+      top: locked ? lockedTop : -36,
       left: 40, width: 200, zIndex: 39,
       background: '#F1ECF2', borderRadius: 8,
       padding: '18px 20px',
@@ -2086,8 +2088,9 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
   // does it switch to a full-width bar locked in flush beneath nav. The
   // side nav follows the same pattern, using an invisible anchor placed
   // next to Preamble to track when it should lock in underneath Jump-to.
-  // It's also invisible at the very top of the page and fades in over the
-  // first 80px of scrolling, so it isn't visible until you start scrolling.
+  // It's also invisible at the very top of the page and fades in slowly
+  // over the first 300px of scrolling, so it isn't visible until you
+  // start scrolling.
   useEffect(() => {
     let raf = null
     const onScroll = () => {
@@ -2098,7 +2101,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         if (el) setJumpLocked(el.getBoundingClientRect().top <= navClearance)
         const anchorEl = sideNavAnchorRef.current
         if (anchorEl) setSideNavLocked(anchorEl.getBoundingClientRect().top <= sideNavLockTop)
-        setSideNavOpacity(Math.min(1, window.scrollY / 80))
+        setSideNavOpacity(Math.min(1, window.scrollY / 300))
       })
     }
     window.addEventListener('scroll', onScroll, { passive: true })
