@@ -1964,9 +1964,9 @@ function HousingImageHeading({ src, alt, isMobile }) {
 function HousingPolicyPageV2({ isMobile, isTablet }) {
   const { left, right } = hPad(isMobile, isTablet)
   const p = HOUSING_POLICY_V2
-  // No sticky jump bar in V2 — "Jump to" lives inside the summary box
-  // itself, matching the Figma frame, so anchors only need to clear nav.
-  const anchorOffset = isMobile ? 130 : 100
+  // Jump-to bar clears the sticky nav (82px, plus the 30px mobile status
+  // strip) once it locks in, so anchors need the same clearance.
+  const anchorOffset = isMobile ? 170 : 140
   return (
     <div style={{ paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
       <div style={{ paddingLeft: left, paddingRight: right, paddingTop: 15 }}>
@@ -1980,18 +1980,16 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
           <p style={{ ...S.para, color: '#FF4B33', fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 14 }}>{p.summary}</p>
           <div style={{
             fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#7d7d7d',
-            fontFamily: "'Open Sans', system-ui, sans-serif", padding: '10px 0', marginBottom: 10,
+            fontFamily: "'Open Sans', system-ui, sans-serif", padding: '10px 0',
           }}>{p.readTime}</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 10 : 20 }}>
-            <span style={{
-              fontSize: isMobile ? 13 : 14, fontWeight: 600, color: '#7d7d7d',
-              fontFamily: "'Open Sans', system-ui, sans-serif",
-            }}>Jump to:</span>
-            <a href="#what-we-think" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 600, color: '#000', textDecoration: 'underline', textUnderlineOffset: '3px' }}>What we think</a>
-            <a href="#what-well-fight-for" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 600, color: '#000', textDecoration: 'underline', textUnderlineOffset: '3px' }}>What we'll fight for</a>
-          </div>
         </div>
       </div>
+
+      {/* Starts in normal flow right after the summary box; once scrolling
+          carries it up to the black nav bar it locks in as a full-width
+          sticky bar flush beneath it, and the rest of the page scrolls
+          behind it from then on. */}
+      <HousingJumpBar isMobile={isMobile} isTablet={isTablet} label="Jump to:" plainLabel />
 
       {/* Soft diagonal wash behind Preamble only, matching the Figma frame's
           background panel — full-bleed, angled bottom edge. */}
