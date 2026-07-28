@@ -15,7 +15,6 @@ const CANDIDATES_BREAKOUT = {
 }
 
 const VISION_CONTENT = [
-  { type: 'heading', level: 1, text: 'Our vision for a better, fairer Victoria' },
   { type: 'para', text: 'A vote for Victorian Socialists is a vote for something radically different to the major parties. Our vision is summed up by our slogan: “People before profit”. We want to pull the emergency brake on capitalism’s out of control drive to private profit and instead move towards a socialist economy and society in which working-class people, our communities and the environment we all depend on for survival come first.' },
   { type: 'para', text: 'At the centre of our election campaign is the push for a system of lifelong support, a Universal Living Guarantee to ensure that everyone, no matter their circumstances, has the things they need to live a good life. In one of the wealthiest countries on Earth, blessed with an abundance of land, resources and technology, and with a highly educated and skilled workforce, no-one should have to struggle to keep a roof over their head and food on the table. No-one should be denied a quality education, health care, aged care or other public services.' },
   { type: 'para', text: 'The main reason people are struggling today is that more and more of the wealth produced by workers is being hoarded by the class of capitalists and their hangers-on. And much of what does flow to the government in the form of taxes is spent on things like subsidies for fossil fuel companies and funding for elite private schools, the military, police and prisons and so on.' },
@@ -2546,7 +2545,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
               )}
             </div>
             <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 276, top: isHousing ? heroHeight - leftDrop : (isMobile ? 127 : 178), ...(isMobile && { padding: '4px 7px 16px' }) }}>
-              <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36 }}>{isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : "What we'll fight for"}</h1>
+              <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36, whiteSpace: 'pre-line' }}>{isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"}</h1>
             </div>
           </div>
         )
