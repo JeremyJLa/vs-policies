@@ -2213,6 +2213,28 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
           {p.areas.map((area, i) => (
             <HousingArea key={i} area={area} index={i} isMobile={isMobile} numbered plain anchorOffset={anchorOffset} />
           ))}
+          <a
+            href="#top"
+            onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              marginTop: isMobile ? 32 : 44,
+              fontSize: isMobile ? 14 : 15, fontWeight: 700, color: '#000',
+              fontFamily: "'Open Sans', system-ui, sans-serif",
+              textDecoration: 'underline', textUnderlineOffset: '3px',
+            }}
+          >
+            Back to top
+            <span style={{
+              display: 'inline-block', width: isMobile ? 13 : 17, height: isMobile ? 7 : 9,
+              backgroundColor: '#000',
+              WebkitMaskImage: 'url(/accordion-chevron.png)', maskImage: 'url(/accordion-chevron.png)',
+              WebkitMaskSize: 'contain', maskSize: 'contain',
+              WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
+              WebkitMaskPosition: 'center', maskPosition: 'center',
+              transform: 'rotate(180deg)',
+            }} />
+          </a>
         </div>
       </div>
     </div>
@@ -2255,7 +2277,6 @@ function ControlsBar({ showVariations, tab, plainView, version, cardView, policy
             <>
               <button onClick={() => setPlainView('vision')} style={linkStyle(plainView === 'vision')}>Vision</button>
               <button onClick={() => setPlainView('policies')} style={linkStyle(plainView === 'policies')}>Policies</button>
-              <button onClick={() => setPlainView('housing')} style={linkStyle(plainView === 'housing')}>Housing policy</button>
               <button onClick={() => setPlainView('housing2')} style={linkStyle(plainView === 'housing2')}>Housing policy 2</button>
             </>
           )}
