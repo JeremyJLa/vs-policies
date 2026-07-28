@@ -246,7 +246,7 @@ const POLICY_GRID_ICONS = POLICIES
 // to preview the card style variations at scale on the "Policies" nav link.
 const PLACEHOLDER_ICONS = [HousingIcon, HealthIcon, ClimateIcon, WorkersUnionsIcon, CivilRightsIcon]
 const PLACEHOLDER_POLICY_GRID = Array.from({ length: 22 }, (_, i) => ({
-  title: `POLICY\nHEADING ${i + 1}`,
+  title: 'POLICY\nHEADING',
   body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
   Icon: PLACEHOLDER_ICONS[i % PLACEHOLDER_ICONS.length],
 }))
@@ -262,7 +262,7 @@ const PLACEHOLDER_POLICY_GRID_WITH_CONTENT = PLACEHOLDER_POLICY_GRID.map((policy
   if (i === 1) return { ...policy, title: "WORKERS'\nPOWER", body: 'Workers deserve secure jobs, fair wages and safe conditions, with the collective power to improve their working lives.', Icon: WorkersUnionsIcon }
   if (cyclePos === 0) return { ...policy, title: 'HOUSING\nFOR ALL', body: "Everyone deserves a safe, affordable home. We believe housing should serve people, not investors, developers or property speculation." }
   if (cyclePos === 3) return { ...policy, title: "WORKERS'\nPOWER", body: 'Workers deserve secure jobs, fair wages and safe conditions, with the collective power to improve their working lives.' }
-  if (cyclePos === 2) return { ...policy, title: 'ARTS AND\nCULTURE FOR\nTHE ENJOYMENT', body: 'Art and culture should reflect working-class life and be accessible to everyone, not controlled by wealth or corporate power.' }
+  if (cyclePos === 2) return { ...policy, title: 'ARTS AND\nCULTURE', body: 'Art and culture should reflect working-class life and be accessible to everyone, not controlled by wealth or corporate power.', Icon: ArtsIcon }
   return policy
 })
 
@@ -271,7 +271,7 @@ const PLACEHOLDER_POLICY_GRID_WITH_CONTENT = PLACEHOLDER_POLICY_GRID.map((policy
 const PLACEHOLDER_POLICY_GRID_TITLES = PLACEHOLDER_POLICY_GRID.map((policy, i) => {
   if (i === 0) return { ...policy, title: 'HOUSING\nFOR ALL' }
   if (i === 1) return { ...policy, title: 'HEALTH\nFOR ALL' }
-  if (i === 2) return { ...policy, title: "WORKERS'\nPOWER" }
+  if (i === 2) return { ...policy, title: 'CLIMATE CHANGE\nAND ENVIRONMENT' }
   return policy
 })
 
@@ -840,6 +840,23 @@ function CivilRightsIcon({ color = '#000', height = 58 }) {
         backgroundColor: color,
         WebkitMaskImage: 'url(/civil-rights-icon.svg)',
         maskImage: 'url(/civil-rights-icon.svg)',
+        WebkitMaskSize: 'contain', maskSize: 'contain',
+        WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
+        WebkitMaskPosition: 'center', maskPosition: 'center',
+      }}
+    />
+  )
+}
+
+function ArtsIcon({ color = '#000', height = 58 }) {
+  const width = Math.round(height * 315.63 / 340.21)
+  return (
+    <span
+      style={{
+        display: 'inline-block', flexShrink: 0, width, height,
+        backgroundColor: color,
+        WebkitMaskImage: 'url(/arts-icon.svg)',
+        maskImage: 'url(/arts-icon.svg)',
         WebkitMaskSize: 'contain', maskSize: 'contain',
         WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
         WebkitMaskPosition: 'center', maskPosition: 'center',
@@ -2096,9 +2113,9 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
   const anchorOffset = navClearance + (JUMP_LOCK_ENABLED ? 80 : 20)
   const jumpRef = useRef(null)
   const [jumpLocked, setJumpLocked] = useState(false)
-  // Side nav's own trigger point: 30px below where the Jump-to bar sits
-  // once it's locked in (nav height + jump bar height + 30px gap).
-  const sideNavLockTop = navClearance + 64 + 30
+  // Side nav's own trigger point: right under nav (moved 30px higher, per
+  // request, than the earlier gap-below-Jump-to-bar position).
+  const sideNavLockTop = navClearance + 64
   const sideNavAnchorRef = useRef(null)
   const [sideNavLocked, setSideNavLocked] = useState(false)
   const [sideNavOpacity, setSideNavOpacity] = useState(0)
@@ -2575,13 +2592,22 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
                 {((cardView === 'reddetails' || cardView === 'expanded') ? PLACEHOLDER_POLICY_GRID_WITH_CONTENT
                   : (cardView === 'detailsnoicon' || cardView === 'titles' || cardView === 'icons') ? PLACEHOLDER_POLICY_GRID_TITLES
                   : PLACEHOLDER_POLICY_GRID).map((policy, i) => {
-                  if (cardView === 'edgy') return <PolicyCardEdgy key={i} policy={policy} index={i} />
-                  if (cardView === 'brush') return <PolicyCardBrush key={i} policy={policy} index={i} />
-                  if (cardView === 'expanded') return <PolicyCardExpanded key={i} policy={policy} index={i} height={258} />
-                  if (cardView === 'detailsnoicon') return <PolicyCardExpandedNoIcon key={i} policy={policy} index={i} />
-                  if (cardView === 'reddetails') return <PolicyCardRedDetails key={i} policy={policy} index={i} height={258} />
-                  if (cardView === 'icons') return <PolicyCardIcons key={i} policy={policy} index={i} />
-                  return <PolicyCard key={i} policy={policy} index={i} />
+                  const card = cardView === 'edgy' ? <PolicyCardEdgy key={i} policy={policy} index={i} />
+                    : cardView === 'brush' ? <PolicyCardBrush key={i} policy={policy} index={i} />
+                    : cardView === 'expanded' ? <PolicyCardExpanded key={i} policy={policy} index={i} height={258} />
+                    : cardView === 'detailsnoicon' ? <PolicyCardExpandedNoIcon key={i} policy={policy} index={i} />
+                    : cardView === 'reddetails' ? <PolicyCardRedDetails key={i} policy={policy} index={i} height={258} />
+                    : cardView === 'icons' ? <PolicyCardIcons key={i} policy={policy} index={i} />
+                    : <PolicyCard key={i} policy={policy} index={i} />
+                  // The Housing card links through to the Housing policy page.
+                  if (policy.Icon === HousingIcon) {
+                    return (
+                      <div key={i} onClick={() => { setPlainView('housing3'); window.scrollTo(0, 0) }} style={{ cursor: 'pointer' }}>
+                        {card}
+                      </div>
+                    )
+                  }
+                  return card
                 })}
               </div>
             </div>
