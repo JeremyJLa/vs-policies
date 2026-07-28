@@ -465,6 +465,31 @@ const HOUSING_POLICY = {
   ]
 }
 
+// "Housing policy 2" — same source content as HOUSING_POLICY, with the
+// Renters area regrouped to match the numbered structure (1.–7.) shown in
+// the Figma reference (file UdDv2zFOv9HEaHRllxY1X3, node 5553:7522): the
+// VCAT group there only covers its first five bullets — the "Increase
+// funding..." and "Increase funding to tenancy legal support..." lines are
+// their own top-level numbered items, not nested under "Reform VCAT:".
+const HOUSING_POLICY_V2 = {
+  ...HOUSING_POLICY,
+  areas: HOUSING_POLICY.areas.map((area, i) => (i !== 0 ? area : {
+    ...area,
+    items: [
+      area.items[0],
+      area.items[1],
+      area.items[2],
+      {
+        heading: area.items[3].heading,
+        items: area.items[3].items.slice(0, 5),
+      },
+      { text: area.items[3].items[5] },
+      { text: area.items[3].items[6] },
+      area.items[4],
+    ],
+  })),
+}
+
 // ── Styles ────────────────────────────────────────────────────────────────────
 
 const S = {
@@ -1741,13 +1766,13 @@ function PolicyAccordionChevron({ policies, isMobile }) {
 
 // One principle from "What we think" — plain text with a small accent rule,
 // deliberately not styled like a clickable card.
-function HousingPrinciple({ principle, isMobile }) {
+function HousingPrinciple({ principle, isMobile, number }) {
   return (
     <div style={{ borderLeft: '3px solid #FF4B33', paddingLeft: isMobile ? 14 : 18, marginBottom: isMobile ? 22 : 26 }}>
       <h4 style={{
         fontSize: isMobile ? 16 : 18, fontWeight: 800, margin: '0 0 6px',
         fontFamily: "'Work Sans', system-ui, sans-serif", color: '#000',
-      }}>{principle.heading}</h4>
+      }}>{number != null && <span style={{ color: '#FF4B33' }}>{number}. </span>}{principle.heading}</h4>
       <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, margin: 0 }}>{principle.text}</p>
     </div>
   )
@@ -1755,14 +1780,15 @@ function HousingPrinciple({ principle, isMobile }) {
 
 // One entry within a "What we'll fight for" policy area: either a flat
 // bullet, or a numbered-group subheading with its own nested bullet list.
-function HousingAreaItem({ item, isMobile }) {
+function HousingAreaItem({ item, isMobile, number }) {
+  const numberPrefix = number != null && <span style={{ color: '#FF4B33' }}>{number}. </span>
   if (item.heading) {
     return (
       <div>
         <h4 style={{
           fontSize: isMobile ? 14.5 : 16, fontWeight: 700, margin: '0 0 10px',
           fontFamily: "'Work Sans', system-ui, sans-serif", color: '#000',
-        }}>{item.heading}</h4>
+        }}>{numberPrefix}{item.heading}</h4>
         <ul style={{ margin: 0, paddingLeft: 20 }}>
           {item.items.map((t, i) => (
             <li key={i} style={{ ...S.bulletItem, fontSize: isMobile ? 14 : 15, lineHeight: isMobile ? '20px' : '22px' }}>{t}</li>
@@ -1771,12 +1797,12 @@ function HousingAreaItem({ item, isMobile }) {
       </div>
     )
   }
-  return <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, margin: 0 }}>{item.text}</p>
+  return <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, margin: 0 }}>{numberPrefix}{item.text}</p>
 }
 
 // One large soft panel for a main policy area (Renters, Home owners, etc.),
 // with divider lines separating each numbered policy group inside it.
-function HousingArea({ area, index, isMobile }) {
+function HousingArea({ area, index, isMobile, numbered }) {
   return (
     <div style={{
       background: TILE_COLOURS[index % 2], borderRadius: 6,
@@ -1794,7 +1820,7 @@ function HousingArea({ area, index, isMobile }) {
           marginTop: i === 0 ? 0 : (isMobile ? 16 : 20),
           borderTop: i === 0 ? 'none' : '1px solid rgba(0,0,0,0.12)',
         }}>
-          <HousingAreaItem item={item} isMobile={isMobile} />
+          <HousingAreaItem item={item} isMobile={isMobile} number={numbered ? i + 1 : null} />
         </div>
       ))}
     </div>
@@ -1806,7 +1832,7 @@ function HousingArea({ area, index, isMobile }) {
 // Full-bleed "Jump to" bar: sticky beneath the page's persistent top
 // elements (the mobile black status strip, where present) so it's always
 // reachable while the rest of the content scrolls underneath it.
-function HousingJumpBar({ isMobile, isTablet }) {
+function HousingJumpBar({ isMobile, isTablet, label = 'Jump to' }) {
   const { left, right } = hPad(isMobile, isTablet)
   return (
     <div style={{
@@ -1822,7 +1848,7 @@ function HousingJumpBar({ isMobile, isTablet }) {
         <span style={{
           fontSize: 12, fontWeight: 700, color: '#999', letterSpacing: '0.08em',
           textTransform: 'uppercase', fontFamily: "'Open Sans', system-ui, sans-serif",
-        }}>Jump to</span>
+        }}>{label}</span>
         <a href="#what-we-think" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '3px' }}>What we think</a>
         <a href="#what-well-fight-for" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '3px' }}>What we'll fight for</a>
       </div>
@@ -1882,6 +1908,69 @@ function HousingPolicyPage({ isMobile, isTablet }) {
   )
 }
 
+// "Housing policy 2" — same page, same shared components (HousingJumpBar,
+// HousingPrinciple, HousingArea/HousingAreaItem) and HOUSING_POLICY content
+// as HousingPolicyPage above, but with the numbering, section heading
+// ("We'll fight to") and "Jump to:" label matched to the Figma reference
+// (file UdDv2zFOv9HEaHRllxY1X3, node 5553:7522), and the corrected Renters
+// grouping in HOUSING_POLICY_V2.
+// Angled black banner image used for the V2 section headings (Preamble /
+// What we think / We'll fight to), matching the Figma reference exactly.
+function HousingImageHeading({ src, alt, isMobile }) {
+  return <img src={src} alt={alt} style={{ display: 'block', height: isMobile ? 38 : 46, width: 'auto', marginBottom: isMobile ? 14 : 18 }} />
+}
+
+function HousingPolicyPageV2({ isMobile, isTablet }) {
+  const { left, right } = hPad(isMobile, isTablet)
+  const p = HOUSING_POLICY_V2
+  const anchorOffset = isMobile ? 170 : 140
+  return (
+    <div style={{ paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
+      <HousingJumpBar isMobile={isMobile} isTablet={isTablet} label="Jump to:" />
+      <div style={{ paddingLeft: left, paddingRight: right, paddingTop: 15 }}>
+        {/* Introductory summary panel */}
+        <div style={{
+          background: '#F1ECF2', borderRadius: 6,
+          padding: isMobile ? '22px 18px' : '32px 40px',
+          marginBottom: isMobile ? 28 : 36, maxWidth: 760,
+        }}>
+          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 22 : 28 }}>{p.title}</h2>
+          <p style={{ ...S.para, fontSize: isMobile ? 15 : 16, marginBottom: 0 }}>{p.summary}</p>
+          <div style={{
+            fontSize: 13, fontWeight: 700, color: '#666', letterSpacing: '0.03em',
+            textTransform: 'uppercase', fontFamily: "'Open Sans', system-ui, sans-serif",
+            marginTop: 16,
+          }}>{p.readTime}</div>
+        </div>
+
+        {/* Introductory housing-crisis text */}
+        <div style={{ maxWidth: 760, marginBottom: isMobile ? 32 : 40 }}>
+          <HousingImageHeading src="/preamble-heading.png" alt="Preamble" isMobile={isMobile} />
+          {p.preamble.map((para, i) => (
+            <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{para}</p>
+          ))}
+        </div>
+
+        {/* What we think */}
+        <div id="what-we-think" style={{ maxWidth: 760, marginBottom: isMobile ? 36 : 48, scrollMarginTop: anchorOffset }}>
+          <HousingImageHeading src="/what-we-think-heading.png" alt="What we think" isMobile={isMobile} />
+          {p.principles.map((principle, i) => (
+            <HousingPrinciple key={i} principle={principle} isMobile={isMobile} number={i + 1} />
+          ))}
+        </div>
+
+        {/* We'll fight to */}
+        <div id="what-well-fight-for" style={{ scrollMarginTop: anchorOffset }}>
+          <HousingImageHeading src="/well-fight-to-heading.png" alt="We'll fight to" isMobile={isMobile} />
+          {p.areas.map((area, i) => (
+            <HousingArea key={i} area={area} index={i} isMobile={isMobile} numbered />
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // Prototype-only navigation: lets a reviewer switch between Option A/B,
 // Vision/Policies, and the card design variations. Kept visually separate
 // from the real black header/hero so the header stays clean, per the
@@ -1919,6 +2008,7 @@ function ControlsBar({ showVariations, tab, plainView, version, cardView, policy
               <button onClick={() => setPlainView('vision')} style={linkStyle(plainView === 'vision')}>Vision</button>
               <button onClick={() => setPlainView('policies')} style={linkStyle(plainView === 'policies')}>Policies</button>
               <button onClick={() => setPlainView('housing')} style={linkStyle(plainView === 'housing')}>Housing policy</button>
+              <button onClick={() => setPlainView('housing2')} style={linkStyle(plainView === 'housing2')}>Housing policy 2</button>
             </>
           )}
         </div>
@@ -2083,7 +2173,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
       <nav style={{ ...S.nav, padding: isMobile ? '0 16px' : '0 24px', position: 'sticky', top: isMobile ? 30 : 0, zIndex: 45 }} />
 
       {(() => {
-        const isHousing = !showVariations && version === 'B' && plainView === 'housing'
+        const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2')
         const fullHeight = isMobile ? 190 : 280
         const heroHeight = isHousing ? fullHeight / 2 : fullHeight
         // Fixed pixel drops (not percentages) so the diagonal's angle stays
@@ -2134,6 +2224,8 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
       <main style={S.content}>
         {(!showVariations && version === 'B' && plainView === 'housing') ? (
           <HousingPolicyPage isMobile={isMobile} isTablet={isTablet} />
+        ) : (!showVariations && version === 'B' && plainView === 'housing2') ? (
+          <HousingPolicyPageV2 isMobile={isMobile} isTablet={isTablet} />
         ) : (!showVariations && version === 'B' && plainView === 'policies') ? (
           <div style={{ paddingTop: 15, paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
             <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right, marginBottom: 32 }}>
