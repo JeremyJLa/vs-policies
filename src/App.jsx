@@ -1968,7 +1968,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         <div style={{
           border: '1px solid #cecece', borderRadius: 8,
           padding: isMobile ? '20px 18px' : '28px 36px',
-          marginBottom: isMobile ? 28 : 36, maxWidth: 760,
+          marginBottom: isMobile ? 28 : 36, maxWidth: 680,
         }}>
           <p style={{ ...S.para, color: '#FF4B33', fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 14 }}>{p.summary}</p>
           <div style={{
@@ -1988,7 +1988,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
 
       <div style={{ paddingLeft: left, paddingRight: right, paddingTop: isMobile ? 32 : 40 }}>
         {/* Introductory housing-crisis text */}
-        <div style={{ maxWidth: 760 }}>
+        <div style={{ maxWidth: 680 }}>
           <HousingImageHeading src="/preamble-heading.png" alt="Preamble" isMobile={isMobile} />
           {p.preamble.map((para, i) => (
             <p key={i} style={{ ...S.para, fontSize: isMobile ? 14 : 15 }}>{para}</p>
@@ -2006,7 +2006,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         paddingLeft: left, paddingRight: right,
       }}>
         {/* What we think */}
-        <div id="what-we-think" style={{ maxWidth: 760, scrollMarginTop: anchorOffset }}>
+        <div id="what-we-think" style={{ maxWidth: 680, scrollMarginTop: anchorOffset }}>
           <HousingImageHeading src="/what-we-think-heading.png" alt="What we think" isMobile={isMobile} />
           {p.principles.map((principle, i) => (
             <HousingPrinciple key={i} principle={principle} isMobile={isMobile} number={i + 1} plain />
@@ -2016,7 +2016,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
 
       <div style={{ paddingLeft: left, paddingRight: right, paddingTop: isMobile ? 32 : 40 }}>
         {/* We'll fight to */}
-        <div id="what-well-fight-for" style={{ maxWidth: 760, scrollMarginTop: anchorOffset }}>
+        <div id="what-well-fight-for" style={{ maxWidth: 680, scrollMarginTop: anchorOffset }}>
           <HousingImageHeading src="/well-fight-to-heading.png" alt="We'll fight to" isMobile={isMobile} />
           {p.areas.map((area, i) => (
             <HousingArea key={i} area={area} index={i} isMobile={isMobile} numbered plain />
