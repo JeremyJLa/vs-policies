@@ -2090,7 +2090,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
                 />
               )}
             </div>
-            <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 276, top: (isMobile ? 127 : 178) * (isHousing ? 0.5 : 1), ...(isMobile && { padding: '4px 7px 16px' }) }}>
+            <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 276, top: isHousing ? heroHeight - leftDrop : (isMobile ? 127 : 178), ...(isMobile && { padding: '4px 7px 16px' }) }}>
               <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36 }}>{isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : "What we'll fight for"}</h1>
             </div>
           </div>
