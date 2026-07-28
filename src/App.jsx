@@ -1766,50 +1766,80 @@ function PolicyAccordionChevron({ policies, isMobile }) {
 
 // One principle from "What we think" — plain text with a small accent rule,
 // deliberately not styled like a clickable card.
-function HousingPrinciple({ principle, isMobile, number }) {
+// Numbers are always Work Sans SemiBold/orange, matching the Figma
+// reference, regardless of what font the surrounding text uses.
+function HousingNumber({ number }) {
+  if (number == null) return null
   return (
-    <div style={{ borderLeft: '3px solid #FF4B33', paddingLeft: isMobile ? 14 : 18, marginBottom: isMobile ? 22 : 26 }}>
+    <span style={{ color: '#FF4B33', fontFamily: "'Work Sans', system-ui, sans-serif", fontWeight: 600 }}>{number}. </span>
+  )
+}
+
+function HousingPrinciple({ principle, isMobile, number, plain }) {
+  // The Figma reference has no per-principle heading, just a numbered
+  // sentence — the scannable heading is only part of the original (non-
+  // Figma) Housing policy page spec, so `plain` (V2) omits it.
+  const content = plain ? (
+    <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, margin: 0 }}><HousingNumber number={number} />{principle.text}</p>
+  ) : (
+    <>
       <h4 style={{
         fontSize: isMobile ? 16 : 18, fontWeight: 800, margin: '0 0 6px',
         fontFamily: "'Work Sans', system-ui, sans-serif", color: '#000',
-      }}>{number != null && <span style={{ color: '#FF4B33' }}>{number}. </span>}{principle.heading}</h4>
-      <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, margin: 0 }}>{principle.text}</p>
+      }}>{principle.heading}</h4>
+      <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, margin: 0 }}><HousingNumber number={number} />{principle.text}</p>
+    </>
+  )
+  if (plain) {
+    return <div style={{ marginBottom: isMobile ? 14 : 18 }}>{content}</div>
+  }
+  return (
+    <div style={{ borderLeft: '3px solid #FF4B33', paddingLeft: isMobile ? 14 : 18, marginBottom: isMobile ? 22 : 26 }}>
+      {content}
     </div>
   )
 }
 
 // One entry within a "What we'll fight for" policy area: either a flat
 // bullet, or a numbered-group subheading with its own nested bullet list.
-function HousingAreaItem({ item, isMobile, number }) {
-  const numberPrefix = number != null && <span style={{ color: '#FF4B33' }}>{number}. </span>
+// `plain` matches the Figma reference exactly: top-level item text/headings
+// are Open Sans Semibold (not Work Sans Bold) — only the nested sub-bullets
+// are regular weight.
+function HousingAreaItem({ item, isMobile, number, plain }) {
+  const numberPrefix = <HousingNumber number={number} />
+  const topLevelStyle = plain
+    ? { fontSize: isMobile ? 14 : 16, fontWeight: 600, margin: '0 0 10px', fontFamily: "'Open Sans', system-ui, sans-serif", color: '#000' }
+    : { fontSize: isMobile ? 14.5 : 16, fontWeight: 700, margin: '0 0 10px', fontFamily: "'Work Sans', system-ui, sans-serif", color: '#000' }
   if (item.heading) {
     return (
       <div>
-        <h4 style={{
-          fontSize: isMobile ? 14.5 : 16, fontWeight: 700, margin: '0 0 10px',
-          fontFamily: "'Work Sans', system-ui, sans-serif", color: '#000',
-        }}>{numberPrefix}{item.heading}</h4>
+        <h4 style={topLevelStyle}>{numberPrefix}{item.heading}</h4>
         <ul style={{ margin: 0, paddingLeft: 20 }}>
           {item.items.map((t, i) => (
-            <li key={i} style={{ ...S.bulletItem, fontSize: isMobile ? 14 : 15, lineHeight: isMobile ? '20px' : '22px' }}>{t}</li>
+            <li key={i} style={{ ...S.bulletItem, fontSize: isMobile ? 14 : (plain ? 16 : 15), lineHeight: isMobile ? '20px' : '22px' }}>{t}</li>
           ))}
         </ul>
       </div>
     )
   }
-  return <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, margin: 0 }}>{numberPrefix}{item.text}</p>
+  return <p style={{ ...S.para, ...(plain && { fontWeight: 600 }), fontSize: isMobile ? 14 : (plain ? 16 : 15), margin: 0 }}>{numberPrefix}{item.text}</p>
 }
 
 // One large soft panel for a main policy area (Renters, Home owners, etc.),
 // with divider lines separating each numbered policy group inside it.
-function HousingArea({ area, index, isMobile, numbered }) {
+// `plain` drops the tile background/padding and switches to the bold-text
+// (no box) heading treatment used in the Figma reference for "We'll fight to".
+function HousingArea({ area, index, isMobile, numbered, plain }) {
   return (
-    <div style={{
+    <div style={plain ? { marginBottom: isMobile ? 32 : 40 } : {
       background: TILE_COLOURS[index % 2], borderRadius: 6,
       padding: isMobile ? '22px 18px' : '36px 44px',
       marginBottom: 20,
     }}>
-      <h3 style={{
+      <h3 style={plain ? {
+        fontSize: isMobile ? 16 : 18, fontWeight: 800, margin: '0 0 14px',
+        fontFamily: "'Open Sans', system-ui, sans-serif", color: '#000',
+      } : {
         fontSize: isMobile ? 19 : 24, fontWeight: 800, margin: '0 0 16px',
         fontFamily: "'Work Sans', system-ui, sans-serif", textTransform: 'uppercase',
         letterSpacing: '0.01em', color: '#000',
@@ -1820,9 +1850,10 @@ function HousingArea({ area, index, isMobile, numbered }) {
           marginTop: i === 0 ? 0 : (isMobile ? 16 : 20),
           borderTop: i === 0 ? 'none' : '1px solid rgba(0,0,0,0.12)',
         }}>
-          <HousingAreaItem item={item} isMobile={isMobile} number={numbered ? i + 1 : null} />
+          <HousingAreaItem item={item} isMobile={isMobile} number={numbered ? i + 1 : null} plain={plain} />
         </div>
       ))}
+      {plain && <div style={{ marginTop: isMobile ? 16 : 20, borderTop: '1px solid rgba(0,0,0,0.15)' }} />}
     </div>
   )
 }
@@ -1926,10 +1957,11 @@ function HousingImageHeading({ src, alt, isMobile }) {
 function HousingPolicyPageV2({ isMobile, isTablet }) {
   const { left, right } = hPad(isMobile, isTablet)
   const p = HOUSING_POLICY_V2
-  const anchorOffset = isMobile ? 170 : 140
+  // No sticky jump bar in V2 — "Jump to" lives inside the summary box
+  // itself, matching the Figma frame, so anchors only need to clear nav.
+  const anchorOffset = isMobile ? 130 : 100
   return (
     <div style={{ paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
-      <HousingJumpBar isMobile={isMobile} isTablet={isTablet} label="Jump to:" plainLabel />
       <div style={{ paddingLeft: left, paddingRight: right, paddingTop: 15 }}>
         {/* Introductory summary panel — bordered, no fill, matching the
             Figma frame (title isn't repeated here; the hero above covers it) */}
@@ -1938,46 +1970,56 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
           padding: isMobile ? '20px 18px' : '28px 36px',
           marginBottom: isMobile ? 28 : 36, maxWidth: 760,
         }}>
-          <p style={{ ...S.para, color: '#FF4B33', fontWeight: 600, fontSize: isMobile ? 15 : 17, marginBottom: 14 }}>{p.summary}</p>
+          <p style={{ ...S.para, color: '#FF4B33', fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 14 }}>{p.summary}</p>
           <div style={{
-            fontSize: isMobile ? 13 : 14, fontWeight: 700, color: '#000',
-            fontFamily: "'Open Sans', system-ui, sans-serif",
+            fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#7d7d7d',
+            fontFamily: "'Open Sans', system-ui, sans-serif", padding: '10px 0',
           }}>{p.readTime}</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 10 : 20 }}>
+            <span style={{
+              fontSize: isMobile ? 13 : 14, fontWeight: 600, color: '#7d7d7d',
+              fontFamily: "'Open Sans', system-ui, sans-serif",
+            }}>Jump to:</span>
+            <a href="#what-we-think" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 600, color: '#000', textDecoration: 'underline', textUnderlineOffset: '3px' }}>What we think</a>
+            <a href="#what-well-fight-for" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 600, color: '#000', textDecoration: 'underline', textUnderlineOffset: '3px' }}>What we'll fight for</a>
+          </div>
         </div>
       </div>
 
-      {/* Soft diagonal wash behind Preamble + What we think, matching the
-          Figma frame's background panel (full-bleed, angled bottom edge). */}
+      <div style={{ paddingLeft: left, paddingRight: right, paddingTop: isMobile ? 32 : 40 }}>
+        {/* Introductory housing-crisis text */}
+        <div style={{ maxWidth: 760 }}>
+          <HousingImageHeading src="/preamble-heading.png" alt="Preamble" isMobile={isMobile} />
+          {p.preamble.map((para, i) => (
+            <p key={i} style={{ ...S.para, fontSize: isMobile ? 14 : 15 }}>{para}</p>
+          ))}
+        </div>
+      </div>
+
+      {/* Soft diagonal wash behind What we think only, matching the Figma
+          frame's background panel — full-bleed, angled bottom edge. */}
       <div style={{
-        background: '#FAF9FB', borderRadius: '8px 8px 0 0',
+        background: '#F8F4FA', borderRadius: '8px 8px 0 0',
         clipPath: `polygon(0 0, 100% 0, 100% calc(100% - ${isMobile ? 40 : 60}px), 0 100%)`,
         paddingTop: isMobile ? 24 : 32,
         paddingBottom: (isMobile ? 24 : 32) + (isMobile ? 40 : 60),
         paddingLeft: left, paddingRight: right,
       }}>
-        {/* Introductory housing-crisis text */}
-        <div style={{ maxWidth: 760, marginBottom: isMobile ? 32 : 40 }}>
-          <HousingImageHeading src="/preamble-heading.png" alt="Preamble" isMobile={isMobile} />
-          {p.preamble.map((para, i) => (
-            <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{para}</p>
-          ))}
-        </div>
-
         {/* What we think */}
         <div id="what-we-think" style={{ maxWidth: 760, scrollMarginTop: anchorOffset }}>
           <HousingImageHeading src="/what-we-think-heading.png" alt="What we think" isMobile={isMobile} />
           {p.principles.map((principle, i) => (
-            <HousingPrinciple key={i} principle={principle} isMobile={isMobile} number={i + 1} />
+            <HousingPrinciple key={i} principle={principle} isMobile={isMobile} number={i + 1} plain />
           ))}
         </div>
       </div>
 
       <div style={{ paddingLeft: left, paddingRight: right, paddingTop: isMobile ? 32 : 40 }}>
         {/* We'll fight to */}
-        <div id="what-well-fight-for" style={{ scrollMarginTop: anchorOffset }}>
+        <div id="what-well-fight-for" style={{ maxWidth: 760, scrollMarginTop: anchorOffset }}>
           <HousingImageHeading src="/well-fight-to-heading.png" alt="We'll fight to" isMobile={isMobile} />
           {p.areas.map((area, i) => (
-            <HousingArea key={i} area={area} index={i} isMobile={isMobile} numbered />
+            <HousingArea key={i} area={area} index={i} isMobile={isMobile} numbered plain />
           ))}
         </div>
       </div>
