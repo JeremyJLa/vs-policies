@@ -2046,7 +2046,7 @@ function HousingSideNav({ areas, locked, lockedTop, opacity = 1 }) {
       // in the white area above Preamble, not inside its wash panel.
       top: locked ? lockedTop : 15,
       left: 40, width: 200, zIndex: 39,
-      background: '#F1ECF2', borderRadius: 8,
+      background: '#FAF9FB', borderRadius: 8,
       padding: '18px 20px',
       opacity, pointerEvents: opacity < 0.05 ? 'none' : 'auto',
     }}>
@@ -2101,7 +2101,10 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         if (el) setJumpLocked(el.getBoundingClientRect().top <= navClearance)
         const anchorEl = sideNavAnchorRef.current
         if (anchorEl) setSideNavLocked(anchorEl.getBoundingClientRect().top <= sideNavLockTop)
-        setSideNavOpacity(Math.min(1, window.scrollY / 300))
+        // Smoothstep easing over a longer scroll distance for a slower,
+        // more natural ease-in rather than a linear ramp.
+        const t = Math.min(1, Math.max(0, window.scrollY / 600))
+        setSideNavOpacity(t * t * (3 - 2 * t))
       })
     }
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -2138,7 +2141,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
             Jump-to. */}
         {!isMobile && !isTablet && <div ref={sideNavAnchorRef} style={{ position: 'absolute', top: 0, left: 0, width: 1, height: 1 }} />}
         {!isMobile && !isTablet && (
-          <HousingSideNav areas={p.areas} locked={sideNavLocked} lockedTop={sideNavLockTop} opacity={sideNavLocked ? 1 : sideNavOpacity} />
+          <HousingSideNav areas={p.areas} locked={sideNavLocked} lockedTop={sideNavLockTop} opacity={sideNavOpacity} />
         )}
 
         <div style={{ paddingLeft: left, paddingRight: right, paddingTop: 15 }}>
