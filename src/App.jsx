@@ -1374,6 +1374,71 @@ function PolicyRowAccordion({ rows, isMobile, isTablet }) {
   )
 }
 
+// "Accordion 2" card variation — copies the visual style of the real
+// "Our key policies" accordion (AccordionPolicies, below): plain white
+// rows separated by thin dividers, icon + uppercase title, a +/− symbol
+// instead of a chevron, and red on hover/open — applied to the same
+// placeholder row data as "Accordion" above.
+function PolicyRowAccordion2({ rows, isMobile, isTablet }) {
+  const [openIndex, setOpenIndex] = useState(null)
+  const [hoveredIndex, setHoveredIndex] = useState(null)
+  const { left, right } = hPad(isMobile, isTablet)
+  const rowLeftPad = isMobile ? left : 24
+  const rowRightPad = isMobile ? right : 24
+  return (
+    <div style={{ marginLeft: isMobile ? 0 : left, width: isMobile ? '100%' : 660, maxWidth: isMobile ? '100%' : `calc(100% - ${left}px)` }}>
+      {rows.map((row, i) => {
+        const isOpen = openIndex === i
+        const isHovered = hoveredIndex === i
+        const isRed = isOpen || isHovered
+        const { Icon } = row
+        return (
+          <div key={i} style={{ borderBottom: '1px solid #C4C4C4', ...(i === 0 ? { borderTop: '1px solid #C4C4C4' } : {}) }}>
+            <button
+              onClick={() => setOpenIndex(isOpen ? null : i)}
+              onMouseEnter={() => setHoveredIndex(i)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center',
+                justifyContent: 'space-between', gap: 16,
+                background: 'none', border: 'none', cursor: 'pointer',
+                padding: `${isMobile ? 16 : 20}px ${rowRightPad}px ${isMobile ? 16 : 20}px ${rowLeftPad}px`,
+                textAlign: 'left',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 14 : 20 }}>
+                <Icon height={isMobile ? 22 : 28} color={isRed ? '#FF4B33' : '#000'} />
+                <h3 style={{
+                  margin: 0, fontSize: isMobile ? 17 : 22, fontWeight: 800, lineHeight: 1,
+                  fontFamily: "'Work Sans', system-ui, sans-serif",
+                  textTransform: 'uppercase', letterSpacing: '0.02em',
+                  color: isRed ? '#FF4B33' : '#000',
+                  transition: 'color 0.15s ease',
+                }}>{row.title}</h3>
+              </div>
+              <span style={{
+                fontSize: 26, lineHeight: 1, fontWeight: 300, flexShrink: 0,
+                color: isRed ? '#FF4B33' : '#000',
+                transition: 'color 0.15s ease',
+              }}>
+                {isOpen ? '−' : '+'}
+              </span>
+            </button>
+            <div style={{ maxHeight: isOpen ? 600 : 0, overflow: 'hidden', transition: 'max-height 0.4s ease' }}>
+              <div style={{ padding: `0 ${rowRightPad}px ${isMobile ? 20 : 24}px ${rowLeftPad + (isMobile ? 36 : 48)}px` }}>
+                <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 16 }}>{ACCORDION_ROW_BODY}</p>
+                <a href="#" style={{ display: 'inline-block', fontSize: 14, fontWeight: 700, fontFamily: "'Open Sans', system-ui, sans-serif", color: '#000', textDecoration: 'underline', letterSpacing: '0.02em' }}>
+                  See full policy ›
+                </a>
+              </div>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 function AccordionPolicies() {
   const [openIndex, setOpenIndex] = useState(null)
   const [hoveredIndex, setHoveredIndex] = useState(null)
@@ -1836,12 +1901,19 @@ function HousingAreaItem({ item, isMobile, number, plain }) {
 // with divider lines separating each numbered policy group inside it.
 // `plain` drops the tile background/padding and switches to the bold-text
 // (no box) heading treatment used in the Figma reference for "We'll fight to".
-function HousingArea({ area, index, isMobile, numbered, plain }) {
+function housingAreaSlug(title) {
+  return 'area-' + title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+}
+
+function HousingArea({ area, index, isMobile, numbered, plain, anchorOffset }) {
   return (
-    <div style={plain ? { marginBottom: isMobile ? 32 : 40 } : {
-      background: TILE_COLOURS[index % 2], borderRadius: 6,
-      padding: isMobile ? '22px 18px' : '36px 44px',
-      marginBottom: 20,
+    <div id={housingAreaSlug(area.title)} style={{
+      ...(anchorOffset != null && { scrollMarginTop: anchorOffset }),
+      ...(plain ? { marginBottom: isMobile ? 32 : 40 } : {
+        background: TILE_COLOURS[index % 2], borderRadius: 6,
+        padding: isMobile ? '22px 18px' : '36px 44px',
+        marginBottom: 20,
+      }),
     }}>
       <h3 style={plain ? {
         fontSize: isMobile ? 16 : 18, fontWeight: 800, margin: '0 0 14px',
@@ -1961,6 +2033,31 @@ function HousingImageHeading({ src, alt, isMobile }) {
   return <img src={src} alt={alt} style={{ display: 'block', height: isMobile ? 38 : 46, width: 'auto', marginBottom: isMobile ? 14 : 18 }} />
 }
 
+// Quick-nav to each "We'll fight to" area (Renters, Home owners, etc.),
+// floating in the left margin once the Jump-to bar has locked in — desktop
+// only, since there's no room for it in the margin on tablet/mobile.
+function HousingSideNav({ areas, top }) {
+  return (
+    <div style={{
+      position: 'fixed', top, left: 40, width: 200, zIndex: 39,
+    }}>
+      <div style={{
+        fontSize: 11, fontWeight: 700, color: '#999', letterSpacing: '0.08em',
+        textTransform: 'uppercase', fontFamily: "'Open Sans', system-ui, sans-serif",
+        marginBottom: 10,
+      }}>On this page</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {areas.map((area, i) => (
+          <a key={i} href={`#${housingAreaSlug(area.title)}`} style={{
+            fontSize: 14, fontWeight: 600, color: '#000',
+            fontFamily: "'Open Sans', system-ui, sans-serif", textDecoration: 'none',
+          }}>{area.title}</a>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function HousingPolicyPageV2({ isMobile, isTablet }) {
   const { left, right } = hPad(isMobile, isTablet)
   const p = HOUSING_POLICY_V2
@@ -2075,10 +2172,14 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         <div id="what-well-fight-for" style={{ maxWidth: 680, scrollMarginTop: anchorOffset }}>
           <HousingImageHeading src="/well-fight-to-heading.png" alt="We'll fight to" isMobile={isMobile} />
           {p.areas.map((area, i) => (
-            <HousingArea key={i} area={area} index={i} isMobile={isMobile} numbered plain />
+            <HousingArea key={i} area={area} index={i} isMobile={isMobile} numbered plain anchorOffset={anchorOffset} />
           ))}
         </div>
       </div>
+
+      {jumpLocked && !isMobile && !isTablet && (
+        <HousingSideNav areas={p.areas} top={navClearance + 64} />
+      )}
     </div>
   )
 }
@@ -2148,6 +2249,7 @@ function ControlsBar({ showVariations, tab, plainView, version, cardView, policy
               <button style={linkStyle(cardView === 'expanded')} onClick={() => setCardView('expanded')}>Details</button>
               <button style={linkStyle(cardView === 'reddetails')} onClick={() => setCardView('reddetails')}>Red details hover</button>
               <button style={linkStyle(cardView === 'rowaccordion')} onClick={() => setCardView('rowaccordion')}>Accordion</button>
+              <button style={linkStyle(cardView === 'rowaccordion2')} onClick={() => setCardView('rowaccordion2')}>Accordion 2</button>
             </div>
           </div>
         ))}
@@ -2188,6 +2290,7 @@ function ControlsBar({ showVariations, tab, plainView, version, cardView, policy
                   { label: 'Details', view: 'expanded' },
                   { label: 'Red details hover', view: 'reddetails' },
                   { label: 'Accordion', view: 'rowaccordion' },
+                  { label: 'Accordion 2', view: 'rowaccordion2' },
                 ].map(({ label, view }) => {
                   const active = policyLayout === 'grid' && cardView === view
                   return (
@@ -2360,6 +2463,8 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
             </div>
             {cardView === 'rowaccordion' ? (
               <PolicyRowAccordion rows={ACCORDION_ROWS} isMobile={isMobile} isTablet={isTablet} />
+            ) : cardView === 'rowaccordion2' ? (
+              <PolicyRowAccordion2 rows={ACCORDION_ROWS} isMobile={isMobile} isTablet={isTablet} />
             ) : (
             <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right }}>
               <div style={{ ...S.grid, gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 300px)', gap: isMobile ? 12 : 24 }}>
