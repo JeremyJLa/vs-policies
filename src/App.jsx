@@ -291,7 +291,7 @@ const ACCORDION_ROWS = Array.from({ length: 22 }, (_, i) => ACCORDION_ROW_BASE[i
 // Exact content from docs/Housing policy.pages
 const HOUSING_POLICY = {
   "title": "Housing for all",
-  "summary": "Victorian Socialists' plan to fix the housing crisis: rent control and stronger renters' rights, a crackdown on property speculation and hoarding, and a massive expansion of public, not-for-profit housing.",
+  "summary": "Victorian Socialists' plan to fix the housing crisis: rent control and stronger renters' rights, a crackdown on property speculation and hoarding, and a massive expansion of public housing.",
   "readTime": "8 min read",
   "preamble": [
     "The housing crisis is getting worse and almost everyone is affected. More than 65,500 Victorians are on the social housing waiting list, with over 37,000 of those classified as priority applicants in urgent need. The last Census counted 30,660 Victorians without a home and homelessness services assisted 105,000 people in 2024-25. Aboriginal Victorians' rate of homelessness is rising nearly four times faster than the rest of the population.",
@@ -2155,7 +2155,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
           <div style={{
             ...(SUMMARY_BOX_BORDER_ENABLED && { border: '1px solid #cecece' }), borderRadius: 8,
             padding: '20px 20px 20px 0',
-            marginBottom: isMobile ? 0 : 8, maxWidth: 680,
+            marginBottom: isMobile ? 32 : 40, maxWidth: 680,
           }}>
             <p style={{ ...S.para, color: '#FF4B33', fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 24 }}>{p.summary}</p>
             <div style={{
