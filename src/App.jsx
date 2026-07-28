@@ -2019,7 +2019,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
             fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#7d7d7d',
             fontFamily: "'Open Sans', system-ui, sans-serif", padding: '10px 0', marginBottom: 10,
           }}>{p.readTime}</div>
-          <div ref={jumpRef} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 10 : 20 }}>
+          <div ref={jumpRef} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 10 : 20, padding: '20px 0' }}>
             {jumpLinks}
           </div>
         </div>
@@ -2035,7 +2035,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         }}>
           <div style={{
             display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 10 : 20,
-            padding: `${isMobile ? 12 : 14}px ${right}px ${isMobile ? 12 : 14}px ${left}px`,
+            padding: `20px ${right}px 20px ${left}px`,
           }}>
             {jumpLinks}
           </div>
