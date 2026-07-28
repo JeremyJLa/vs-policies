@@ -2544,6 +2544,18 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
                 />
               )}
             </div>
+            {isHousing && (
+              <svg
+                width={isMobile ? 12 : 16} height={isMobile ? 20 : 26} viewBox="0 0 14 24" fill="none"
+                style={{
+                  position: 'absolute',
+                  left: (isMobile ? 20 : isTablet ? 40 : 276) - (isMobile ? 20 : 28),
+                  top: (heroHeight - leftDrop) + (isMobile ? 14 : 20),
+                }}
+              >
+                <path d="M11 2L2 12L11 22" stroke="#000" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
             <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 276, top: isHousing ? heroHeight - leftDrop : (isMobile ? 127 : 178), ...(isMobile && { padding: '4px 7px 16px' }) }}>
               <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36, whiteSpace: 'pre-line' }}>{isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"}</h1>
             </div>
