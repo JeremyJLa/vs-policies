@@ -1383,7 +1383,9 @@ function PolicyRowAccordion2({ rows, isMobile, isTablet }) {
   const [openIndex, setOpenIndex] = useState(null)
   const [hoveredIndex, setHoveredIndex] = useState(null)
   const { left, right } = hPad(isMobile, isTablet)
-  const rowLeftPad = isMobile ? left : 24
+  // Left edge stays flush with the intro text column above (no extra
+  // inset) — only the right side keeps padding for the +/- symbol.
+  const rowLeftPad = isMobile ? left : 0
   const rowRightPad = isMobile ? right : 24
   return (
     <div style={{ marginLeft: isMobile ? 0 : left, width: isMobile ? '100%' : 660, maxWidth: isMobile ? '100%' : `calc(100% - ${left}px)` }}>
@@ -2036,10 +2038,14 @@ function HousingImageHeading({ src, alt, isMobile }) {
 // Quick-nav to each "We'll fight to" area (Renters, Home owners, etc.),
 // floating in the left margin once the Jump-to bar has locked in — desktop
 // only, since there's no room for it in the margin on tablet/mobile.
-function HousingSideNav({ areas, top }) {
+function HousingSideNav({ areas, locked, lockedTop }) {
   return (
     <div style={{
-      position: 'fixed', top, left: 40, width: 200, zIndex: 39,
+      position: locked ? 'fixed' : 'absolute',
+      top: locked ? lockedTop : 24,
+      left: 40, width: 200, zIndex: 39,
+      background: '#F1ECF2', borderRadius: 8,
+      padding: '18px 20px',
     }}>
       <div style={{
         fontSize: 11, fontWeight: 700, color: '#999', letterSpacing: '0.08em',
@@ -2067,10 +2073,17 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
   const anchorOffset = navClearance + 40
   const jumpRef = useRef(null)
   const [jumpLocked, setJumpLocked] = useState(false)
+  // Side nav's own trigger point: just under where the Jump-to bar sits
+  // once it's locked in (nav height + jump bar height).
+  const sideNavLockTop = navClearance + 64
+  const sideNavAnchorRef = useRef(null)
+  const [sideNavLocked, setSideNavLocked] = useState(false)
 
   // The in-box "Jump to" row stays exactly where it is (inside the summary
   // box) until scrolling carries it up to the black nav bar — only then
-  // does it switch to a full-width bar locked in flush beneath nav.
+  // does it switch to a full-width bar locked in flush beneath nav. The
+  // side nav follows the same pattern, using an invisible anchor placed
+  // next to Preamble to track when it should lock in underneath Jump-to.
   useEffect(() => {
     let raf = null
     const onScroll = () => {
@@ -2078,8 +2091,9 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
       raf = requestAnimationFrame(() => {
         raf = null
         const el = jumpRef.current
-        if (!el) return
-        setJumpLocked(el.getBoundingClientRect().top <= navClearance)
+        if (el) setJumpLocked(el.getBoundingClientRect().top <= navClearance)
+        const anchorEl = sideNavAnchorRef.current
+        if (anchorEl) setSideNavLocked(anchorEl.getBoundingClientRect().top <= sideNavLockTop)
       })
     }
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -2088,7 +2102,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
       window.removeEventListener('scroll', onScroll)
       if (raf) cancelAnimationFrame(raf)
     }
-  }, [navClearance])
+  }, [navClearance, sideNavLockTop])
 
   const jumpLinks = (
     <>
@@ -2108,7 +2122,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
             Figma frame (title isn't repeated here; the hero above covers it) */}
         <div style={{
           border: '1px solid #cecece', borderRadius: 8,
-          padding: isMobile ? '20px 18px' : '28px 36px',
+          padding: '28px',
           marginBottom: isMobile ? 28 : 36, maxWidth: 680,
         }}>
           <p style={{ ...S.para, color: '#FF4B33', fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 14 }}>{p.summary}</p>
@@ -2139,21 +2153,35 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         </div>
       )}
 
-      {/* Soft diagonal wash behind Preamble only, matching the Figma frame's
-          background panel — full-bleed, angled bottom edge. */}
-      <div style={{
-        background: '#F8F4FA', borderRadius: '8px 8px 0 0',
-        clipPath: `polygon(0 0, 100% 0, 100% calc(100% - ${isMobile ? 40 : 60}px), 0 100%)`,
-        paddingTop: isMobile ? 24 : 32,
-        paddingBottom: (isMobile ? 24 : 32) + (isMobile ? 40 : 60),
-        paddingLeft: left, paddingRight: right,
-      }}>
-        {/* Introductory housing-crisis text */}
-        <div style={{ maxWidth: 680 }}>
-          <HousingImageHeading src="/preamble-heading.png" alt="Preamble" isMobile={isMobile} />
-          {p.preamble.map((para, i) => (
-            <p key={i} style={{ ...S.para, fontSize: isMobile ? 14 : 15 }}>{para}</p>
-          ))}
+      {/* Wrapper (no clip-path) so the side nav below — which needs
+          position:fixed once locked — isn't clipped by the wash panel's
+          own clip-path. An ancestor's clip-path (like transform) creates a
+          containing block for fixed descendants, clipping them to its own
+          box; keeping the nav outside that ancestor avoids it. */}
+      <div style={{ position: 'relative' }}>
+        {/* Invisible anchor tracking when the side nav (below) should
+            switch from resting next to Preamble to locked under Jump-to. */}
+        {!isMobile && !isTablet && <div ref={sideNavAnchorRef} style={{ position: 'absolute', top: 0, left: 0, width: 1, height: 1 }} />}
+        {!isMobile && !isTablet && (
+          <HousingSideNav areas={p.areas} locked={sideNavLocked} lockedTop={sideNavLockTop} />
+        )}
+
+        {/* Soft diagonal wash behind Preamble only, matching the Figma
+            frame's background panel — full-bleed, angled bottom edge. */}
+        <div style={{
+          background: '#F8F4FA', borderRadius: '8px 8px 0 0',
+          clipPath: `polygon(0 0, 100% 0, 100% calc(100% - ${isMobile ? 40 : 60}px), 0 100%)`,
+          paddingTop: isMobile ? 24 : 32,
+          paddingBottom: (isMobile ? 24 : 32) + (isMobile ? 40 : 60),
+          paddingLeft: left, paddingRight: right,
+        }}>
+          {/* Introductory housing-crisis text */}
+          <div style={{ maxWidth: 680 }}>
+            <HousingImageHeading src="/preamble-heading.png" alt="Preamble" isMobile={isMobile} />
+            {p.preamble.map((para, i) => (
+              <p key={i} style={{ ...S.para, fontSize: isMobile ? 14 : 15 }}>{para}</p>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -2176,10 +2204,6 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
           ))}
         </div>
       </div>
-
-      {jumpLocked && !isMobile && !isTablet && (
-        <HousingSideNav areas={p.areas} top={navClearance + 64} />
-      )}
     </div>
   )
 }
@@ -2420,16 +2444,6 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
             <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 276, top: isHousing ? heroHeight - leftDrop : (isMobile ? 127 : 178), ...(isMobile && { padding: '4px 7px 16px' }) }}>
               <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36 }}>{isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : "What we'll fight for"}</h1>
             </div>
-            {(!showVariations && version === 'B' && plainView === 'housing2') && (
-              <img
-                src="/red-house-icon.png"
-                alt=""
-                style={{
-                  position: 'absolute', right: isTablet ? 40 : 80, top: isMobile ? 14 : 20,
-                  height: isMobile ? 90 : 150, width: 'auto',
-                }}
-              />
-            )}
           </div>
         )
       })()}
@@ -2454,11 +2468,8 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
         ) : (!showVariations && version === 'B' && plainView === 'policies') ? (
           <div style={{ paddingTop: 15, paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
             <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right, marginBottom: 32 }}>
-              <p style={{ ...S.para, maxWidth: isMobile ? '100%' : 660, fontSize: isMobile ? 15 : 16 }}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate.
-              </p>
               <p style={{ ...S.para, maxWidth: isMobile ? '100%' : 660, fontSize: isMobile ? 15 : 16, marginBottom: 0 }}>
-                Velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate.
               </p>
             </div>
             {cardView === 'rowaccordion' ? (
