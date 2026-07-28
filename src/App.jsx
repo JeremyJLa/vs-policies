@@ -2065,6 +2065,9 @@ function HousingSideNav({ areas, locked, lockedTop, opacity = 1 }) {
 // scroll" interaction. Disabled per request, but the tracking logic below
 // is left intact so it can be switched back on later.
 const JUMP_LOCK_ENABLED = false
+// Toggle for the summary box's outline. Disabled per request, easy to
+// bring back later.
+const SUMMARY_BOX_BORDER_ENABLED = false
 
 function HousingPolicyPageV2({ isMobile, isTablet }) {
   const { left, right } = hPad(isMobile, isTablet)
@@ -2150,7 +2153,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
           {/* Introductory summary panel — bordered, no fill, matching the
               Figma frame (title isn't repeated here; the hero above covers it) */}
           <div style={{
-            border: '1px solid #cecece', borderRadius: 8,
+            ...(SUMMARY_BOX_BORDER_ENABLED && { border: '1px solid #cecece' }), borderRadius: 8,
             padding: '20px',
             marginBottom: isMobile ? 28 : 36, maxWidth: 680,
           }}>
@@ -2159,7 +2162,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
               fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#7d7d7d',
               fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 24,
             }}>{p.readTime}</div>
-            <div ref={jumpRef} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 10 : 20, padding: '20px 0' }}>
+            <div ref={jumpRef} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 10 : 20 }}>
               {jumpLinks}
             </div>
           </div>
@@ -2185,7 +2188,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         {/* Soft diagonal wash behind Preamble only, matching the Figma
             frame's background panel — full-bleed, angled bottom edge. */}
         <div style={{
-          background: '#F8F4FA', borderRadius: '8px 8px 0 0',
+          background: '#FAF9FB', borderRadius: '8px 8px 0 0',
           clipPath: `polygon(0 0, 100% 0, 100% calc(100% - ${isMobile ? 40 : 60}px), 0 100%)`,
           paddingTop: isMobile ? 24 : 32,
           paddingBottom: (isMobile ? 24 : 32) + (isMobile ? 40 : 60),
