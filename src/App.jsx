@@ -1810,7 +1810,9 @@ function HousingJumpBar({ isMobile, isTablet }) {
   const { left, right } = hPad(isMobile, isTablet)
   return (
     <div style={{
-      position: 'sticky', top: isMobile ? 30 : 0, zIndex: 40,
+      // Locks in flush against the bottom of the sticky black nav bar
+      // (82px tall, plus the 30px mobile status strip above it).
+      position: 'sticky', top: isMobile ? 30 + 82 : 82, zIndex: 40,
       background: '#F1ECF2', borderBottom: '1px solid rgba(0,0,0,0.1)',
     }}>
       <div style={{
@@ -1833,7 +1835,7 @@ function HousingPolicyPage({ isMobile, isTablet }) {
   const p = HOUSING_POLICY
   // Anchor targets need extra top clearance so the sticky Jump-to bar
   // (and, on mobile, the black status strip above it) doesn't cover them.
-  const anchorOffset = isMobile ? 100 : 70
+  const anchorOffset = isMobile ? 170 : 140
   return (
     <div style={{ paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
       <HousingJumpBar isMobile={isMobile} isTablet={isTablet} />
@@ -2078,7 +2080,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
         }} />
       )}
 
-      <nav style={{ ...S.nav, padding: isMobile ? '0 16px' : '0 24px' }} />
+      <nav style={{ ...S.nav, padding: isMobile ? '0 16px' : '0 24px', position: 'sticky', top: isMobile ? 30 : 0, zIndex: 45 }} />
 
       {(() => {
         const isHousing = !showVariations && version === 'B' && plainView === 'housing'
@@ -2119,11 +2121,11 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
 
 
       {!combined && (
-        <div ref={tabBarRef} style={{ ...S.tabBar, padding: isMobile ? '0 16px' : isTablet ? '0 40px' : '0 300px', gap: isMobile ? 16 : 24, ...(isMobile && { position: 'sticky', top: 30, zIndex: 40, boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }) }}>
-          <button style={{ ...S.tabBtn(tab === 'platform'), fontSize: isMobile ? 15 : 18 }} onClick={() => { setTab('platform'); isMobile && tabBarRef.current && window.scrollTo(0, tabBarRef.current.offsetTop - 30) }}>
+        <div ref={tabBarRef} style={{ ...S.tabBar, padding: isMobile ? '0 16px' : isTablet ? '0 40px' : '0 300px', gap: isMobile ? 16 : 24, ...(isMobile && { position: 'sticky', top: 30 + 82, zIndex: 40, boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }) }}>
+          <button style={{ ...S.tabBtn(tab === 'platform'), fontSize: isMobile ? 15 : 18 }} onClick={() => { setTab('platform'); isMobile && tabBarRef.current && window.scrollTo(0, tabBarRef.current.offsetTop - (30 + 82)) }}>
             Our vision
           </button>
-          <button style={{ ...S.tabBtn(tab === 'policies'), fontSize: isMobile ? 15 : 18 }} onClick={() => { setTab('policies'); isMobile && tabBarRef.current && window.scrollTo(0, tabBarRef.current.offsetTop - 30) }}>
+          <button style={{ ...S.tabBtn(tab === 'policies'), fontSize: isMobile ? 15 : 18 }} onClick={() => { setTab('policies'); isMobile && tabBarRef.current && window.scrollTo(0, tabBarRef.current.offsetTop - (30 + 82)) }}>
             Our policies
           </button>
         </div>
