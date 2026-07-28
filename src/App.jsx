@@ -2060,31 +2060,42 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
 
       <nav style={{ ...S.nav, padding: isMobile ? '0 16px' : '0 24px' }} />
 
-      <div style={{ ...S.heroSection, height: isMobile ? 190 : 280 }}>
-        {/* Fixed frame: the diagonal clip shape never changes size. */}
-        <div
-          style={{
-            position: 'absolute', inset: 0, overflow: 'hidden',
-            clipPath: isMobile ? 'polygon(0 0, 100% 0, 100% 90%, 0 70%)' : 'polygon(0 0, 100% 0, 100% 86%, 0 63%)',
-          }}
-        >
-          {/* Only this image layer zooms, clipped to the fixed frame above. */}
-          {(!showVariations && version === 'B' && plainView === 'housing') ? (
-            <div style={{ position: 'absolute', inset: 0, background: '#E9E4EB' }} />
-          ) : (
+      {(() => {
+        const isHousing = !showVariations && version === 'B' && plainView === 'housing'
+        const fullHeight = isMobile ? 190 : 280
+        const heroHeight = isHousing ? fullHeight / 2 : fullHeight
+        // Fixed pixel drops (not percentages) so the diagonal's angle stays
+        // identical even when the container's height is halved for Housing.
+        const rightDrop = isMobile ? 19 : 39.2
+        const leftDrop = isMobile ? 57 : 103.6
+        return (
+          <div style={{ ...S.heroSection, height: heroHeight }}>
+            {/* Fixed frame: the diagonal clip shape never changes size. */}
             <div
-              ref={heroImgRef}
               style={{
-                ...S.heroPurple,
-                transform: 'scale(1)', transition: 'transform 0.1s linear', willChange: 'transform',
+                position: 'absolute', inset: 0, overflow: 'hidden',
+                clipPath: `polygon(0 0, 100% 0, 100% calc(100% - ${rightDrop}px), 0 calc(100% - ${leftDrop}px))`,
               }}
-            />
-          )}
-        </div>
-        <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 276, top: isMobile ? 127 : 178, ...(isMobile && { padding: '4px 7px 16px' }) }}>
-          <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36 }}>{(!showVariations && version === 'B' && plainView === 'housing') ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : "What we'll fight for"}</h1>
-        </div>
-      </div>
+            >
+              {/* Only this image layer zooms, clipped to the fixed frame above. */}
+              {isHousing ? (
+                <div style={{ position: 'absolute', inset: 0, background: '#E9E4EB' }} />
+              ) : (
+                <div
+                  ref={heroImgRef}
+                  style={{
+                    ...S.heroPurple,
+                    transform: 'scale(1)', transition: 'transform 0.1s linear', willChange: 'transform',
+                  }}
+                />
+              )}
+            </div>
+            <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 276, top: (isMobile ? 127 : 178) * (isHousing ? 0.5 : 1), ...(isMobile && { padding: '4px 7px 16px' }) }}>
+              <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36 }}>{isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : "What we'll fight for"}</h1>
+            </div>
+          </div>
+        )
+      })()}
 
 
       {!combined && (
