@@ -477,7 +477,7 @@ const S = {
     paddingBottom: 20,
     paddingLeft: 20,
     cursor: 'pointer',
-    height: 262,
+    height: 220,
     display: 'flex',
     flexDirection: 'column',
   },
