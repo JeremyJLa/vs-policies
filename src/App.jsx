@@ -1986,7 +1986,15 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         </div>
       </div>
 
-      <div style={{ paddingLeft: left, paddingRight: right, paddingTop: isMobile ? 32 : 40 }}>
+      {/* Soft diagonal wash behind Preamble only, matching the Figma frame's
+          background panel — full-bleed, angled bottom edge. */}
+      <div style={{
+        background: '#F8F4FA', borderRadius: '8px 8px 0 0',
+        clipPath: `polygon(0 0, 100% 0, 100% calc(100% - ${isMobile ? 40 : 60}px), 0 100%)`,
+        paddingTop: isMobile ? 24 : 32,
+        paddingBottom: (isMobile ? 24 : 32) + (isMobile ? 40 : 60),
+        paddingLeft: left, paddingRight: right,
+      }}>
         {/* Introductory housing-crisis text */}
         <div style={{ maxWidth: 680 }}>
           <HousingImageHeading src="/preamble-heading.png" alt="Preamble" isMobile={isMobile} />
@@ -1996,15 +2004,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         </div>
       </div>
 
-      {/* Soft diagonal wash behind What we think only, matching the Figma
-          frame's background panel — full-bleed, angled bottom edge. */}
-      <div style={{
-        background: '#F8F4FA', borderRadius: '8px 8px 0 0',
-        clipPath: `polygon(0 0, 100% 0, 100% calc(100% - ${isMobile ? 40 : 60}px), 0 100%)`,
-        paddingTop: isMobile ? 24 : 32,
-        paddingBottom: (isMobile ? 24 : 32) + (isMobile ? 40 : 60),
-        paddingLeft: left, paddingRight: right,
-      }}>
+      <div style={{ paddingLeft: left, paddingRight: right, paddingTop: isMobile ? 32 : 40 }}>
         {/* What we think */}
         <div id="what-we-think" style={{ maxWidth: 680, scrollMarginTop: anchorOffset }}>
           <HousingImageHeading src="/what-we-think-heading.png" alt="What we think" isMobile={isMobile} />
