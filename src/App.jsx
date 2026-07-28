@@ -2042,7 +2042,7 @@ function HousingSideNav({ areas, locked, lockedTop }) {
   return (
     <div style={{
       position: locked ? 'fixed' : 'absolute',
-      top: locked ? lockedTop : 24,
+      top: locked ? lockedTop : 30,
       left: 40, width: 200, zIndex: 39,
       background: '#F1ECF2', borderRadius: 8,
       padding: '18px 20px',
@@ -2073,9 +2073,9 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
   const anchorOffset = navClearance + 40
   const jumpRef = useRef(null)
   const [jumpLocked, setJumpLocked] = useState(false)
-  // Side nav's own trigger point: just under where the Jump-to bar sits
-  // once it's locked in (nav height + jump bar height).
-  const sideNavLockTop = navClearance + 64
+  // Side nav's own trigger point: 30px below where the Jump-to bar sits
+  // once it's locked in (nav height + jump bar height + 30px gap).
+  const sideNavLockTop = navClearance + 64 + 30
   const sideNavAnchorRef = useRef(null)
   const [sideNavLocked, setSideNavLocked] = useState(false)
 
