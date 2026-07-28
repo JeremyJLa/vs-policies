@@ -2029,12 +2029,6 @@ function HousingPolicyPage({ isMobile, isTablet }) {
 // ("We'll fight to") and "Jump to:" label matched to the Figma reference
 // (file UdDv2zFOv9HEaHRllxY1X3, node 5553:7522), and the corrected Renters
 // grouping in HOUSING_POLICY_V2.
-// Angled black banner image used for the V2 section headings (Preamble /
-// What we think / We'll fight to), matching the Figma reference exactly.
-function HousingImageHeading({ src, alt, isMobile }) {
-  return <img src={src} alt={alt} style={{ display: 'block', height: isMobile ? 38 : 46, width: 'auto', marginBottom: isMobile ? 14 : 18 }} />
-}
-
 // Quick-nav to each "We'll fight to" area (Renters, Home owners, etc.),
 // floating in the left margin once the Jump-to bar has locked in — desktop
 // only, since there's no room for it in the margin on tablet/mobile.
@@ -2046,7 +2040,7 @@ function HousingSideNav({ areas, locked, lockedTop, opacity = 1 }) {
       // in the white area above Preamble, not inside its wash panel.
       top: locked ? lockedTop : 15,
       left: 40, width: 200, zIndex: 39,
-      background: '#FAF9FB', borderRadius: 8,
+      background: '#FAF9FB', border: '1px solid #E5E5E5', borderRadius: 8,
       padding: '18px 20px',
       opacity, pointerEvents: opacity < 0.05 ? 'none' : 'auto',
     }}>
@@ -2073,7 +2067,10 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
   // Jump-to bar clears the sticky nav (82px, plus the 30px mobile status
   // strip) once it locks in, so anchors need the same clearance.
   const navClearance = isMobile ? 30 + 82 : 82
-  const anchorOffset = navClearance + 40
+  // Clears the sticky nav (82px) plus the locked Jump-to bar (measured at
+  // 60px), with a little extra breathing room so headings never land
+  // partially behind either.
+  const anchorOffset = navClearance + 80
   const jumpRef = useRef(null)
   const [jumpLocked, setJumpLocked] = useState(false)
   // Side nav's own trigger point: 30px below where the Jump-to bar sits
@@ -2149,13 +2146,13 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
               Figma frame (title isn't repeated here; the hero above covers it) */}
           <div style={{
             border: '1px solid #cecece', borderRadius: 8,
-            padding: '28px',
+            padding: '20px',
             marginBottom: isMobile ? 28 : 36, maxWidth: 680,
           }}>
             <p style={{ ...S.para, color: '#FF4B33', fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 14 }}>{p.summary}</p>
             <div style={{
               fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#7d7d7d',
-              fontFamily: "'Open Sans', system-ui, sans-serif", padding: '10px 0', marginBottom: 10,
+              fontFamily: "'Open Sans', system-ui, sans-serif", padding: '24px 0', marginBottom: 10,
             }}>{p.readTime}</div>
             <div ref={jumpRef} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 10 : 20, padding: '20px 0' }}>
               {jumpLinks}
@@ -2191,7 +2188,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         }}>
           {/* Introductory housing-crisis text */}
           <div style={{ maxWidth: 680 }}>
-            <HousingImageHeading src="/preamble-heading.png" alt="Preamble" isMobile={isMobile} />
+            <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Preamble</h2>
             {p.preamble.map((para, i) => (
               <p key={i} style={{ ...S.para, fontSize: isMobile ? 14 : 15 }}>{para}</p>
             ))}
@@ -2202,7 +2199,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
       <div style={{ paddingLeft: left, paddingRight: right, paddingTop: isMobile ? 32 : 40 }}>
         {/* What we think */}
         <div id="what-we-think" style={{ maxWidth: 680, scrollMarginTop: anchorOffset }}>
-          <HousingImageHeading src="/what-we-think-heading.png" alt="What we think" isMobile={isMobile} />
+          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>What we think</h2>
           {p.principles.map((principle, i) => (
             <HousingPrinciple key={i} principle={principle} isMobile={isMobile} number={i + 1} plain />
           ))}
@@ -2212,7 +2209,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
       <div style={{ paddingLeft: left, paddingRight: right, paddingTop: isMobile ? 32 : 40 }}>
         {/* We'll fight to */}
         <div id="what-well-fight-for" style={{ maxWidth: 680, scrollMarginTop: anchorOffset }}>
-          <HousingImageHeading src="/well-fight-to-heading.png" alt="We'll fight to" isMobile={isMobile} />
+          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>We'll fight to</h2>
           {p.areas.map((area, i) => (
             <HousingArea key={i} area={area} index={i} isMobile={isMobile} numbered plain anchorOffset={anchorOffset} />
           ))}
