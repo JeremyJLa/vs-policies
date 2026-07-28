@@ -2062,10 +2062,16 @@ function HousingSideNav({ areas, locked, lockedTop, opacity = 1 }) {
         href="#top"
         onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
         style={{
+          display: 'inline-flex', alignItems: 'center', gap: 6,
           fontSize: 14, fontWeight: 600, color: '#000',
           fontFamily: "'Open Sans', system-ui, sans-serif", textDecoration: 'none',
         }}
-      >Back to top</HoverLink>
+      >
+        Back to top
+        <svg width="12" height="14" viewBox="0 0 12 14" fill="none" style={{ flexShrink: 0 }}>
+          <path d="M6 13V1M1.5 5.5L6 1L10.5 5.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </HoverLink>
     </div>
   )
 }
