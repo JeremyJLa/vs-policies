@@ -1775,12 +1775,19 @@ function HousingNumber({ number }) {
   )
 }
 
+// Hanging indent so a wrapped second line aligns under the first word,
+// not under the number/bullet symbol on the first line.
+function hangingIndent(isMobile) {
+  const px = isMobile ? 18 : 20
+  return { paddingLeft: px, textIndent: -px }
+}
+
 function HousingPrinciple({ principle, isMobile, number, plain }) {
   // The Figma reference has no per-principle heading, just a numbered
   // sentence — the scannable heading is only part of the original (non-
   // Figma) Housing policy page spec, so `plain` (V2) omits it.
   const content = plain ? (
-    <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, margin: 0 }}><HousingNumber number={number} />{principle.text}</p>
+    <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, margin: 0, ...hangingIndent(isMobile) }}><HousingNumber number={number} />{principle.text}</p>
   ) : (
     <>
       <h4 style={{
@@ -1813,7 +1820,7 @@ function HousingAreaItem({ item, isMobile, number, plain }) {
   if (item.heading) {
     return (
       <div>
-        <h4 style={topLevelStyle}>{numberPrefix}{item.heading}</h4>
+        <h4 style={{ ...topLevelStyle, ...hangingIndent(isMobile) }}>{numberPrefix}{item.heading}</h4>
         <ul style={{ margin: 0, paddingLeft: 20 }}>
           {item.items.map((t, i) => (
             <li key={i} style={{ ...S.bulletItem, fontSize: isMobile ? 14 : (plain ? 16 : 15), lineHeight: isMobile ? '20px' : '22px' }}>{t}</li>
@@ -1822,7 +1829,7 @@ function HousingAreaItem({ item, isMobile, number, plain }) {
       </div>
     )
   }
-  return <p style={{ ...S.para, ...(plain && { fontWeight: 600 }), fontSize: isMobile ? 14 : (plain ? 16 : 15), margin: 0 }}>{numberPrefix}{item.text}</p>
+  return <p style={{ ...S.para, ...(plain && { fontWeight: 600 }), fontSize: isMobile ? 14 : (plain ? 16 : 15), margin: 0, ...hangingIndent(isMobile) }}>{numberPrefix}{item.text}</p>
 }
 
 // One large soft panel for a main policy area (Renters, Home owners, etc.),
@@ -1973,7 +1980,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
           <p style={{ ...S.para, color: '#FF4B33', fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 14 }}>{p.summary}</p>
           <div style={{
             fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#7d7d7d',
-            fontFamily: "'Open Sans', system-ui, sans-serif", padding: '10px 0',
+            fontFamily: "'Open Sans', system-ui, sans-serif", padding: '10px 0', marginBottom: 10,
           }}>{p.readTime}</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 10 : 20 }}>
             <span style={{
@@ -2261,6 +2268,16 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
             <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 276, top: isHousing ? heroHeight - leftDrop : (isMobile ? 127 : 178), ...(isMobile && { padding: '4px 7px 16px' }) }}>
               <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36 }}>{isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : "What we'll fight for"}</h1>
             </div>
+            {(!showVariations && version === 'B' && plainView === 'housing2') && (
+              <img
+                src="/red-house-icon.png"
+                alt=""
+                style={{
+                  position: 'absolute', right: isTablet ? 40 : 80, top: isMobile ? 14 : 20,
+                  height: isMobile ? 90 : 150, width: 'auto',
+                }}
+              />
+            )}
           </div>
         )
       })()}
