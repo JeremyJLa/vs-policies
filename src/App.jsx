@@ -2057,6 +2057,15 @@ function HousingSideNav({ areas, locked, lockedTop, opacity = 1 }) {
           }}>{area.title}</HoverLink>
         ))}
       </div>
+      <div style={{ height: 1, background: '#E5E5E5', margin: '14px 0' }} />
+      <HoverLink
+        href="#top"
+        onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+        style={{
+          fontSize: 14, fontWeight: 600, color: '#000',
+          fontFamily: "'Open Sans', system-ui, sans-serif", textDecoration: 'none',
+        }}
+      >Back to top</HoverLink>
     </div>
   )
 }
@@ -2108,7 +2117,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         if (anchorEl) setSideNavLocked(anchorEl.getBoundingClientRect().top <= sideNavLockTop)
         // Smoothstep easing over a longer scroll distance for a slower,
         // more natural ease-in rather than a linear ramp.
-        const t = Math.min(1, Math.max(0, window.scrollY / 1400))
+        const t = Math.min(1, Math.max(0, window.scrollY / 900))
         setSideNavOpacity(t * t * (3 - 2 * t))
       })
     }
