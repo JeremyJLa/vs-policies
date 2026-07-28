@@ -2042,9 +2042,9 @@ function HousingSideNav({ areas, locked, lockedTop, opacity = 1 }) {
   return (
     <div style={{
       position: locked ? 'fixed' : 'absolute',
-      // Resting position sits in the white gap just above the Preamble
-      // wash panel, not inside it (the panel starts at top:0 here).
-      top: locked ? lockedTop : -36,
+      // Resting position aligns with the top of the summary box — solidly
+      // in the white area above Preamble, not inside its wash panel.
+      top: locked ? lockedTop : 15,
       left: 40, width: 200, zIndex: 39,
       background: '#F1ECF2', borderRadius: 8,
       padding: '18px 20px',
@@ -2125,53 +2125,56 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
 
   return (
     <div style={{ paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
-      <div style={{ paddingLeft: left, paddingRight: right, paddingTop: 15 }}>
-        {/* Introductory summary panel — bordered, no fill, matching the
-            Figma frame (title isn't repeated here; the hero above covers it) */}
-        <div style={{
-          border: '1px solid #cecece', borderRadius: 8,
-          padding: '28px',
-          marginBottom: isMobile ? 28 : 36, maxWidth: 680,
-        }}>
-          <p style={{ ...S.para, color: '#FF4B33', fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 14 }}>{p.summary}</p>
-          <div style={{
-            fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#7d7d7d',
-            fontFamily: "'Open Sans', system-ui, sans-serif", padding: '10px 0', marginBottom: 10,
-          }}>{p.readTime}</div>
-          <div ref={jumpRef} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 10 : 20, padding: '20px 0' }}>
-            {jumpLinks}
-          </div>
-        </div>
-      </div>
-
-      {/* Locked-in view: only rendered once the in-box row above has
-          scrolled up to the nav; by then the real row is already hidden
-          behind the (also sticky) nav, so there's no visible duplicate. */}
-      {jumpLocked && (
-        <div style={{
-          position: 'fixed', top: navClearance, left: 0, right: 0, zIndex: 40,
-          background: '#fff', boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
-        }}>
-          <div style={{
-            display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 10 : 20,
-            padding: `20px ${right}px 20px ${left}px`,
-          }}>
-            {jumpLinks}
-          </div>
-        </div>
-      )}
-
-      {/* Wrapper (no clip-path) so the side nav below — which needs
-          position:fixed once locked — isn't clipped by the wash panel's
-          own clip-path. An ancestor's clip-path (like transform) creates a
+      {/* Wrapper (no clip-path) spanning from the summary box down through
+          Preamble, so the side nav below can rest in the white area
+          alongside the summary box. It's kept outside the wash panel's own
+          clip-path — an ancestor's clip-path (like transform) creates a
           containing block for fixed descendants, clipping them to its own
-          box; keeping the nav outside that ancestor avoids it. */}
+          box, so the nav's position:fixed (once locked) needs to stay
+          outside that ancestor to avoid being clipped away when scrolled. */}
       <div style={{ position: 'relative' }}>
         {/* Invisible anchor tracking when the side nav (below) should
-            switch from resting next to Preamble to locked under Jump-to. */}
+            switch from resting next to the summary box to locked under
+            Jump-to. */}
         {!isMobile && !isTablet && <div ref={sideNavAnchorRef} style={{ position: 'absolute', top: 0, left: 0, width: 1, height: 1 }} />}
         {!isMobile && !isTablet && (
           <HousingSideNav areas={p.areas} locked={sideNavLocked} lockedTop={sideNavLockTop} opacity={sideNavLocked ? 1 : sideNavOpacity} />
+        )}
+
+        <div style={{ paddingLeft: left, paddingRight: right, paddingTop: 15 }}>
+          {/* Introductory summary panel — bordered, no fill, matching the
+              Figma frame (title isn't repeated here; the hero above covers it) */}
+          <div style={{
+            border: '1px solid #cecece', borderRadius: 8,
+            padding: '28px',
+            marginBottom: isMobile ? 28 : 36, maxWidth: 680,
+          }}>
+            <p style={{ ...S.para, color: '#FF4B33', fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 14 }}>{p.summary}</p>
+            <div style={{
+              fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#7d7d7d',
+              fontFamily: "'Open Sans', system-ui, sans-serif", padding: '10px 0', marginBottom: 10,
+            }}>{p.readTime}</div>
+            <div ref={jumpRef} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 10 : 20, padding: '20px 0' }}>
+              {jumpLinks}
+            </div>
+          </div>
+        </div>
+
+        {/* Locked-in view: only rendered once the in-box row above has
+            scrolled up to the nav; by then the real row is already hidden
+            behind the (also sticky) nav, so there's no visible duplicate. */}
+        {jumpLocked && (
+          <div style={{
+            position: 'fixed', top: navClearance, left: 0, right: 0, zIndex: 40,
+            background: '#fff', boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+          }}>
+            <div style={{
+              display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 10 : 20,
+              padding: `20px ${right}px 20px ${left}px`,
+            }}>
+              {jumpLinks}
+            </div>
+          </div>
         )}
 
         {/* Soft diagonal wash behind Preamble only, matching the Figma
