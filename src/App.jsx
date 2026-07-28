@@ -2149,7 +2149,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
           <HousingSideNav areas={p.areas} locked={sideNavLocked} lockedTop={sideNavLockTop} opacity={sideNavOpacity} />
         )}
 
-        <div style={{ paddingLeft: left, paddingRight: right, paddingTop: 15 }}>
+        <div style={{ paddingLeft: left, paddingRight: right, marginTop: -35 }}>
           {/* Introductory summary panel — bordered, no fill, matching the
               Figma frame (title isn't repeated here; the hero above covers it) */}
           <div style={{
@@ -2285,6 +2285,7 @@ function ControlsBar({ showVariations, tab, plainView, version, cardView, policy
             <>
               <button onClick={() => setPlainView('vision')} style={linkStyle(plainView === 'vision')}>Vision</button>
               <button onClick={() => setPlainView('policies')} style={linkStyle(plainView === 'policies')}>Policies</button>
+              <button onClick={() => setPlainView('housing3')} style={linkStyle(plainView === 'housing3')}>Housing policy</button>
               <button onClick={() => setPlainView('housing2')} style={linkStyle(plainView === 'housing2')}>Housing policy 2</button>
             </>
           )}
@@ -2452,7 +2453,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
       <nav style={{ ...S.nav, padding: isMobile ? '0 16px' : '0 24px', position: 'sticky', top: isMobile ? 30 : 0, zIndex: 45 }} />
 
       {(() => {
-        const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2')
+        const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3')
         const fullHeight = isMobile ? 190 : 280
         const heroHeight = isHousing ? fullHeight / 2 : fullHeight
         // Fixed pixel drops (not percentages) so the diagonal's angle stays
@@ -2469,7 +2470,9 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
               }}
             >
               {/* Only this image layer zooms, clipped to the fixed frame above. */}
-              {isHousing ? (
+              {plainView === 'housing3' ? (
+                <div style={{ position: 'absolute', inset: 0, background: 'url(/housing-header.jpg) center / cover no-repeat' }} />
+              ) : isHousing ? (
                 <div style={{ position: 'absolute', inset: 0, background: '#E9E4EB' }} />
               ) : (
                 <div
@@ -2503,7 +2506,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
       <main style={S.content}>
         {(!showVariations && version === 'B' && plainView === 'housing') ? (
           <HousingPolicyPage isMobile={isMobile} isTablet={isTablet} />
-        ) : (!showVariations && version === 'B' && plainView === 'housing2') ? (
+        ) : (!showVariations && version === 'B' && (plainView === 'housing2' || plainView === 'housing3')) ? (
           <HousingPolicyPageV2 isMobile={isMobile} isTablet={isTablet} />
         ) : (!showVariations && version === 'B' && plainView === 'policies') ? (
           <div style={{ paddingTop: 15, paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
