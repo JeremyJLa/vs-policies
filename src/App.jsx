@@ -288,6 +288,183 @@ const ACCORDION_ROW_BASE = [
 const ACCORDION_ROW_BODY = "Lorem ipsum dolor sit amet consectetur. Cras lorem vivamus justo tempor at. Nec nec neque quam molestie tincidunt vel. Netus in aenean mi eleifend tellus rhoncus. Ut fames neque eget cras mi et amet non quisque. Lorem blandit vestibulum ut sollicitudin nibh diam ante in. Curabitur eget scelerisque sit porttitor tempor adipiscing lorem arcu sit."
 const ACCORDION_ROWS = Array.from({ length: 22 }, (_, i) => ACCORDION_ROW_BASE[i % ACCORDION_ROW_BASE.length])
 
+// Exact content from docs/Housing policy.pages
+const HOUSING_POLICY = {
+  "title": "Housing for all",
+  "summary": "Victorian Socialists' plan to fix the housing crisis: rent control and stronger renters' rights, a crackdown on property speculation and hoarding, and a massive expansion of public, not-for-profit housing.",
+  "readTime": "8 min read",
+  "preamble": [
+    "The housing crisis is getting worse and almost everyone is affected. More than 65,500 Victorians are on the social housing waiting list, with over 37,000 of those classified as priority applicants in urgent need. The last Census counted 30,660 Victorians without a home and homelessness services assisted 105,000 people in 2024-25. Aboriginal Victorians' rate of homelessness is rising nearly four times faster than the rest of the population.",
+    "This crisis is not the result of a genuine shortage of homes; over 100,000 homes sit empty or underutilised in Metropolitan Melbourne alone (excluding holiday homes), even as tens of thousands of Victorians go without one. Political choices and profit-driven hoarding have led to housing for profit not people: the selling off public land to private developers, allowing big developers to land-bank undeveloped sites to drive up prices, and disguising the demolition of public housing estates as ‘renewal’. Housing has been transformed from a social necessity into an investment vehicle and a source of profit for landlords, speculators and developers, at the direct expense of the people who need homes to live in. Victorian Socialists stand for renters, for households struggling with mortgages, and for everyone experiencing homelessness and housing insecurity."
+  ],
+  "principles": [
+    {
+      "heading": "Housing is a human right",
+      "text": "Access to secure, quality housing is a fundamental human right."
+    },
+    {
+      "heading": "Homelessness is a product of the system",
+      "text": "Homelessness is a result of a competitive, market driven society, organised around private ownership of residential property."
+    },
+    {
+      "heading": "Housing shouldn't be a profit machine",
+      "text": "Housing should not be a means by which some people can accrue a profit at the expense of others."
+    },
+    {
+      "heading": "Public housing should stay public",
+      "text": "Public housing should be built and managed by the public sector and not corporatised through ‘community’ or ‘affordable’ housing schemes."
+    },
+    {
+      "heading": "New homes should build community",
+      "text": "All new developments must be built sustainably and integrated with social and community infrastructure, including public transport, education, health services, parks, playgrounds, other third spaces, recreational and cultural facilities."
+    }
+  ],
+  "areas": [
+    {
+      "title": "Renters",
+      "items": [
+        {
+          "text": "Impose a five-year rent freeze, and establish a landlord-funded rent reparations fund to support tenants who have received above-inflation rent rises since 2021."
+        },
+        {
+          "heading": "Create Rental Inspectorate Victoria, which will be empowered to:",
+          "items": [
+            "Investigate complaints against landlords and agents and enforce penalties.",
+            "Introduce rent control where rents can only increase annually by either half of CPI or WPI, whichever is lower.",
+            "Enforce minimum standards (safety, quality and thermal comfort), including by conducting spot inspections of advertised rental properties and issuing enforceable improvement notices to landlords.",
+            "Inspect rooming houses and set rooming house rents.",
+            "Order the ownership of the rental property to be transferred to public ownership and community control."
+          ]
+        },
+        {
+          "heading": "Strengthen protections for tenants:",
+          "items": [
+            "Introduce minimum 12-month notice periods for all change of use evictions (e.g. renovation, sale, family member moving in) and doubling the notice period for all others.",
+            "Remove the notice period for tenants to end a lease on any grounds.",
+            "Make landlords liable for all ordinary end-of-lease cleaning and maintenance costs.",
+            "Allow renters to withhold rent until a dispute is resolved or repairs completed."
+          ]
+        },
+        {
+          "heading": "Reform VCAT:",
+          "items": [
+            "Require VCAT to refuse to issue an eviction order when the tenant has been unable to secure new housing.",
+            "Triple fees for landlords to apply to VCAT, remove all fees for tenant applications and introduce financial penalties for landlords and agents who bring inflated and spurious VCAT claims against tenants.",
+            "Permit tenants to withhold rent payments when VCAT has ordered repairs and these have not occurred.",
+            "Limit the personal and financial information that landlords and real estate agents can ask tenants to provide.",
+            "Create a public, searchable register with details of repair, breach and compensation orders made against landlords.",
+            "Increase funding for VCAT to facilitate rapid resolution of disputes with landlords and ban landlords from sitting as VCAT members.",
+            "Increase funding to tenancy legal support services to guarantee that low- and moderate-income tenants have legal representation at VCAT, re-introduce funding for drop-in tenancy advice services and expand the capacity of the Tenants Victoria phone helpline in accordance with demand."
+          ]
+        },
+        {
+          "text": "Mandate sustainability and thermal quality retrofitting of rental properties at the expense of landlords including underfloor, roof and window insulation and solar panels by 2030."
+        }
+      ]
+    },
+    {
+      "title": "Home owners",
+      "items": [
+        {
+          "text": "Establish a State Bank of Victoria that will offer to take over existing owner-occupier mortgages owing on residential properties at below market rates."
+        },
+        {
+          "text": "Establish a Victorian Real Estate Exchange that will offer to advertise and manage the sale and rental of houses, for a fixed fee, to undercut private real estate agents."
+        }
+      ]
+    },
+    {
+      "title": "Property speculation",
+      "items": [
+        {
+          "heading": "Crack down on property speculators and property hoarders",
+          "items": [
+            "Tax Vacant Residential Land at 30 per cent of the Capital Improved Value on all properties that remain vacant for more than six months of the year.",
+            "Audit existing properties to identify those that are empty or underutilised; bring into public ownership without compensation those that have been vacant for more than two years without extenuating circumstances and are currently unfit for habitation; redistribute without compensation homes that are fit for habitation but have been vacant for more than two years without extenuating circumstances; and conduct an annual audit thereafter.",
+            "Apply a Luxury Property Tax on the 1 percent of most valuable properties, at 10 per cent of improved value per year.",
+            "Abolish all tax concessions for property investors and landlords.",
+            "Immediately ban property hoarding, defined as an individual or for-profit business owning more than five properties. Real estate in excess of five residential properties owned by property hoarders should be seized and converted into public housing.",
+            "Increase adverse possession rights for squatters seeking to adversely possess empty homes."
+          ]
+        },
+        {
+          "heading": "Over time, end for-profit housing by:",
+          "items": [
+            "Restricting home ownership to government, individuals and collectives, co-operatives, or co-housing.",
+            "Capping at two the number of homes that any individual can own."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Homelessness",
+      "items": [
+        {
+          "text": "Set a target of ending rough sleeping in Victoria within six months."
+        },
+        {
+          "text": "Adopt a housing first policy that offers unconditional access to permanent public housing for all homeless Victorians."
+        },
+        {
+          "text": "Guarantee that every person discharged from hospital, prison, youth detention or out-of-home care has access to funded housing and support pathways."
+        },
+        {
+          "text": "Provide long-term secure funding to homelessness support organisations, with funding agreements of at least five years to enable workforce stability and service planning."
+        },
+        {
+          "text": "Ban hostile architecture in public and commercial spaces and require future public infrastructure to be designed for genuine public use rather than to exclude people experiencing homelessness."
+        }
+      ]
+    },
+    {
+      "title": "Public housing",
+      "items": [
+        {
+          "text": "Stop the proposed demolition of the 44 public housing towers and refurbish them to a high standard."
+        },
+        {
+          "heading": "Create a Victorian Public Housing Authority, chartered to provide high-quality public housing for all Victorians on a not-for-profit basis that will:",
+          "items": [
+            "Include a publicly owned construction company across the entire housing supply chain, creating 20,000 jobs at above Award conditions for union members to build public housing and take on other major projects such as the Suburban Rail Loop.",
+            "Be governed by a board consisting of one-third Victorian government appointees, one-third workers' representatives and one-third tenants' representatives.",
+            "Prioritise new housing construction near public infrastructure in high-demand suburbs.",
+            "Construct at least 15,000 new public housing units per year for at least the next 10 years.",
+            "Construct 15,000 shared-ownership residences per year that will be available to first-home buyers for no more than $400,000, backed by a 2 percent interest loan, guarantee full rights associated with home ownership, and refund to owners their full share up to $400,000 upon transfer of ownership plus a share of interest accrued.",
+            "Ban the transfer of public housing ownership or management to community housing organisations.",
+            "Ensure that tenants in former public housing now managed by community housing organisations pay the same or lower rent (capped at 20 per cent of household income) and receive the same protections as public tenants. If community housing organisations fail to achieve this within six months, all the dwellings they manage will revert to public housing.",
+            "End punitive tenancy management practices in social and public housing and set up structures to give tenants a democratic voice.",
+            "Ban the sale and privatisation of public housing and land to private property developers under the guise of \"renewal\" programs.",
+            "Undertake a housing quality audit of all public housing and commence repairs and remediation works, including retrofitting for energy efficiency, sustainability and thermal comfort.",
+            "Properly fund ongoing responsive and programmed maintenance to all public housing to prevent further deterioration of stock, while meeting all residents' temporary accommodation expenses where necessary.",
+            "Ensure that rents from public housing tenants can only be spent on the construction and maintenance of public housing.",
+            "Spot purchase properties for conversion into public housing to immediately address specific housing wait and transfer list needs.",
+            "Audit publicly owned land and unused buildings for conversion into public housing.",
+            "Audit commercial property and re-purpose to create residential dwellings where possible.",
+            "Empower and fund tenants' organisations to collectively manage public housing common areas."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Planning",
+      "items": [
+        {
+          "text": "Impose a non-negotiable Inclusionary Zoning Requirement mandating public housing set at least 30 percent for all private developments, built to a higher standard than the rest of the development (no \"poor doors\")."
+        },
+        {
+          "text": "Strengthen local councils' power to impose and enforce regulations ensuring sustainability and social equity."
+        },
+        {
+          "text": "Strengthen planning regulations to mandate that all new dwellings comply with minimum standards that enrich the lives of occupants, including minimum outdoor space, canopy tree coverage, minimum internal floor space, optimal solar and street orientation, light access, soundproofing, thermal comfort and energy efficiency."
+        },
+        {
+          "text": "Encourage the maintenance, retrofitting and restoration of existing good quality housing stock."
+        }
+      ]
+    }
+  ]
+}
+
 // ── Styles ────────────────────────────────────────────────────────────────────
 
 const S = {
@@ -1562,6 +1739,127 @@ function PolicyAccordionChevron({ policies, isMobile }) {
   )
 }
 
+// One principle from "What we think" — plain text with a small accent rule,
+// deliberately not styled like a clickable card.
+function HousingPrinciple({ principle, isMobile }) {
+  return (
+    <div style={{ borderLeft: '3px solid #FF4B33', paddingLeft: isMobile ? 14 : 18, marginBottom: isMobile ? 22 : 26 }}>
+      <h4 style={{
+        fontSize: isMobile ? 16 : 18, fontWeight: 800, margin: '0 0 6px',
+        fontFamily: "'Work Sans', system-ui, sans-serif", color: '#000',
+      }}>{principle.heading}</h4>
+      <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, margin: 0 }}>{principle.text}</p>
+    </div>
+  )
+}
+
+// One entry within a "What we'll fight for" policy area: either a flat
+// bullet, or a numbered-group subheading with its own nested bullet list.
+function HousingAreaItem({ item, isMobile }) {
+  if (item.heading) {
+    return (
+      <div>
+        <h4 style={{
+          fontSize: isMobile ? 14.5 : 16, fontWeight: 700, margin: '0 0 10px',
+          fontFamily: "'Work Sans', system-ui, sans-serif", color: '#000',
+        }}>{item.heading}</h4>
+        <ul style={{ margin: 0, paddingLeft: 20 }}>
+          {item.items.map((t, i) => (
+            <li key={i} style={{ ...S.bulletItem, fontSize: isMobile ? 14 : 15, lineHeight: isMobile ? '20px' : '22px' }}>{t}</li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+  return <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, margin: 0 }}>{item.text}</p>
+}
+
+// One large soft panel for a main policy area (Renters, Home owners, etc.),
+// with divider lines separating each numbered policy group inside it.
+function HousingArea({ area, index, isMobile }) {
+  return (
+    <div style={{
+      background: TILE_COLOURS[index % 2], borderRadius: 6,
+      padding: isMobile ? '22px 18px' : '36px 44px',
+      marginBottom: 20,
+    }}>
+      <h3 style={{
+        fontSize: isMobile ? 19 : 24, fontWeight: 800, margin: '0 0 16px',
+        fontFamily: "'Work Sans', system-ui, sans-serif", textTransform: 'uppercase',
+        letterSpacing: '0.01em', color: '#000',
+      }}>{area.title}</h3>
+      {area.items.map((item, i) => (
+        <div key={i} style={{
+          paddingTop: i === 0 ? 0 : (isMobile ? 16 : 20),
+          marginTop: i === 0 ? 0 : (isMobile ? 16 : 20),
+          borderTop: i === 0 ? 'none' : '1px solid rgba(0,0,0,0.12)',
+        }}>
+          <HousingAreaItem item={item} isMobile={isMobile} />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// Housing policy detail page — the page a "Policies" tile links through to.
+// Content is the exact text from docs/Housing policy.pages (see HOUSING_POLICY).
+function HousingPolicyPage({ isMobile, isTablet }) {
+  const { left, right } = hPad(isMobile, isTablet)
+  const p = HOUSING_POLICY
+  return (
+    <div style={{ paddingTop: 15, paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
+      <div style={{ paddingLeft: left, paddingRight: right }}>
+        {/* Introductory summary panel */}
+        <div style={{
+          background: '#F1ECF2', borderRadius: 6,
+          padding: isMobile ? '22px 18px' : '32px 40px',
+          marginBottom: isMobile ? 28 : 36, maxWidth: 760,
+        }}>
+          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 22 : 28 }}>{p.title}</h2>
+          <p style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{p.summary}</p>
+          <div style={{
+            fontSize: 13, fontWeight: 700, color: '#666', letterSpacing: '0.03em',
+            textTransform: 'uppercase', fontFamily: "'Open Sans', system-ui, sans-serif",
+            marginBottom: 16,
+          }}>{p.readTime}</div>
+          <div style={{
+            fontSize: 12, fontWeight: 700, color: '#999', letterSpacing: '0.08em',
+            textTransform: 'uppercase', fontFamily: "'Open Sans', system-ui, sans-serif",
+            marginBottom: 8,
+          }}>Jump to</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
+            <a href="#what-we-think" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '3px' }}>What we think</a>
+            <a href="#what-well-fight-for" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '3px' }}>What we'll fight for</a>
+          </div>
+        </div>
+
+        {/* Introductory housing-crisis text */}
+        <div style={{ maxWidth: 760, marginBottom: isMobile ? 32 : 40 }}>
+          {p.preamble.map((para, i) => (
+            <p key={i} style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{para}</p>
+          ))}
+        </div>
+
+        {/* What we think */}
+        <div id="what-we-think" style={{ maxWidth: 760, marginBottom: isMobile ? 36 : 48, scrollMarginTop: isMobile ? 60 : 24 }}>
+          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>What we think</h2>
+          {p.principles.map((principle, i) => (
+            <HousingPrinciple key={i} principle={principle} isMobile={isMobile} />
+          ))}
+        </div>
+
+        {/* What we'll fight for */}
+        <div id="what-well-fight-for" style={{ scrollMarginTop: isMobile ? 60 : 24 }}>
+          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>What we'll fight for</h2>
+          {p.areas.map((area, i) => (
+            <HousingArea key={i} area={area} index={i} isMobile={isMobile} />
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // Prototype-only navigation: lets a reviewer switch between Option A/B,
 // Vision/Policies, and the card design variations. Kept visually separate
 // from the real black header/hero so the header stays clean, per the
@@ -1598,6 +1896,7 @@ function ControlsBar({ showVariations, tab, plainView, version, cardView, policy
             <>
               <button onClick={() => setPlainView('vision')} style={linkStyle(plainView === 'vision')}>Vision</button>
               <button onClick={() => setPlainView('policies')} style={linkStyle(plainView === 'policies')}>Policies</button>
+              <button onClick={() => setPlainView('housing')} style={linkStyle(plainView === 'housing')}>Housing policy</button>
             </>
           )}
         </div>
@@ -1770,16 +2069,20 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
           }}
         >
           {/* Only this image layer zooms, clipped to the fixed frame above. */}
-          <div
-            ref={heroImgRef}
-            style={{
-              ...S.heroPurple,
-              transform: 'scale(1)', transition: 'transform 0.1s linear', willChange: 'transform',
-            }}
-          />
+          {(!showVariations && version === 'B' && plainView === 'housing') ? (
+            <div style={{ position: 'absolute', inset: 0, background: '#E9E4EB' }} />
+          ) : (
+            <div
+              ref={heroImgRef}
+              style={{
+                ...S.heroPurple,
+                transform: 'scale(1)', transition: 'transform 0.1s linear', willChange: 'transform',
+              }}
+            />
+          )}
         </div>
         <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 276, top: isMobile ? 127 : 178, ...(isMobile && { padding: '4px 7px 16px' }) }}>
-          <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36 }}>{(!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : "What we'll fight for"}</h1>
+          <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36 }}>{(!showVariations && version === 'B' && plainView === 'housing') ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : "What we'll fight for"}</h1>
         </div>
       </div>
 
@@ -1796,7 +2099,9 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
       )}
 
       <main style={S.content}>
-        {(!showVariations && version === 'B' && plainView === 'policies') ? (
+        {(!showVariations && version === 'B' && plainView === 'housing') ? (
+          <HousingPolicyPage isMobile={isMobile} isTablet={isTablet} />
+        ) : (!showVariations && version === 'B' && plainView === 'policies') ? (
           <div style={{ paddingTop: 15, paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
             <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right, marginBottom: 32 }}>
               <p style={{ ...S.para, maxWidth: isMobile ? '100%' : 660, fontSize: isMobile ? 15 : 16 }}>
