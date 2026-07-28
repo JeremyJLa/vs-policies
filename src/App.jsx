@@ -1803,12 +1803,41 @@ function HousingArea({ area, index, isMobile }) {
 
 // Housing policy detail page — the page a "Policies" tile links through to.
 // Content is the exact text from docs/Housing policy.pages (see HOUSING_POLICY).
+// Full-bleed "Jump to" bar: sticky beneath the page's persistent top
+// elements (the mobile black status strip, where present) so it's always
+// reachable while the rest of the content scrolls underneath it.
+function HousingJumpBar({ isMobile, isTablet }) {
+  const { left, right } = hPad(isMobile, isTablet)
+  return (
+    <div style={{
+      position: 'sticky', top: isMobile ? 30 : 0, zIndex: 40,
+      background: '#F1ECF2', borderBottom: '1px solid rgba(0,0,0,0.1)',
+    }}>
+      <div style={{
+        display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 10 : 20,
+        padding: `${isMobile ? 12 : 14}px ${right}px ${isMobile ? 12 : 14}px ${left}px`,
+      }}>
+        <span style={{
+          fontSize: 12, fontWeight: 700, color: '#999', letterSpacing: '0.08em',
+          textTransform: 'uppercase', fontFamily: "'Open Sans', system-ui, sans-serif",
+        }}>Jump to</span>
+        <a href="#what-we-think" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '3px' }}>What we think</a>
+        <a href="#what-well-fight-for" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '3px' }}>What we'll fight for</a>
+      </div>
+    </div>
+  )
+}
+
 function HousingPolicyPage({ isMobile, isTablet }) {
   const { left, right } = hPad(isMobile, isTablet)
   const p = HOUSING_POLICY
+  // Anchor targets need extra top clearance so the sticky Jump-to bar
+  // (and, on mobile, the black status strip above it) doesn't cover them.
+  const anchorOffset = isMobile ? 100 : 70
   return (
-    <div style={{ paddingTop: 15, paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
-      <div style={{ paddingLeft: left, paddingRight: right }}>
+    <div style={{ paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
+      <HousingJumpBar isMobile={isMobile} isTablet={isTablet} />
+      <div style={{ paddingLeft: left, paddingRight: right, paddingTop: 15 }}>
         {/* Introductory summary panel */}
         <div style={{
           background: '#F1ECF2', borderRadius: 6,
@@ -1816,21 +1845,12 @@ function HousingPolicyPage({ isMobile, isTablet }) {
           marginBottom: isMobile ? 28 : 36, maxWidth: 760,
         }}>
           <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 22 : 28 }}>{p.title}</h2>
-          <p style={{ ...S.para, fontSize: isMobile ? 15 : 16 }}>{p.summary}</p>
+          <p style={{ ...S.para, fontSize: isMobile ? 15 : 16, marginBottom: 0 }}>{p.summary}</p>
           <div style={{
             fontSize: 13, fontWeight: 700, color: '#666', letterSpacing: '0.03em',
             textTransform: 'uppercase', fontFamily: "'Open Sans', system-ui, sans-serif",
-            marginBottom: 16,
+            marginTop: 16,
           }}>{p.readTime}</div>
-          <div style={{
-            fontSize: 12, fontWeight: 700, color: '#999', letterSpacing: '0.08em',
-            textTransform: 'uppercase', fontFamily: "'Open Sans', system-ui, sans-serif",
-            marginBottom: 8,
-          }}>Jump to</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
-            <a href="#what-we-think" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '3px' }}>What we think</a>
-            <a href="#what-well-fight-for" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '3px' }}>What we'll fight for</a>
-          </div>
         </div>
 
         {/* Introductory housing-crisis text */}
@@ -1841,7 +1861,7 @@ function HousingPolicyPage({ isMobile, isTablet }) {
         </div>
 
         {/* What we think */}
-        <div id="what-we-think" style={{ maxWidth: 760, marginBottom: isMobile ? 36 : 48, scrollMarginTop: isMobile ? 60 : 24 }}>
+        <div id="what-we-think" style={{ maxWidth: 760, marginBottom: isMobile ? 36 : 48, scrollMarginTop: anchorOffset }}>
           <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>What we think</h2>
           {p.principles.map((principle, i) => (
             <HousingPrinciple key={i} principle={principle} isMobile={isMobile} />
@@ -1849,7 +1869,7 @@ function HousingPolicyPage({ isMobile, isTablet }) {
         </div>
 
         {/* What we'll fight for */}
-        <div id="what-well-fight-for" style={{ scrollMarginTop: isMobile ? 60 : 24 }}>
+        <div id="what-well-fight-for" style={{ scrollMarginTop: anchorOffset }}>
           <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>What we'll fight for</h2>
           {p.areas.map((area, i) => (
             <HousingArea key={i} area={area} index={i} isMobile={isMobile} />
