@@ -1966,7 +1966,44 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
   const p = HOUSING_POLICY_V2
   // Jump-to bar clears the sticky nav (82px, plus the 30px mobile status
   // strip) once it locks in, so anchors need the same clearance.
-  const anchorOffset = isMobile ? 170 : 140
+  const navClearance = isMobile ? 30 + 82 : 82
+  const anchorOffset = navClearance + 40
+  const jumpRef = useRef(null)
+  const [jumpLocked, setJumpLocked] = useState(false)
+
+  // The in-box "Jump to" row stays exactly where it is (inside the summary
+  // box) until scrolling carries it up to the black nav bar — only then
+  // does it switch to a full-width bar locked in flush beneath nav.
+  useEffect(() => {
+    let raf = null
+    const onScroll = () => {
+      if (raf) return
+      raf = requestAnimationFrame(() => {
+        raf = null
+        const el = jumpRef.current
+        if (!el) return
+        setJumpLocked(el.getBoundingClientRect().top <= navClearance)
+      })
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [navClearance])
+
+  const jumpLinks = (
+    <>
+      <span style={{
+        fontSize: isMobile ? 13 : 14, fontWeight: 600, color: '#7d7d7d',
+        fontFamily: "'Open Sans', system-ui, sans-serif",
+      }}>Jump to:</span>
+      <a href="#what-we-think" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 600, color: '#000', textDecoration: 'underline', textUnderlineOffset: '3px' }}>What we think</a>
+      <a href="#what-well-fight-for" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 600, color: '#000', textDecoration: 'underline', textUnderlineOffset: '3px' }}>What we'll fight for</a>
+    </>
+  )
+
   return (
     <div style={{ paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
       <div style={{ paddingLeft: left, paddingRight: right, paddingTop: 15 }}>
@@ -1980,16 +2017,30 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
           <p style={{ ...S.para, color: '#FF4B33', fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 14 }}>{p.summary}</p>
           <div style={{
             fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#7d7d7d',
-            fontFamily: "'Open Sans', system-ui, sans-serif", padding: '10px 0',
+            fontFamily: "'Open Sans', system-ui, sans-serif", padding: '10px 0', marginBottom: 10,
           }}>{p.readTime}</div>
+          <div ref={jumpRef} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 10 : 20 }}>
+            {jumpLinks}
+          </div>
         </div>
       </div>
 
-      {/* Starts in normal flow right after the summary box; once scrolling
-          carries it up to the black nav bar it locks in as a full-width
-          sticky bar flush beneath it, and the rest of the page scrolls
-          behind it from then on. */}
-      <HousingJumpBar isMobile={isMobile} isTablet={isTablet} label="Jump to:" plainLabel />
+      {/* Locked-in view: only rendered once the in-box row above has
+          scrolled up to the nav; by then the real row is already hidden
+          behind the (also sticky) nav, so there's no visible duplicate. */}
+      {jumpLocked && (
+        <div style={{
+          position: 'fixed', top: navClearance, left: 0, right: 0, zIndex: 40,
+          background: '#fff', boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+        }}>
+          <div style={{
+            display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 10 : 20,
+            padding: `${isMobile ? 12 : 14}px ${right}px ${isMobile ? 12 : 14}px ${left}px`,
+          }}>
+            {jumpLinks}
+          </div>
+        </div>
+      )}
 
       {/* Soft diagonal wash behind Preamble only, matching the Figma frame's
           background panel — full-bleed, angled bottom edge. */}
