@@ -2038,7 +2038,7 @@ function HousingImageHeading({ src, alt, isMobile }) {
 // Quick-nav to each "We'll fight to" area (Renters, Home owners, etc.),
 // floating in the left margin once the Jump-to bar has locked in — desktop
 // only, since there's no room for it in the margin on tablet/mobile.
-function HousingSideNav({ areas, locked, lockedTop }) {
+function HousingSideNav({ areas, locked, lockedTop, opacity = 1 }) {
   return (
     <div style={{
       position: locked ? 'fixed' : 'absolute',
@@ -2046,6 +2046,7 @@ function HousingSideNav({ areas, locked, lockedTop }) {
       left: 40, width: 200, zIndex: 39,
       background: '#F1ECF2', borderRadius: 8,
       padding: '18px 20px',
+      opacity, pointerEvents: opacity < 0.05 ? 'none' : 'auto',
     }}>
       <div style={{
         fontSize: 11, fontWeight: 700, color: '#999', letterSpacing: '0.08em',
@@ -2078,12 +2079,15 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
   const sideNavLockTop = navClearance + 64 + 30
   const sideNavAnchorRef = useRef(null)
   const [sideNavLocked, setSideNavLocked] = useState(false)
+  const [sideNavOpacity, setSideNavOpacity] = useState(0)
 
   // The in-box "Jump to" row stays exactly where it is (inside the summary
   // box) until scrolling carries it up to the black nav bar — only then
   // does it switch to a full-width bar locked in flush beneath nav. The
   // side nav follows the same pattern, using an invisible anchor placed
   // next to Preamble to track when it should lock in underneath Jump-to.
+  // It's also invisible at the very top of the page and fades in over the
+  // first 80px of scrolling, so it isn't visible until you start scrolling.
   useEffect(() => {
     let raf = null
     const onScroll = () => {
@@ -2094,6 +2098,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         if (el) setJumpLocked(el.getBoundingClientRect().top <= navClearance)
         const anchorEl = sideNavAnchorRef.current
         if (anchorEl) setSideNavLocked(anchorEl.getBoundingClientRect().top <= sideNavLockTop)
+        setSideNavOpacity(Math.min(1, window.scrollY / 80))
       })
     }
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -2163,7 +2168,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
             switch from resting next to Preamble to locked under Jump-to. */}
         {!isMobile && !isTablet && <div ref={sideNavAnchorRef} style={{ position: 'absolute', top: 0, left: 0, width: 1, height: 1 }} />}
         {!isMobile && !isTablet && (
-          <HousingSideNav areas={p.areas} locked={sideNavLocked} lockedTop={sideNavLockTop} />
+          <HousingSideNav areas={p.areas} locked={sideNavLocked} lockedTop={sideNavLockTop} opacity={sideNavLocked ? 1 : sideNavOpacity} />
         )}
 
         {/* Soft diagonal wash behind Preamble only, matching the Figma
