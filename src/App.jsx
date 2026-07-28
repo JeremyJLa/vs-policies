@@ -2154,7 +2154,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
               Figma frame (title isn't repeated here; the hero above covers it) */}
           <div style={{
             ...(SUMMARY_BOX_BORDER_ENABLED && { border: '1px solid #cecece' }), borderRadius: 8,
-            padding: '20px',
+            padding: '20px 20px 20px 0',
             marginBottom: isMobile ? 28 : 36, maxWidth: 680,
           }}>
             <p style={{ ...S.para, color: '#FF4B33', fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 24 }}>{p.summary}</p>
