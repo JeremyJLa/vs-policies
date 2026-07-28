@@ -270,8 +270,8 @@ const PLACEHOLDER_POLICY_GRID_WITH_CONTENT = PLACEHOLDER_POLICY_GRID.map((policy
 // text, so just the first 3 headings are swapped in (no body needed).
 const PLACEHOLDER_POLICY_GRID_TITLES = PLACEHOLDER_POLICY_GRID.map((policy, i) => {
   if (i === 0) return { ...policy, title: 'HOUSING\nFOR ALL' }
-  if (i === 1) return { ...policy, title: 'HEALTH\nFOR ALL' }
-  if (i === 2) return { ...policy, title: 'CLIMATE CHANGE\nAND ENVIRONMENT' }
+  if (i === 1) return { ...policy, title: 'FIX THE\nHEALTH CRISIS' }
+  if (i === 2) return { ...policy, title: 'CLIMATE\nCHANGE AND\nENVIRONMENT' }
   return policy
 })
 
@@ -2265,15 +2265,9 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
             }}
           >
             Back to top
-            <span style={{
-              display: 'inline-block', width: isMobile ? 13 : 17, height: isMobile ? 7 : 9,
-              backgroundColor: '#000',
-              WebkitMaskImage: 'url(/accordion-chevron.png)', maskImage: 'url(/accordion-chevron.png)',
-              WebkitMaskSize: 'contain', maskSize: 'contain',
-              WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
-              WebkitMaskPosition: 'center', maskPosition: 'center',
-              transform: 'rotate(180deg)',
-            }} />
+            <svg width="12" height="14" viewBox="0 0 12 14" fill="none" style={{ flexShrink: 0 }}>
+              <path d="M6 13V1M1.5 5.5L6 1L10.5 5.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </a>
         </div>
       </div>
