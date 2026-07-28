@@ -1832,7 +1832,7 @@ function HousingArea({ area, index, isMobile, numbered }) {
 // Full-bleed "Jump to" bar: sticky beneath the page's persistent top
 // elements (the mobile black status strip, where present) so it's always
 // reachable while the rest of the content scrolls underneath it.
-function HousingJumpBar({ isMobile, isTablet, label = 'Jump to' }) {
+function HousingJumpBar({ isMobile, isTablet, label = 'Jump to', plainLabel = false }) {
   const { left, right } = hPad(isMobile, isTablet)
   return (
     <div style={{
@@ -1845,7 +1845,10 @@ function HousingJumpBar({ isMobile, isTablet, label = 'Jump to' }) {
         display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 10 : 20,
         padding: `${isMobile ? 12 : 14}px ${right}px ${isMobile ? 12 : 14}px ${left}px`,
       }}>
-        <span style={{
+        <span style={plainLabel ? {
+          fontSize: isMobile ? 13 : 14, fontWeight: 600, color: '#7d7d7d',
+          fontFamily: "'Open Sans', system-ui, sans-serif",
+        } : {
           fontSize: 12, fontWeight: 700, color: '#999', letterSpacing: '0.08em',
           textTransform: 'uppercase', fontFamily: "'Open Sans', system-ui, sans-serif",
         }}>{label}</span>
@@ -1926,23 +1929,32 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
   const anchorOffset = isMobile ? 170 : 140
   return (
     <div style={{ paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
-      <HousingJumpBar isMobile={isMobile} isTablet={isTablet} label="Jump to:" />
+      <HousingJumpBar isMobile={isMobile} isTablet={isTablet} label="Jump to:" plainLabel />
       <div style={{ paddingLeft: left, paddingRight: right, paddingTop: 15 }}>
-        {/* Introductory summary panel */}
+        {/* Introductory summary panel — bordered, no fill, matching the
+            Figma frame (title isn't repeated here; the hero above covers it) */}
         <div style={{
-          background: '#F1ECF2', borderRadius: 6,
-          padding: isMobile ? '22px 18px' : '32px 40px',
+          border: '1px solid #cecece', borderRadius: 8,
+          padding: isMobile ? '20px 18px' : '28px 36px',
           marginBottom: isMobile ? 28 : 36, maxWidth: 760,
         }}>
-          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 22 : 28 }}>{p.title}</h2>
-          <p style={{ ...S.para, fontSize: isMobile ? 15 : 16, marginBottom: 0 }}>{p.summary}</p>
+          <p style={{ ...S.para, color: '#FF4B33', fontWeight: 600, fontSize: isMobile ? 15 : 17, marginBottom: 14 }}>{p.summary}</p>
           <div style={{
-            fontSize: 13, fontWeight: 700, color: '#666', letterSpacing: '0.03em',
-            textTransform: 'uppercase', fontFamily: "'Open Sans', system-ui, sans-serif",
-            marginTop: 16,
+            fontSize: isMobile ? 13 : 14, fontWeight: 700, color: '#000',
+            fontFamily: "'Open Sans', system-ui, sans-serif",
           }}>{p.readTime}</div>
         </div>
+      </div>
 
+      {/* Soft diagonal wash behind Preamble + What we think, matching the
+          Figma frame's background panel (full-bleed, angled bottom edge). */}
+      <div style={{
+        background: '#FAF9FB', borderRadius: '8px 8px 0 0',
+        clipPath: `polygon(0 0, 100% 0, 100% calc(100% - ${isMobile ? 40 : 60}px), 0 100%)`,
+        paddingTop: isMobile ? 24 : 32,
+        paddingBottom: (isMobile ? 24 : 32) + (isMobile ? 40 : 60),
+        paddingLeft: left, paddingRight: right,
+      }}>
         {/* Introductory housing-crisis text */}
         <div style={{ maxWidth: 760, marginBottom: isMobile ? 32 : 40 }}>
           <HousingImageHeading src="/preamble-heading.png" alt="Preamble" isMobile={isMobile} />
@@ -1952,13 +1964,15 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         </div>
 
         {/* What we think */}
-        <div id="what-we-think" style={{ maxWidth: 760, marginBottom: isMobile ? 36 : 48, scrollMarginTop: anchorOffset }}>
+        <div id="what-we-think" style={{ maxWidth: 760, scrollMarginTop: anchorOffset }}>
           <HousingImageHeading src="/what-we-think-heading.png" alt="What we think" isMobile={isMobile} />
           {p.principles.map((principle, i) => (
             <HousingPrinciple key={i} principle={principle} isMobile={isMobile} number={i + 1} />
           ))}
         </div>
+      </div>
 
+      <div style={{ paddingLeft: left, paddingRight: right, paddingTop: isMobile ? 32 : 40 }}>
         {/* We'll fight to */}
         <div id="what-well-fight-for" style={{ scrollMarginTop: anchorOffset }}>
           <HousingImageHeading src="/well-fight-to-heading.png" alt="We'll fight to" isMobile={isMobile} />
