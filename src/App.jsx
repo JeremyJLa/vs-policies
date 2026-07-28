@@ -1888,7 +1888,7 @@ function HousingAreaItem({ item, isMobile, number, plain }) {
     return (
       <div>
         <h4 style={{ ...topLevelStyle, ...hangingIndent(isMobile) }}>{numberPrefix}{item.heading}</h4>
-        <ul style={{ margin: 0, paddingLeft: 20 }}>
+        <ul style={{ margin: 0, paddingLeft: plain ? 40 : 20 }}>
           {item.items.map((t, i) => (
             <li key={i} style={{ ...S.bulletItem, fontSize: isMobile ? 14 : (plain ? 16 : 15), lineHeight: isMobile ? '20px' : '22px' }}>{t}</li>
           ))}
@@ -2051,15 +2051,20 @@ function HousingSideNav({ areas, locked, lockedTop, opacity = 1 }) {
       }}>On this page</div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {areas.map((area, i) => (
-          <a key={i} href={`#${housingAreaSlug(area.title)}`} style={{
+          <HoverLink key={i} href={`#${housingAreaSlug(area.title)}`} style={{
             fontSize: 14, fontWeight: 600, color: '#000',
             fontFamily: "'Open Sans', system-ui, sans-serif", textDecoration: 'none',
-          }}>{area.title}</a>
+          }}>{area.title}</HoverLink>
         ))}
       </div>
     </div>
   )
 }
+
+// Toggle for the Jump-to bar's "locks to a full-width bar under nav on
+// scroll" interaction. Disabled per request, but the tracking logic below
+// is left intact so it can be switched back on later.
+const JUMP_LOCK_ENABLED = false
 
 function HousingPolicyPageV2({ isMobile, isTablet }) {
   const { left, right } = hPad(isMobile, isTablet)
@@ -2067,10 +2072,10 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
   // Jump-to bar clears the sticky nav (82px, plus the 30px mobile status
   // strip) once it locks in, so anchors need the same clearance.
   const navClearance = isMobile ? 30 + 82 : 82
-  // Clears the sticky nav (82px) plus the locked Jump-to bar (measured at
-  // 60px), with a little extra breathing room so headings never land
-  // partially behind either.
-  const anchorOffset = navClearance + 80
+  // Clears the sticky nav (82px), plus the locked Jump-to bar's height
+  // (measured at 60px) when that interaction is enabled, with a little
+  // extra breathing room so headings never land partially behind either.
+  const anchorOffset = navClearance + (JUMP_LOCK_ENABLED ? 80 : 20)
   const jumpRef = useRef(null)
   const [jumpLocked, setJumpLocked] = useState(false)
   // Side nav's own trigger point: 30px below where the Jump-to bar sits
@@ -2100,7 +2105,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         if (anchorEl) setSideNavLocked(anchorEl.getBoundingClientRect().top <= sideNavLockTop)
         // Smoothstep easing over a longer scroll distance for a slower,
         // more natural ease-in rather than a linear ramp.
-        const t = Math.min(1, Math.max(0, window.scrollY / 600))
+        const t = Math.min(1, Math.max(0, window.scrollY / 1400))
         setSideNavOpacity(t * t * (3 - 2 * t))
       })
     }
@@ -2119,7 +2124,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         fontFamily: "'Open Sans', system-ui, sans-serif",
       }}>Jump to:</span>
       <a href="#what-we-think" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 600, color: '#000', textDecoration: 'underline', textUnderlineOffset: '3px' }}>What we think</a>
-      <a href="#what-well-fight-for" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 600, color: '#000', textDecoration: 'underline', textUnderlineOffset: '3px' }}>What we'll fight for</a>
+      <a href="#what-well-fight-for" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 600, color: '#000', textDecoration: 'underline', textUnderlineOffset: '3px' }}>We'll fight to</a>
     </>
   )
 
@@ -2149,10 +2154,10 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
             padding: '20px',
             marginBottom: isMobile ? 28 : 36, maxWidth: 680,
           }}>
-            <p style={{ ...S.para, color: '#FF4B33', fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 14 }}>{p.summary}</p>
+            <p style={{ ...S.para, color: '#FF4B33', fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 24 }}>{p.summary}</p>
             <div style={{
               fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#7d7d7d',
-              fontFamily: "'Open Sans', system-ui, sans-serif", padding: '24px 0', marginBottom: 10,
+              fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 24,
             }}>{p.readTime}</div>
             <div ref={jumpRef} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? 10 : 20, padding: '20px 0' }}>
               {jumpLinks}
@@ -2163,7 +2168,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         {/* Locked-in view: only rendered once the in-box row above has
             scrolled up to the nav; by then the real row is already hidden
             behind the (also sticky) nav, so there's no visible duplicate. */}
-        {jumpLocked && (
+        {JUMP_LOCK_ENABLED && jumpLocked && (
           <div style={{
             position: 'fixed', top: navClearance, left: 0, right: 0, zIndex: 40,
             background: '#fff', boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
@@ -2188,7 +2193,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         }}>
           {/* Introductory housing-crisis text */}
           <div style={{ maxWidth: 680 }}>
-            <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Preamble</h2>
+            <h2 style={{ ...S.platformHeading, marginTop: 0, marginBottom: 24, fontSize: isMobile ? 20 : 26 }}>Preamble</h2>
             {p.preamble.map((para, i) => (
               <p key={i} style={{ ...S.para, fontSize: isMobile ? 14 : 15 }}>{para}</p>
             ))}
@@ -2199,7 +2204,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
       <div style={{ paddingLeft: left, paddingRight: right, paddingTop: isMobile ? 32 : 40 }}>
         {/* What we think */}
         <div id="what-we-think" style={{ maxWidth: 680, scrollMarginTop: anchorOffset }}>
-          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>What we think</h2>
+          <h2 style={{ ...S.platformHeading, marginTop: 0, marginBottom: 24, fontSize: isMobile ? 20 : 26 }}>What we think</h2>
           {p.principles.map((principle, i) => (
             <HousingPrinciple key={i} principle={principle} isMobile={isMobile} number={i + 1} plain />
           ))}
@@ -2209,7 +2214,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
       <div style={{ paddingLeft: left, paddingRight: right, paddingTop: isMobile ? 32 : 40 }}>
         {/* We'll fight to */}
         <div id="what-well-fight-for" style={{ maxWidth: 680, scrollMarginTop: anchorOffset }}>
-          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>We'll fight to</h2>
+          <h2 style={{ ...S.platformHeading, marginTop: 0, marginBottom: 24, fontSize: isMobile ? 20 : 26 }}>We'll fight to</h2>
           {p.areas.map((area, i) => (
             <HousingArea key={i} area={area} index={i} isMobile={isMobile} numbered plain anchorOffset={anchorOffset} />
           ))}
