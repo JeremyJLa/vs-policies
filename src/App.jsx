@@ -2313,6 +2313,7 @@ function ControlsBar({ showVariations, tab, plainView, version, cardView, policy
               <button onClick={() => setPlainView('policies')} style={linkStyle(plainView === 'policies')}>Policies</button>
               <button onClick={() => setPlainView('housing3')} style={linkStyle(plainView === 'housing3')}>Housing policy</button>
               <button onClick={() => setPlainView('housing2')} style={linkStyle(plainView === 'housing2')}>Housing policy 2</button>
+              <button onClick={() => setPlainView('manifesto')} style={linkStyle(plainView === 'manifesto')}>Manifesto/vision</button>
             </>
           )}
         </div>
@@ -2520,6 +2521,135 @@ function CommentLayer({ pageKey }) {
   )
 }
 
+// One row of the Manifesto/vision "Our key policies" accordion — alternating
+// red/black bar headers with a white chevron, matching Manifesto-A.png
+// (collapsed) and Manifesto-B.png (expanded).
+function ManifestoPolicyAccordion({ policy, index, isOpen, onToggle, isMobile }) {
+  // Alternates the two heading banner images (with their own captions
+  // baked in) regardless of which policy follows — matching the Figma
+  // mockup exactly, which repeats these same two placeholder banners
+  // across every row rather than a distinct banner per category.
+  const headingSrc = index % 2 === 0 ? '/accordion-heading-a.png' : '/accordion-heading-b.png'
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <button
+        onClick={onToggle}
+        style={{
+          width: '100%', position: 'relative', display: 'block',
+          background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left',
+        }}
+      >
+        <img src={headingSrc} alt={policy.heading} style={{ display: 'block', width: '100%', height: 'auto' }} />
+        <span style={{
+          position: 'absolute', right: isMobile ? 14 : 20, top: '50%',
+          flexShrink: 0, display: 'inline-block', width: 13, height: 8,
+          backgroundColor: '#000',
+          WebkitMaskImage: 'url(/accordion-chevron.png)', maskImage: 'url(/accordion-chevron.png)',
+          WebkitMaskSize: 'contain', maskSize: 'contain',
+          WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
+          WebkitMaskPosition: 'center', maskPosition: 'center',
+          transform: isOpen ? 'translateY(-50%) rotate(180deg)' : 'translateY(-50%) rotate(0deg)',
+          transition: 'transform 0.25s ease',
+        }} />
+      </button>
+      <div style={{ maxHeight: isOpen ? 600 : 0, overflow: 'hidden', transition: 'max-height 0.4s ease', background: '#fff' }}>
+        <div style={{ padding: isMobile ? '16px' : '20px' }}>
+          <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 16 }}>{policy.body}</p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+            <a href="#" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 700, color: '#000', textDecoration: 'none', fontFamily: "'Open Sans', system-ui, sans-serif" }}>
+              <span style={{
+                width: 22, height: 22, borderRadius: '50%', background: '#000', color: '#fff',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, flexShrink: 0,
+              }}>▶</span>
+              Watch 2 min video
+            </a>
+            <a href="#" style={{ fontSize: 13, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif" }}>READ MORE</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// "Manifesto/vision" — combines Vision and Policies into one page, matching
+// the mobile reference mockups (Manifesto-A.png collapsed, Manifesto-B.png
+// expanded). Reuses the real VISION_CONTENT intro and POLICIES data rather
+// than the mockup's placeholder blurbs.
+function ManifestoVisionPage({ isMobile, isTablet }) {
+  const { left, right } = hPad(isMobile, isTablet)
+  const [openIndex, setOpenIndex] = useState(0)
+  const visionIntro = VISION_CONTENT.find(item => item.type === 'para')
+
+  return (
+    <div style={{ paddingBottom: isMobile ? 60 : 80 }}>
+      <div style={{ paddingLeft: left, paddingRight: right, paddingTop: isMobile ? 24 : 32 }}>
+        {/* Our vision / Our policies tabs — simple anchor links down the page */}
+        <div style={{ display: 'flex', gap: isMobile ? 20 : 28, borderBottom: '1px solid #E5E5E5', marginBottom: isMobile ? 24 : 32, paddingBottom: 12 }}>
+          <a href="#manifesto-vision" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '4px', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Our vision</a>
+          <a href="#manifesto-policies" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 600, color: '#666', textDecoration: 'none', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Our policies</a>
+        </div>
+
+        {/* Our vision */}
+        <div id="manifesto-vision" style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
+          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Our vision for a better, fairer Victoria</h2>
+          <p style={{
+            ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 8,
+            display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+          }}>{visionIntro.text}</p>
+          <a href="#" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Read more…</a>
+        </div>
+      </div>
+
+      {/* Grayscale candidates photo, full-bleed */}
+      <div style={{ width: '100%', height: isMobile ? 200 : 320, overflow: 'hidden', marginBottom: isMobile ? 28 : 36 }}>
+        <img src="/candidates.png" alt="Victorian Socialists candidates" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(1) contrast(1.1)' }} />
+      </div>
+
+      <div style={{ paddingLeft: left, paddingRight: right }}>
+        {/* Our key policies */}
+        <div id="manifesto-policies" style={{ maxWidth: 680, marginBottom: isMobile ? 20 : 28 }}>
+          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Our key policies</h2>
+          <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>Below are some of the key policies we're taking to this election. They form part of a broader and more detailed platform developed in recent months with input from Victorian Socialists members.</p>
+        </div>
+
+        <div style={{ maxWidth: 680, marginBottom: isMobile ? 32 : 44 }}>
+          {POLICIES.map((policy, i) => (
+            <ManifestoPolicyAccordion
+              key={i} policy={policy} index={i} isMobile={isMobile}
+              isOpen={openIndex === i}
+              onToggle={() => setOpenIndex(openIndex === i ? null : i)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Trailing placeholder sections, matching the mockup's generic
+          "Heading" + lorem-ipsum blocks and interspersed photos. */}
+      <div style={{ paddingLeft: left, paddingRight: right }}>
+        <div style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
+          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 18 : 22 }}>Heading</h2>
+          <p style={{ ...S.para, fontSize: isMobile ? 14 : 15 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lectus id sollicitudin urna ut ultricies. Ornare lectus quis pellentesque purus turpis fringilla nunc odio arcu neque feugiat. Nunc ac aliquet proin eu convallis vitae.</p>
+        </div>
+      </div>
+
+      <div style={{ width: '100%', height: isMobile ? 180 : 280, overflow: 'hidden', marginBottom: isMobile ? 28 : 36 }}>
+        <img src="/candidates.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+      </div>
+
+      <div style={{ paddingLeft: left, paddingRight: right }}>
+        <div style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
+          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 18 : 22 }}>Heading here</h2>
+          <p style={{ ...S.para, fontSize: isMobile ? 14 : 15 }}>Nisi a morbi nibh diam viverra vehicula. Aliquet facilisis nisi semper laoreet nunc a. Cras amet euismod lorem ipsum dolor sit amet, consectetur adipiscing elit. Eget pellentesque purus turpis fringilla nunc odio arcu.</p>
+        </div>
+        <div style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
+          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 18 : 22 }}>Heading</h2>
+          <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lectus id sollicitudin urna ut ultricies. Ornare lectus quis pellentesque purus turpis fringilla nunc odio arcu neque feugiat.</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vision', onVersionChange, onNavigateHome }) {
   // Default view is the clean "No icon" style with no variations picker.
   // ?clean=1 in the URL shows the full "Card design variations" picker and
@@ -2613,7 +2743,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
       <nav style={{ ...S.nav, padding: isMobile ? '0 16px' : '0 24px', position: 'sticky', top: isMobile ? 30 : 0, zIndex: 45 }} />
 
       {(() => {
-        const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3')
+        const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3' || plainView === 'manifesto')
         const fullHeight = isMobile ? 190 : 280
         // The photo header (housing3) gets more height than the solid-colour
         // Housing pages so more of the image is visible, not just a thin
@@ -2677,7 +2807,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
               </button>
             )}
             <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 276, top: isHousing ? heroHeight - leftDrop : (isMobile ? 127 : 178), ...(isMobile && { padding: '4px 7px 16px' }) }}>
-              <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36, whiteSpace: 'pre-line' }}>{isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"}</h1>
+              <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36, whiteSpace: 'pre-line' }}>{(!showVariations && version === 'B' && plainView === 'manifesto') ? 'Our vision\nand policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"}</h1>
             </div>
           </div>
         )
@@ -2700,6 +2830,8 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
           <HousingPolicyPage isMobile={isMobile} isTablet={isTablet} />
         ) : (!showVariations && version === 'B' && (plainView === 'housing2' || plainView === 'housing3')) ? (
           <HousingPolicyPageV2 isMobile={isMobile} isTablet={isTablet} />
+        ) : (!showVariations && version === 'B' && plainView === 'manifesto') ? (
+          <ManifestoVisionPage isMobile={isMobile} isTablet={isTablet} />
         ) : (!showVariations && version === 'B' && plainView === 'policies') ? (
           <div style={{ paddingTop: 15, paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
             <div style={{ paddingLeft: hPad(isMobile, isTablet).left, paddingRight: hPad(isMobile, isTablet).right, marginBottom: 32 }}>
