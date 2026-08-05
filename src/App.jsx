@@ -2657,8 +2657,9 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
   const [showVariations] = useState(() => new URLSearchParams(window.location.search).get('clean') === '1')
   // Plain-URL only: lets you flip between the finished single-page layout
   // ("Vision") and a placeholder card grid for previewing card styles
-  // ("Policies"), without needing ?clean=1.
-  const [plainView, setPlainView] = useState(initialPlainView)
+  // ("Policies"), without needing ?clean=1. ?view=<name> deep-links directly
+  // to a plainView (e.g. ?view=manifesto) for sharing/capture purposes.
+  const [plainView, setPlainView] = useState(() => new URLSearchParams(window.location.search).get('view') || initialPlainView)
   const [tab, setTab] = useState(initialTab)
   const [cardView, setCardView] = useState(showVariations ? 'titles' : 'detailsnoicon')
   const [policyLayout, setPolicyLayout] = useState('grid')
