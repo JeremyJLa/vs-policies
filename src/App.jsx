@@ -2549,9 +2549,6 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
       background: isOpen ? '#F8EBFF' : 'transparent', border: '1px solid #CCCCCC', borderRadius: 8,
       transition: 'background-color 0.25s ease',
     }}>
-      {/* Thin accent strip across the very top of the card. */}
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 5, background: '#BC506F' }} />
-
       {/* Tilted banner — flush to the card's exact top-left corner (the clip
           path includes the (0,0) point itself), clipped by the card's own
           overflow:hidden, same technique used for the housing/policies
@@ -2655,7 +2652,7 @@ function ManifestoVideoModal({ policy, onClose }) {
           position: 'relative', width: '100%', aspectRatio: '16 / 9', borderRadius: 4, overflow: 'hidden',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          <img src="/imageA.jpeg" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+          <img src="/jordan-video.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)' }} />
           <span style={{
             position: 'relative', width: 72, height: 72, borderRadius: '50%',
@@ -2674,12 +2671,82 @@ function ManifestoVideoModal({ policy, onClose }) {
   )
 }
 
+// Flat-row policy accordion for the "Our full policy platform" tab — same
+// visual style as the "Accordion 2" card variation (plain rows with
+// dividers, icon + uppercase title, a +/− symbol, red on hover/open), but
+// driven by real content. Accordion 2's own row data is just 3 real titles
+// cycled with placeholder lorem-ipsum text to preview row density at scale,
+// so rather than repeat that placeholder text here, every individual policy
+// commitment (each POLICIES[].sections entry, not just the 5 parent
+// headings) becomes its own row — 20 real items in total.
+const MANIFESTO_ACCORDION_ROWS = POLICIES.flatMap((policy) =>
+  policy.sections.map((s) => ({ heading: s.heading, text: s.text, Icon: policy.Icon }))
+)
+
+function ManifestoFullPolicyAccordion({ isMobile, isTablet }) {
+  const [openIndex, setOpenIndex] = useState(null)
+  const [hoveredIndex, setHoveredIndex] = useState(null)
+  const { left, right } = hPad(isMobile, isTablet)
+  const rowLeftPad = isMobile ? left : 0
+  const rowRightPad = isMobile ? right : 24
+  return (
+    <div style={{ marginLeft: isMobile ? 0 : left, width: isMobile ? '100%' : 660, maxWidth: isMobile ? '100%' : `calc(100% - ${left}px)` }}>
+      {MANIFESTO_ACCORDION_ROWS.map((row, i) => {
+        const isOpen = openIndex === i
+        const isHovered = hoveredIndex === i
+        const isRed = isOpen || isHovered
+        const { Icon } = row
+        return (
+          <div key={i} style={{ borderBottom: '1px solid #C4C4C4', ...(i === 0 ? { borderTop: '1px solid #C4C4C4' } : {}) }}>
+            <button
+              onClick={() => setOpenIndex(isOpen ? null : i)}
+              onMouseEnter={() => setHoveredIndex(i)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center',
+                justifyContent: 'space-between', gap: 16,
+                background: 'none', border: 'none', cursor: 'pointer',
+                padding: `${isMobile ? 16 : 20}px ${rowRightPad}px ${isMobile ? 16 : 20}px ${rowLeftPad}px`,
+                textAlign: 'left',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 14 : 20 }}>
+                <Icon height={isMobile ? 22 : 28} color={isRed ? '#FF4B33' : '#000'} />
+                <h3 style={{
+                  margin: 0, fontSize: isMobile ? 15 : 18, fontWeight: 800, lineHeight: 1.2,
+                  fontFamily: "'Work Sans', system-ui, sans-serif",
+                  letterSpacing: '0.01em',
+                  color: isRed ? '#FF4B33' : '#000',
+                  transition: 'color 0.15s ease',
+                }}>{row.heading}</h3>
+              </div>
+              <span style={{
+                fontSize: 26, lineHeight: 1, fontWeight: 300, flexShrink: 0,
+                color: isRed ? '#FF4B33' : '#000',
+                transition: 'color 0.15s ease',
+              }}>
+                {isOpen ? '−' : '+'}
+              </span>
+            </button>
+            <div style={{ maxHeight: isOpen ? 800 : 0, overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
+              <div style={{ padding: `0 ${rowRightPad}px ${isMobile ? 20 : 24}px ${rowLeftPad + (isMobile ? 36 : 48)}px` }}>
+                <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, margin: 0 }}>{row.text}</p>
+              </div>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 // "Manifesto/vision" — combines Vision and Policies into one page, matching
 // the mobile reference mockups (Manifesto-A.png collapsed, Manifesto-B.png
 // expanded). Reuses the real VISION_CONTENT intro and POLICIES data rather
 // than the mockup's placeholder blurbs.
 function ManifestoVisionPage({ isMobile, isTablet }) {
   const { left, right } = hPad(isMobile, isTablet)
+  const [activeTab, setActiveTab] = useState('vision')
   const [openIndex, setOpenIndex] = useState(null)
   const [videoPolicy, setVideoPolicy] = useState(null)
   const visionIntro = VISION_CONTENT.find(item => item.type === 'para')
@@ -2687,69 +2754,103 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
   return (
     <div style={{ paddingBottom: isMobile ? 60 : 80 }}>
       <div style={{ paddingLeft: left, paddingRight: right, paddingTop: isMobile ? 24 : 32 }}>
-        {/* Our vision / Our policies tabs — simple anchor links down the page */}
+        {/* Our vision / Our full policy platform tabs */}
         <div style={{ display: 'flex', gap: isMobile ? 20 : 28, borderBottom: '1px solid #E5E5E5', marginBottom: isMobile ? 24 : 32, paddingBottom: 12 }}>
-          <a href="#manifesto-vision" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '4px', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Our vision</a>
-          {/* Not interactive for now — plain label, no link/href. */}
-          <span style={{ fontSize: isMobile ? 14 : 15, fontWeight: 600, color: '#666', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Our full policy platform</span>
-        </div>
-
-        {/* Our vision */}
-        <div id="manifesto-vision" style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
-          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Our vision for a better, fairer Victoria</h2>
-          <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>{visionIntro.text}</p>
-        </div>
-      </div>
-
-      {/* Grayscale candidates photo, full-bleed */}
-      <div style={{ width: '100%', height: isMobile ? 200 : 320, overflow: 'hidden', marginBottom: isMobile ? 28 : 36 }}>
-        <img src="/candidates.png" alt="Victorian Socialists candidates" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(1) contrast(1.1)' }} />
-      </div>
-
-      <div style={{ paddingLeft: left, paddingRight: right }}>
-        {/* Our key policies */}
-        <div id="manifesto-policies" style={{ maxWidth: 680, marginBottom: isMobile ? 20 : 28 }}>
-          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Our key policies</h2>
-          <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>Below are some of the key policies we're taking to this election. They form part of a broader and more detailed platform developed in recent months with input from Victorian Socialists members.</p>
-        </div>
-
-        <div style={{ maxWidth: 680, marginBottom: isMobile ? 32 : 44 }}>
-          {POLICIES.map((policy, i) => (
-            <ManifestoPolicyAccordion
-              key={i} policy={policy} index={i} isMobile={isMobile}
-              isOpen={openIndex === i}
-              onToggle={() => setOpenIndex(openIndex === i ? null : i)}
-              onOpenVideo={() => setVideoPolicy(policy)}
-            />
-          ))}
+          <button
+            type="button"
+            onClick={() => setActiveTab('vision')}
+            style={{
+              background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+              fontSize: isMobile ? 14 : 15, fontWeight: activeTab === 'vision' ? 700 : 600,
+              color: activeTab === 'vision' ? '#000' : '#666',
+              textDecoration: activeTab === 'vision' ? 'underline' : 'none', textUnderlineOffset: '4px',
+              fontFamily: "'Open Sans', system-ui, sans-serif",
+            }}
+          >Our vision</button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('policies')}
+            style={{
+              background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+              fontSize: isMobile ? 14 : 15, fontWeight: activeTab === 'policies' ? 700 : 600,
+              color: activeTab === 'policies' ? '#000' : '#666',
+              textDecoration: activeTab === 'policies' ? 'underline' : 'none', textUnderlineOffset: '4px',
+              fontFamily: "'Open Sans', system-ui, sans-serif",
+            }}
+          >Our full policy platform</button>
         </div>
       </div>
 
-      {videoPolicy && <ManifestoVideoModal policy={videoPolicy} onClose={() => setVideoPolicy(null)} />}
-
-      {/* Trailing placeholder sections, matching the mockup's generic
-          "Heading" + lorem-ipsum blocks and interspersed photos. */}
-      <div style={{ paddingLeft: left, paddingRight: right }}>
-        <div style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
-          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 18 : 22 }}>Heading</h2>
-          <p style={{ ...S.para, fontSize: isMobile ? 14 : 15 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lectus id sollicitudin urna ut ultricies. Ornare lectus quis pellentesque purus turpis fringilla nunc odio arcu neque feugiat. Nunc ac aliquet proin eu convallis vitae.</p>
+      {activeTab === 'policies' ? (
+        <div style={{ paddingLeft: left, paddingRight: right }}>
+          <div style={{ maxWidth: 680, marginBottom: isMobile ? 20 : 28 }}>
+            <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0, marginTop: 0 }}>Below is our full platform of key policies we're taking to this election.</p>
+          </div>
+          <div style={{ marginBottom: isMobile ? 32 : 44 }}>
+            <ManifestoFullPolicyAccordion isMobile={isMobile} isTablet={isTablet} />
+          </div>
         </div>
-      </div>
+      ) : (
+        <>
+          <div style={{ paddingLeft: left, paddingRight: right }}>
+            {/* Our vision */}
+            <div id="manifesto-vision" style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
+              <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Our vision for a better, fairer Victoria</h2>
+              <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>{visionIntro.text}</p>
+            </div>
+          </div>
 
-      <div style={{ width: '100%', height: isMobile ? 180 : 280, overflow: 'hidden', marginBottom: isMobile ? 28 : 36 }}>
-        <img src="/candidates.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-      </div>
+          {/* Grayscale candidates photo, full-bleed */}
+          <div style={{ width: '100%', height: isMobile ? 200 : 320, overflow: 'hidden', marginBottom: isMobile ? 28 : 36 }}>
+            <img src="/candidates.png" alt="Victorian Socialists candidates" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(1) contrast(1.1)' }} />
+          </div>
 
-      <div style={{ paddingLeft: left, paddingRight: right }}>
-        <div style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
-          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 18 : 22 }}>Heading here</h2>
-          <p style={{ ...S.para, fontSize: isMobile ? 14 : 15 }}>Nisi a morbi nibh diam viverra vehicula. Aliquet facilisis nisi semper laoreet nunc a. Cras amet euismod lorem ipsum dolor sit amet, consectetur adipiscing elit. Eget pellentesque purus turpis fringilla nunc odio arcu.</p>
-        </div>
-        <div style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
-          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 18 : 22 }}>Heading</h2>
-          <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lectus id sollicitudin urna ut ultricies. Ornare lectus quis pellentesque purus turpis fringilla nunc odio arcu neque feugiat.</p>
-        </div>
-      </div>
+          <div style={{ paddingLeft: left, paddingRight: right }}>
+            {/* Our key policies */}
+            <div id="manifesto-policies" style={{ maxWidth: 680, marginBottom: isMobile ? 20 : 28 }}>
+              <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Our key policies</h2>
+              <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>Below are some of the key policies we're taking to this election. They form part of a broader and more detailed platform developed in recent months with input from Victorian Socialists members.</p>
+            </div>
+
+            <div style={{ maxWidth: 680, marginBottom: isMobile ? 32 : 44 }}>
+              {POLICIES.map((policy, i) => (
+                <ManifestoPolicyAccordion
+                  key={i} policy={policy} index={i} isMobile={isMobile}
+                  isOpen={openIndex === i}
+                  onToggle={() => setOpenIndex(openIndex === i ? null : i)}
+                  onOpenVideo={() => setVideoPolicy(policy)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {videoPolicy && <ManifestoVideoModal policy={videoPolicy} onClose={() => setVideoPolicy(null)} />}
+
+          {/* Trailing placeholder sections, matching the mockup's generic
+              "Heading" + lorem-ipsum blocks and interspersed photos. */}
+          <div style={{ paddingLeft: left, paddingRight: right }}>
+            <div style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
+              <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 18 : 22 }}>Heading</h2>
+              <p style={{ ...S.para, fontSize: isMobile ? 14 : 15 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lectus id sollicitudin urna ut ultricies. Ornare lectus quis pellentesque purus turpis fringilla nunc odio arcu neque feugiat. Nunc ac aliquet proin eu convallis vitae.</p>
+            </div>
+          </div>
+
+          <div style={{ width: '100%', height: isMobile ? 180 : 280, overflow: 'hidden', marginBottom: isMobile ? 28 : 36 }}>
+            <img src="/candidates.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
+
+          <div style={{ paddingLeft: left, paddingRight: right }}>
+            <div style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
+              <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 18 : 22 }}>Heading here</h2>
+              <p style={{ ...S.para, fontSize: isMobile ? 14 : 15 }}>Nisi a morbi nibh diam viverra vehicula. Aliquet facilisis nisi semper laoreet nunc a. Cras amet euismod lorem ipsum dolor sit amet, consectetur adipiscing elit. Eget pellentesque purus turpis fringilla nunc odio arcu.</p>
+            </div>
+            <div style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
+              <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 18 : 22 }}>Heading</h2>
+              <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lectus id sollicitudin urna ut ultricies. Ornare lectus quis pellentesque purus turpis fringilla nunc odio arcu neque feugiat.</p>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }
