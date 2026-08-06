@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react'
-import { createPortal } from 'react-dom'
 import './index.css'
 import HomePage from './HomePage'
 
@@ -2407,120 +2406,6 @@ function ControlsBar({ showVariations, tab, plainView, version, cardView, policy
   )
 }
 
-// Lightweight Figma-style commenting: toggle "add" mode, click anywhere on
-// the page to drop a numbered pin and leave a note. Pins are stored in
-// localStorage (scoped per `pageKey`, e.g. which plainView/tab/cardView is
-// showing) so they persist across reloads and don't bleed between views.
-// Rendered via a portal straight into document.body so its position:absolute
-// pins are always relative to the real document, never a positioned
-// ancestor buried inside the page.
-function CommentLayer({ pageKey }) {
-  const [comments, setComments] = useState(() => {
-    try {
-      const raw = localStorage.getItem('vsProtoComments')
-      return raw ? JSON.parse(raw) : []
-    } catch {
-      return []
-    }
-  })
-  const [addMode, setAddMode] = useState(false)
-  const [draft, setDraft] = useState(null)
-  const [openId, setOpenId] = useState(null)
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('vsProtoComments', JSON.stringify(comments))
-    } catch {
-      // ignore quota errors
-    }
-  }, [comments])
-
-  useEffect(() => {
-    if (!addMode) return
-    const onClick = (e) => {
-      if (e.target.closest('[data-comment-ui]')) return
-      setDraft({ x: e.clientX + window.scrollX, y: e.clientY + window.scrollY, text: '' })
-      setAddMode(false)
-    }
-    document.addEventListener('click', onClick, true)
-    return () => document.removeEventListener('click', onClick, true)
-  }, [addMode])
-
-  const pageComments = comments.filter(c => c.page === pageKey)
-
-  return createPortal(
-    <>
-      {addMode && (
-        <div style={{ position: 'fixed', inset: 0, cursor: 'crosshair', zIndex: 9998, background: 'rgba(255,75,51,0.04)' }} />
-      )}
-      {pageComments.map((c, i) => (
-        <div key={c.id} data-comment-ui style={{ position: 'absolute', left: c.x, top: c.y, zIndex: 9997, transform: 'translate(-50%, -100%)' }}>
-          <button
-            onClick={(e) => { e.stopPropagation(); setOpenId(openId === c.id ? null : c.id) }}
-            style={{
-              width: 26, height: 26, borderRadius: '50% 50% 50% 0', background: '#FF4B33', color: '#fff',
-              border: '2px solid #fff', boxShadow: '0 2px 6px rgba(0,0,0,0.3)', cursor: 'pointer',
-              fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: "'Open Sans', system-ui, sans-serif", padding: 0,
-            }}
-          >{i + 1}</button>
-          {openId === c.id && (
-            <div style={{
-              position: 'absolute', top: 32, left: 0, width: 240, background: '#fff', border: '1px solid #ddd',
-              borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.18)', padding: 12, fontFamily: "'Open Sans', system-ui, sans-serif",
-            }}>
-              <p style={{ fontSize: 13, margin: '0 0 8px', whiteSpace: 'pre-wrap', color: '#000' }}>{c.text}</p>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11, color: '#999' }}>
-                <span>{new Date(c.timestamp).toLocaleDateString()}</span>
-                <button onClick={() => setComments(cs => cs.filter(x => x.id !== c.id))} style={{ background: 'none', border: 'none', color: '#FF4B33', cursor: 'pointer', fontSize: 11, fontWeight: 700, padding: 0 }}>Delete</button>
-              </div>
-            </div>
-          )}
-        </div>
-      ))}
-      {draft && (
-        <div data-comment-ui style={{
-          position: 'absolute', left: draft.x, top: draft.y, zIndex: 9999, transform: 'translate(-50%, -100%)',
-          width: 240, background: '#fff', border: '1px solid #ddd', borderRadius: 8,
-          boxShadow: '0 8px 24px rgba(0,0,0,0.2)', padding: 12, fontFamily: "'Open Sans', system-ui, sans-serif",
-        }}>
-          <textarea
-            autoFocus
-            value={draft.text}
-            onChange={(e) => setDraft({ ...draft, text: e.target.value })}
-            placeholder="Leave a comment…"
-            style={{ width: '100%', minHeight: 60, fontSize: 13, border: '1px solid #eee', borderRadius: 4, padding: 8, fontFamily: 'inherit', resize: 'vertical', boxSizing: 'border-box' }}
-          />
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 }}>
-            <button onClick={() => setDraft(null)} style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', fontSize: 12 }}>Cancel</button>
-            <button
-              onClick={() => {
-                if (!draft.text.trim()) { setDraft(null); return }
-                setComments(cs => [...cs, { id: Date.now(), page: pageKey, x: draft.x, y: draft.y, text: draft.text, timestamp: Date.now() }])
-                setDraft(null)
-              }}
-              style={{ background: '#FF4B33', border: 'none', color: '#fff', cursor: 'pointer', fontSize: 12, fontWeight: 700, padding: '6px 12px', borderRadius: 4 }}
-            >Save</button>
-          </div>
-        </div>
-      )}
-      <button
-        data-comment-ui
-        onClick={() => setAddMode(m => !m)}
-        style={{
-          position: 'fixed', bottom: 24, right: 24, zIndex: 9999,
-          background: addMode ? '#FF4B33' : '#000', color: '#fff', border: 'none', borderRadius: 999,
-          padding: '12px 18px', fontSize: 14, fontWeight: 700, cursor: 'pointer',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.25)', fontFamily: "'Open Sans', system-ui, sans-serif",
-        }}
-      >
-        {addMode ? 'Click page to comment…' : `Comments (${pageComments.length})`}
-      </button>
-    </>,
-    document.body
-  )
-}
-
 // One row of the Manifesto/vision "Our key policies" accordion — alternating
 // red/black bar headers with a white chevron, matching Manifesto-A.png
 // (collapsed) and Manifesto-B.png (expanded).
@@ -2828,21 +2713,44 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
             <div style={{ maxWidth: 680 }}>
               <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Our vision for a better, fairer Victoria</h2>
               <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>
-                {visionIntro.text}{' '}
-                <button
-                  type="button"
-                  onClick={() => setVisionExpanded(v => !v)}
-                  style={{
-                    font: 'inherit', fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px',
-                    background: 'none', border: 'none', padding: 0, cursor: 'pointer',
-                  }}
-                >{visionExpanded ? 'Read less' : 'Read more'}</button>
+                {visionIntro.text}
+                {!visionExpanded && (
+                  <>
+                    {' '}
+                    <button
+                      type="button"
+                      onClick={() => setVisionExpanded(true)}
+                      style={{
+                        font: 'inherit', fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px',
+                        background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                      }}
+                    >Read more</button>
+                  </>
+                )}
               </p>
               {visionExpanded && (
                 <div style={{ marginTop: 16 }}>
-                  {visionExtra.map((p, i) => (
-                    <p key={i} style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: i === visionExtra.length - 1 ? 0 : 16 }}>{p.text}</p>
-                  ))}
+                  {visionExtra.map((p, i) => {
+                    const isLast = i === visionExtra.length - 1
+                    return (
+                      <p key={i} style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: isLast ? 0 : 16 }}>
+                        {p.text}
+                        {isLast && (
+                          <>
+                            {' '}
+                            <button
+                              type="button"
+                              onClick={() => setVisionExpanded(false)}
+                              style={{
+                                font: 'inherit', fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px',
+                                background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                              }}
+                            >Read less</button>
+                          </>
+                        )}
+                      </p>
+                    )
+                  })}
                 </div>
               )}
             </div>
@@ -2981,7 +2889,6 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
 
   return (
     <div style={{ background: '#DDDDDD' }}>
-      <CommentLayer pageKey={`${plainView}:${tab}:${cardView}`} />
       <ControlsBar
         showVariations={showVariations} tab={tab} plainView={plainView} version={version}
         cardView={cardView} policyLayout={policyLayout}
