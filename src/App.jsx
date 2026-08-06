@@ -2434,6 +2434,7 @@ function ManifestoFlagMark() {
 // a tilted red banner flush to its top-left corner, a "Watch 2 min video"
 // pill and "READ MORE" toggle, and — expanded — the full sections breakdown.
 function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVideo }) {
+  const isShortHeading = policy.heading === 'Homes for all'
   return (
     <div style={{
       position: 'relative', overflow: 'hidden', marginBottom: 16,
@@ -2448,8 +2449,8 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
           wraps to at most two lines. */}
       <div style={{
         position: 'absolute', top: 0, left: 0,
-        width: policy.heading === 'Homes for all' ? (isMobile ? 190 : 250) : (isMobile ? 270 : 340),
-        height: isMobile ? 88 : 96,
+        width: isShortHeading ? (isMobile ? 190 : 250) : (isMobile ? 270 : 340),
+        height: isShortHeading ? (isMobile ? 64 : 70) : (isMobile ? 88 : 96),
         background: '#FF4B33',
         clipPath: 'polygon(0% 100%, 0% 0%, 93.9% 0%, 100% 82.2%)',
         display: 'flex', alignItems: 'center', paddingLeft: isMobile ? 16 : 20, paddingRight: isMobile ? 24 : 30, paddingBottom: 6,
@@ -2460,7 +2461,7 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
         }}>{policy.heading}</span>
       </div>
 
-      <div style={{ paddingTop: isMobile ? 100 : 110, padding: `${isMobile ? 100 : 110}px ${isMobile ? 18 : 24}px ${isMobile ? 20 : 26}px` }}>
+      <div style={{ padding: `${isShortHeading ? (isMobile ? 76 : 86) : (isMobile ? 100 : 110)}px ${isMobile ? 18 : 24}px ${isMobile ? 20 : 26}px` }}>
         <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 20 }}>{policy.body}</p>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <button
@@ -2562,90 +2563,104 @@ function ManifestoVideoModal({ policy, onClose }) {
   )
 }
 
-// "Lower content" — matches the Figma reference exactly (file
-// UdDv2zFOv9HEaHRllxY1X3, node 5682:17328): alternating black/red torn-paper
-// shapes peeking out from behind a photo, with a bold quote overlaid on the
-// exposed portion of the shape, interspersed with two plain heading +
-// paragraph sections. The shape geometry below is the literal clip-path
-// polygon extracted from that node's own SVG path data (not redrawn), and
-// the three photo crops all come from the same source image (Figma's
-// "DSCF3029"), matching the design's single-photo-multiple-crops technique.
-// All copy is Figma's own placeholder lorem ipsum — this section previews
-// purely as a layout, with no real copy assigned to it yet in the design.
-const LOWER_CONTENT_SHAPES = {
-  black1: { fill: '#000', clipPath: 'polygon(0.74% 0%, 100% 0%, 88.9% 100%, 0% 99.84%)', aspect: 635.565 / 420.67 },
-  red: { fill: '#FF4B33', clipPath: 'polygon(0% 0%, 79.39% 0%, 100% 100%, 0% 95.65%)', aspect: 651.273 / 424.653 },
-  black2: { fill: '#000', clipPath: 'polygon(1.4% 0%, 100% 0%, 87.57% 100%, 0% 97.03%)', aspect: 425.861 / 423.456 },
-}
-
+// "Lower content" — traced directly from IMAGES/Lower content.png, a
+// 402x3603 full-resolution export of Figma node 5682:17328 (file
+// UdDv2zFOv9HEaHRllxY1X3) at its native mobile frame size. Every position
+// below is that PNG's own pixel geometry: left/width expressed as a percent
+// of the 402px reference frame (so bleeds/insets scale with any container
+// width), top/height in the frame's own px. Shape fills use the literal
+// clip-path polygon extracted from the node's SVG path data. All three
+// photo crops come from the same source image (Figma's "DSCF3029"). Copy is
+// Figma's own placeholder lorem ipsum — no real copy exists for this
+// section in the design yet. Mobile-only for now.
 const LOWER_CONTENT_QUOTE = 'Lorem ipsum dolor sit amet consectetur. Lectus id sollicitudin urna ut ultricies. Ornare lectus proin quis pellentesque. Eget pellentesque purus turpis fringilla nunc odio arcu neque feugiat. Nunc ac aliquet proin eu convallis vitae. Et volutpat sed porttitor habitasse c'
-const LOWER_CONTENT_QUOTE_SHORT = 'Lorem ipsum dolor sit amet consectetur. Lectus id sollicitudin urna ut ultricies.'
-const LOWER_CONTENT_PARAGRAPH = 'Lorem ipsum dolor sit amet consectetur. Lectus id sollicitudin urna ut ultricies. Ornare lectus proin quis pellentesque. Eget pellentesque purus turpis fringilla nunc odio arcu neque feugiat. Nunc ac aliquet proin eu convallis vitae. Et volutpat sed porttitor habitasse consequat sollicitudin. Metus molestie integer ipsum facilisi tellus rutrum enim. Amet dolor amet volutpat eget. Faucibus fringilla vehicula diam sit aliquam faucibus ut dignissim. Donec nisi a morbi nibh diam viverra vehicula. Aliquet facilisis nisi semper laoreet nunc a. Cras amet euismod quam etiam amet ornare dictumst. Imperdiet sit in pellentesque non etiam dolor ipsum id interdum. Etiam euismod et vitae commodo fermentum ac ultricies sit cum. Risus tellus id amet nullam odio.'
+const LOWER_CONTENT_PARAGRAPH_1 = 'Lorem ipsum dolor sit amet consectetur. Lectus id sollicitudin urna ut ultricies. Ornare lectus proin quis pellentesque. Eget pellentesque purus turpis fringilla nunc odio arcu neque feugiat. Nunc ac aliquet proin eu convallis vitae. Et volutpat sed porttitor habitasse consequat sollicitudin. Metus molestie integer ipsum facilisi tellus rutrum enim. Amet dolor amet volutpat eget. Faucibus fringilla vehicula diam sit aliquam faucibus ut dignissim. Donec nisi a morbi nibh diam viverra vehicula. Aliquet facilisis nisi semper laoreet nunc a. Cras amet euismod quam'
+const LOWER_CONTENT_PARAGRAPH_1_EXTRA = 'Lorem ipsum dolor sit amet consectetur. Lectus id sollicitudin urna ut ultricies. Ornare lectus proin quis pellentesque. Eget pellentesque purus turpis fringilla nunc odio arcu neque feugiat. Nunc ac aliquet proin eu convallis vitae. Et volutpat sed porttitor habitasse consequat sollicitudin. Metus molestie integer ipsum facilisi tellus rutrum enim. Amet dolor amet volutpat eget. Faucibus fringilla vehicula diam sit '
+const LOWER_CONTENT_PARAGRAPH_2 = 'Metus molestie integer ipsum facilisi tellus rutrum enim. Amet dolor amet volutpat eget. Faucibus fringilla vehicula diam sit aliquam faucibus ut dignissim. Donec nisi a morbi nibh diam viverra vehicula. Aliquet facilisis nisi semper laoreet nunc a. Cras amet euismod quam etiam amet ornare dictumst. Imperdiet sit in pellentesque non etiam dolor ipsum id interdum. Etiam euismod et vitae commodo fermentum ac ultricies sit cum. Risus tellus id amet nullam odio. Lorem ipsum dolor sit amet consectetur. Lectus id sollicitudin urna ut ultricies. Ornare lectus proin quis pellentesque. Eget pellentesque purus turpis fringilla nunc odio arcu neque feugiat.'
 
-// A torn-shape band (peeking above a photo) — shapeHeight/photoHeight are
-// per-breakpoint pixel heights; the photo overlaps up into the shape's
-// bottom portion so only the top "peeking" strip of colour + quote shows.
-function LowerContentBand({ shape, quote, photoObjectPosition, isMobile }) {
-  const shapeHeight = isMobile ? 220 : 340
-  const photoHeight = isMobile ? 260 : 400
-  const overlap = isMobile ? 70 : 110
+// left/width as % of the 402px reference frame; top/height in frame px.
+function pct(px) { return `${(px / 402 * 100).toFixed(2)}%` }
+
+function ManifestoLowerContent({ isMobile }) {
+  if (!isMobile) return null
+  const quoteStyle = {
+    position: 'absolute', margin: 0, color: '#fff', fontWeight: 700, width: 229,
+    fontSize: 18, lineHeight: '26px', fontFamily: "'Work Sans', system-ui, sans-serif",
+  }
+  const headingStyle = {
+    position: 'absolute', margin: 0, fontWeight: 800, fontSize: 18, color: '#000',
+    fontFamily: "'Work Sans', system-ui, sans-serif",
+  }
+  const paraStyle = {
+    position: 'absolute', margin: 0, fontSize: 13, lineHeight: 1.41, color: '#000',
+    fontFamily: "'Open Sans', system-ui, sans-serif",
+  }
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', width: '100%', height: 3603, overflow: 'hidden', marginTop: 30 }}>
+      {/* Shape 1 — black, quote 1 */}
       <div style={{
-        position: 'relative', width: '100%', height: shapeHeight,
-        background: shape.fill, clipPath: shape.clipPath,
-      }}>
-        <p style={{
-          position: 'absolute', top: isMobile ? 26 : 44, left: isMobile ? 24 : 56, right: isMobile ? 64 : '52%',
-          margin: 0, color: '#fff', fontWeight: 700, fontSize: isMobile ? 14 : 16, lineHeight: 1.5,
-          fontFamily: "'Work Sans', system-ui, sans-serif",
-        }}>{quote}</p>
+        position: 'absolute', left: pct(-48.81), width: pct(420.67), top: 123.94, height: 635.57,
+        background: '#000', clipPath: 'polygon(0.74% 0%, 100% 0%, 88.9% 100%, 0% 99.84%)',
+      }} />
+      <p style={{ ...quoteStyle, left: pct(51.78), top: 184.48 }}>{LOWER_CONTENT_QUOTE}</p>
+
+      {/* Photo A — inset left, bleeds off the right edge */}
+      <div style={{ position: 'absolute', left: pct(85.59), width: pct(507.61), top: 538.31, height: 288.27, overflow: 'hidden' }}>
+        <img src="/lower-content-photo.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 25%', display: 'block' }} />
       </div>
+
+      {/* Shape 2 — red, quote 2 */}
       <div style={{
-        position: 'relative', width: '100%', height: photoHeight, marginTop: -overlap,
-        overflow: 'hidden',
-      }}>
-        <img
-          src="/lower-content-photo.jpg" alt=""
-          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: photoObjectPosition, display: 'block' }}
-        />
-      </div>
-    </div>
-  )
-}
+        position: 'absolute', left: pct(-40.36), width: pct(424.65), top: 876.24, height: 651.27,
+        background: '#FF4B33', clipPath: 'polygon(0% 0%, 79.39% 0%, 100% 100%, 0% 95.65%)',
+      }} />
+      <p style={{ ...quoteStyle, left: pct(51.98), top: 944.21, color: '#F0EBEB' }}>{LOWER_CONTENT_QUOTE}</p>
 
-function ManifestoLowerContent({ isMobile, isTablet }) {
-  const { left, right } = hPad(isMobile, isTablet)
-  return (
-    <div style={{ marginTop: isMobile ? 8 : 16 }}>
-      <LowerContentBand shape={LOWER_CONTENT_SHAPES.black1} quote={LOWER_CONTENT_QUOTE} photoObjectPosition="center 15%" isMobile={isMobile} />
-      <LowerContentBand shape={LOWER_CONTENT_SHAPES.red} quote={LOWER_CONTENT_QUOTE} photoObjectPosition="center 50%" isMobile={isMobile} />
-
-      <div style={{ paddingLeft: left, paddingRight: right, paddingTop: isMobile ? 32 : 48 }}>
-        <div style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
-          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Lorem ipsum dolor</h2>
-          <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>{LOWER_CONTENT_PARAGRAPH}</p>
-        </div>
+      {/* Photo B — bleeds off the left edge, inset right */}
+      <div style={{ position: 'absolute', left: pct(-207.11), width: pct(507.61), top: 1280.29, height: 338.45, overflow: 'hidden' }}>
+        <img src="/lower-content-photo.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 50%', display: 'block' }} />
       </div>
 
-      <LowerContentBand shape={LOWER_CONTENT_SHAPES.black2} quote={LOWER_CONTENT_QUOTE_SHORT} photoObjectPosition="center 10%" isMobile={isMobile} />
-
-      <div style={{ paddingLeft: left, paddingRight: right, paddingTop: isMobile ? 32 : 48 }}>
-        <div style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
-          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Lorem ipsum dolor</h2>
-          <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>{LOWER_CONTENT_PARAGRAPH}</p>
-        </div>
+      {/* Heading + paragraph 1 (three paragraphs) */}
+      <h2 style={{ ...headingStyle, left: pct(46.46), width: 335, top: 1664.33 }}>Lorem ipsum dolor</h2>
+      {/* Height-capped + clipped so text never runs under shape 3, which
+          sits at a fixed top:2119.29 (415.98px below this block's own top)
+          regardless of how much text is here. */}
+      <div style={{ position: 'absolute', left: pct(44.98), width: 335, top: 1703.31, height: 2119.29 - 1703.31, overflow: 'hidden' }}>
+        <p style={{ ...paraStyle, position: 'static', marginBottom: 16 }}>{LOWER_CONTENT_PARAGRAPH_1}</p>
+        <p style={{ ...paraStyle, position: 'static', marginBottom: 16 }}>{LOWER_CONTENT_PARAGRAPH_1}</p>
+        <p style={{ ...paraStyle, position: 'static' }}>{LOWER_CONTENT_PARAGRAPH_1_EXTRA}</p>
       </div>
 
-      {/* Closing decorative shape — red torn edge into a solid black band,
-          matching the Figma frame's own transition out of this section. */}
-      <div style={{ position: 'relative', width: '100%', height: isMobile ? 90 : 140, marginTop: isMobile ? 24 : 32 }}>
-        <div style={{
-          position: 'absolute', inset: 0, background: LOWER_CONTENT_SHAPES.red.fill,
-          clipPath: 'polygon(0% 0%, 100% 0%, 100% 30%, 0% 100%)',
-        }} />
+      {/* Shape 3 — black, quote 3 */}
+      <div style={{
+        position: 'absolute', left: pct(-51.59), width: pct(423.46), top: 2119.29, height: 425.86,
+        background: '#000', clipPath: 'polygon(1.4% 0%, 100% 0%, 87.57% 100%, 0% 97.03%)',
+      }} />
+      <p style={{ ...quoteStyle, left: pct(51.78), top: 2155.81 }}>{LOWER_CONTENT_QUOTE}</p>
+
+      {/* Photo C — inset left, bleeds off the right edge */}
+      <div style={{ position: 'absolute', left: pct(69.21), width: pct(507.61), top: 2500.69, height: 206.79, overflow: 'hidden' }}>
+        <img src="/lower-content-photo.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 15%', display: 'block' }} />
       </div>
-      <div style={{ width: '100%', height: isMobile ? 60 : 90, background: '#000' }} />
+
+      {/* Heading 2 */}
+      <h2 style={{ ...headingStyle, left: pct(46.46), width: 335, top: 2762.14 }}>Lorem ipsum dolor</h2>
+
+      {/* Closing shape — red, bleeding far left, growing wider toward the
+          bottom, into a solid black band; both clipped by the frame's own
+          bottom edge exactly as in the reference. Painted before paragraph 2
+          so the paragraph's tail can overlap on top of it. */}
+      <div style={{
+        position: 'absolute', left: pct(-114.93), width: pct(424.65), top: 3035.44, height: 651.27,
+        background: '#FF4B33', clipPath: 'polygon(0% 0%, 79.39% 0%, 100% 100%, 0% 95.65%)',
+      }} />
+      <div style={{ position: 'absolute', left: pct(-43.48), width: pct(476.37), top: 3454.33, height: 214.63, background: '#000' }} />
+
+      {/* White backdrop card so the end of paragraph 2 stays legible where
+          it overlaps the red shape above. */}
+      <div style={{ position: 'absolute', left: pct(26.62), width: pct(301.68), top: 2975.04, height: 230.82, background: '#fff' }} />
+      <p style={{ ...paraStyle, left: pct(44.98), width: 335, top: 2801.11, height: 384.75, overflow: 'hidden' }}>{LOWER_CONTENT_PARAGRAPH_2}</p>
     </div>
   )
 }
@@ -2891,7 +2906,7 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
               <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>Below are some of the key policies we're taking to this election. They form part of a broader and more detailed platform developed in recent months with input from Victorian Socialists members.</p>
             </div>
 
-            <div style={{ maxWidth: 680, marginBottom: isMobile ? 32 : 44 }}>
+            <div style={{ maxWidth: 680, marginBottom: isMobile ? 0 : 44 }}>
               {POLICIES.map((policy, i) => (
                 <ManifestoPolicyAccordion
                   key={i} policy={policy} index={i} isMobile={isMobile}
@@ -2918,7 +2933,7 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
 
           {/* Not yet matching Figma closely enough on desktop — hold it to
               mobile only until the layout is refined further. */}
-          {isMobile && <ManifestoLowerContent isMobile={isMobile} isTablet={isTablet} />}
+          {isMobile && <ManifestoLowerContent isMobile={isMobile} />}
         </>
       )}
     </div>
