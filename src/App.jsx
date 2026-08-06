@@ -2714,7 +2714,7 @@ function ManifestoFullPolicyAccordion({ isMobile }) {
   // No left inset of its own — the parent already applies the page's hPad
   // padding, so rows sit flush with the text content above them.
   return (
-    <div style={{ width: '100%' }}>
+    <div style={{ width: '100%', maxWidth: isMobile ? '100%' : 635 }}>
       {MANIFESTO_ACCORDION_ROWS.map((row, i) => {
         const isOpen = openIndex === i
         const isHovered = hoveredIndex === i
