@@ -2539,14 +2539,14 @@ function ManifestoFlagMark() {
 
 // A policy "card" for Manifesto/vision — matching the Figma reference
 // exactly (file UdDv2zFOv9HEaHRllxY1X3, node 5627:5300 collapsed /
-// 5627:5704 expanded): an outlined card (fills #F8EBFF when expanded) with
+// 5627:5704 expanded): an outlined card (fills #F3F2FF when expanded) with
 // a tilted red banner flush to its top-left corner, a "Watch 2 min video"
 // pill and "READ MORE" toggle, and — expanded — the full sections breakdown.
 function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVideo }) {
   return (
     <div style={{
       position: 'relative', overflow: 'hidden', marginBottom: 16,
-      background: isOpen ? '#F8EBFF' : 'transparent', border: '1px solid #CCCCCC', borderRadius: 8,
+      background: isOpen ? '#F3F2FF' : 'transparent', border: '1px solid #CCCCCC', borderRadius: 8,
       transition: 'background-color 0.25s ease',
     }}>
       {/* Tilted banner — flush to the card's exact top-left corner (the clip
@@ -2557,10 +2557,10 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
           wraps to at most two lines. */}
       <div style={{
         position: 'absolute', top: 0, left: 0,
-        width: isMobile ? 270 : 340, height: isMobile ? 88 : 96,
+        width: policy.heading === 'Homes for all' ? (isMobile ? 190 : 250) : (isMobile ? 270 : 340),
+        height: isMobile ? 88 : 96,
         background: '#FF4B33',
         clipPath: 'polygon(0% 100%, 0% 0%, 93.9% 0%, 100% 82.2%)',
-        transform: 'rotate(0.8deg)', transformOrigin: 'top left',
         display: 'flex', alignItems: 'center', paddingLeft: isMobile ? 16 : 20, paddingRight: isMobile ? 24 : 30, paddingBottom: 6,
       }}>
         <span style={{
@@ -2679,23 +2679,46 @@ function ManifestoVideoModal({ policy, onClose }) {
 // so rather than repeat that placeholder text here, every individual policy
 // commitment (each POLICIES[].sections entry, not just the 5 parent
 // headings) becomes its own row — 20 real items in total.
-const MANIFESTO_ACCORDION_ROWS = POLICIES.flatMap((policy) =>
-  policy.sections.map((s) => ({ heading: s.heading, text: s.text, Icon: policy.Icon }))
-)
+//
+// Rows cycle through the full set of policy-icon assets (rather than
+// reusing each row's parent-policy icon, which repeats the same icon for
+// several consecutive rows) so no two adjacent rows show the same icon.
+const MANIFESTO_ICON_FILES = [
+  '/icons/housing.svg', '/icons/health.svg', '/icons/climate.svg',
+  '/icons/civil-rights.svg', '/icons/first-nations.svg', '/icons/power.svg',
+  '/icons/public-ownership.svg', '/icons/tax-the-rich.svg',
+  '/icons/workers-and-unions.svg', '/icons/workers-wage.svg',
+  '/icons/oppose-racism.svg', '/icons/oppose-military.svg',
+]
 
-function ManifestoFullPolicyAccordion({ isMobile, isTablet }) {
+function ManifestoRowIcon({ src, color = '#000', height = 28 }) {
+  return (
+    <span style={{
+      display: 'inline-block', flexShrink: 0, width: height, height,
+      backgroundColor: color,
+      WebkitMaskImage: `url(${src})`, maskImage: `url(${src})`,
+      WebkitMaskSize: 'contain', maskSize: 'contain',
+      WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
+      WebkitMaskPosition: 'center', maskPosition: 'center',
+    }} />
+  )
+}
+
+const MANIFESTO_ACCORDION_ROWS = POLICIES.flatMap((policy) =>
+  policy.sections.map((s) => ({ heading: s.heading, text: s.text }))
+).map((row, i) => ({ ...row, iconSrc: MANIFESTO_ICON_FILES[i % MANIFESTO_ICON_FILES.length] }))
+
+function ManifestoFullPolicyAccordion({ isMobile }) {
   const [openIndex, setOpenIndex] = useState(null)
   const [hoveredIndex, setHoveredIndex] = useState(null)
-  const { left, right } = hPad(isMobile, isTablet)
-  const rowLeftPad = isMobile ? left : 0
-  const rowRightPad = isMobile ? right : 24
+  // No left inset of its own — the parent already applies the page's hPad
+  // padding, so rows sit flush with the text content above them.
   return (
-    <div style={{ marginLeft: isMobile ? 0 : left, width: isMobile ? '100%' : 660, maxWidth: isMobile ? '100%' : `calc(100% - ${left}px)` }}>
+    <div style={{ width: '100%' }}>
       {MANIFESTO_ACCORDION_ROWS.map((row, i) => {
         const isOpen = openIndex === i
         const isHovered = hoveredIndex === i
         const isRed = isOpen || isHovered
-        const { Icon } = row
         return (
           <div key={i} style={{ borderBottom: '1px solid #C4C4C4', ...(i === 0 ? { borderTop: '1px solid #C4C4C4' } : {}) }}>
             <button
@@ -2706,12 +2729,12 @@ function ManifestoFullPolicyAccordion({ isMobile, isTablet }) {
                 width: '100%', display: 'flex', alignItems: 'center',
                 justifyContent: 'space-between', gap: 16,
                 background: 'none', border: 'none', cursor: 'pointer',
-                padding: `${isMobile ? 16 : 20}px ${rowRightPad}px ${isMobile ? 16 : 20}px ${rowLeftPad}px`,
+                padding: `${isMobile ? 16 : 20}px 24px ${isMobile ? 16 : 20}px 0`,
                 textAlign: 'left',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 14 : 20 }}>
-                <Icon height={isMobile ? 22 : 28} color={isRed ? '#FF4B33' : '#000'} />
+                <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 32 : 40} color={isRed ? '#FF4B33' : '#000'} />
                 <h3 style={{
                   margin: 0, fontSize: isMobile ? 15 : 18, fontWeight: 800, lineHeight: 1.2,
                   fontFamily: "'Work Sans', system-ui, sans-serif",
@@ -2729,7 +2752,7 @@ function ManifestoFullPolicyAccordion({ isMobile, isTablet }) {
               </span>
             </button>
             <div style={{ maxHeight: isOpen ? 800 : 0, overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
-              <div style={{ padding: `0 ${rowRightPad}px ${isMobile ? 20 : 24}px ${rowLeftPad + (isMobile ? 36 : 48)}px` }}>
+              <div style={{ padding: `0 24px ${isMobile ? 20 : 24}px ${isMobile ? 36 : 48}px` }}>
                 <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, margin: 0 }}>{row.text}</p>
               </div>
             </div>
@@ -2749,7 +2772,10 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
   const [activeTab, setActiveTab] = useState('vision')
   const [openIndex, setOpenIndex] = useState(null)
   const [videoPolicy, setVideoPolicy] = useState(null)
-  const visionIntro = VISION_CONTENT.find(item => item.type === 'para')
+  const [visionExpanded, setVisionExpanded] = useState(false)
+  const visionParas = VISION_CONTENT.filter(item => item.type === 'para')
+  const visionIntro = visionParas[0]
+  const visionExtra = visionParas.slice(1, 4)
 
   return (
     <div style={{ paddingBottom: isMobile ? 60 : 80 }}>
@@ -2792,11 +2818,40 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
         </div>
       ) : (
         <>
-          <div style={{ paddingLeft: left, paddingRight: right }}>
-            {/* Our vision */}
-            <div id="manifesto-vision" style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
+          {/* Our vision — full-width purple panel, text column matches the
+              rest of the page via hPad padding applied to the panel itself. */}
+          <div id="manifesto-vision" style={{
+            width: '100%', boxSizing: 'border-box', background: '#F8F5FA',
+            marginBottom: isMobile ? 28 : 36,
+            padding: `${isMobile ? 20 : 32}px ${right}px ${isMobile ? 24 : 36}px ${left}px`,
+          }}>
+            <div style={{ maxWidth: 680 }}>
               <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Our vision for a better, fairer Victoria</h2>
-              <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>{visionIntro.text}</p>
+              <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>
+                {visionIntro.text}{' '}
+                <button
+                  type="button"
+                  onClick={() => setVisionExpanded(v => !v)}
+                  style={{
+                    font: 'inherit', fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px',
+                    background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                  }}
+                >{visionExpanded ? 'Read less' : 'Read more'}</button>
+              </p>
+              {visionExpanded && (
+                <div style={{ marginTop: 16 }}>
+                  {visionExtra.map((p, i) => (
+                    <p key={i} style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: i === visionExtra.length - 1 ? 0 : 16 }}>{p.text}</p>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Manifesto booklet promo panel */}
+          <div style={{ paddingLeft: left, paddingRight: right, marginBottom: isMobile ? 28 : 36 }}>
+            <div style={{ maxWidth: 680, background: '#fff', borderRadius: 8, padding: isMobile ? 16 : 20 }}>
+              <img src="/Manifesto-order.png" alt="Full election manifesto available — order your copy" style={{ width: '100%', height: 'auto', display: 'block' }} />
             </div>
           </div>
 
@@ -2957,7 +3012,10 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
         const heroHeight = plainView === 'housing3' ? (isMobile ? 150 : fullHeight * 0.8) : isHousing ? fullHeight / 2 : fullHeight
         // Fixed pixel drops (not percentages) so the diagonal's angle stays
         // identical even when the container's height is halved for Housing.
-        const rightDrop = isMobile ? 19 : 39.2
+        // Manifesto's diagonal is tuned to an exact -1.9° (against a 1280px/
+        // 390px desktop/mobile reference width) rather than reusing the
+        // Housing pages' angle.
+        const rightDrop = plainView === 'manifesto' ? (isMobile ? 44.1 : 61.1) : (isMobile ? 19 : 39.2)
         const leftDrop = isMobile ? 57 : 103.6
         return (
           <div style={{ ...S.heroSection, height: heroHeight }}>
@@ -2984,6 +3042,14 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
                       photo gives a sepia-like tint using red instead of brown. */}
                   <div style={{ position: 'absolute', inset: 0, background: '#FF4B33', mixBlendMode: 'color', opacity: 0.12, pointerEvents: 'none' }} />
                 </div>
+              ) : plainView === 'manifesto' ? (
+                <div
+                  ref={heroImgRef}
+                  style={{
+                    ...S.heroPurple,
+                    transform: 'scale(1)', transition: 'transform 0.1s linear', willChange: 'transform',
+                  }}
+                />
               ) : isHousing ? (
                 <div style={{ position: 'absolute', inset: 0, background: '#E9E4EB' }} />
               ) : (
