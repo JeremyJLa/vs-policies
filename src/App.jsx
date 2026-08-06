@@ -238,6 +238,12 @@ const POLICIES = [
 ]
 
 const ACCORDION_POLICIES = POLICIES
+
+// "Watch 2 min video" thumbnails for the Manifesto policy cards — cycles
+// through the 3 available portraits (Homes for all gets jordan, Making
+// everyday life gets jasmine, Investing in better services gets omar, then
+// the remaining 2 cards repeat from jordan again).
+const MANIFESTO_VIDEO_IMAGES = ['/jordan-video.png', '/jasmine-video.png', '/omar-video.png']
 const POLICY_GRID = POLICIES
 const POLICY_GRID_ICONS = POLICIES
 
@@ -2537,7 +2543,7 @@ function ManifestoVideoModal({ policy, onClose }) {
           position: 'relative', width: '100%', aspectRatio: '16 / 9', borderRadius: 4, overflow: 'hidden',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          <img src="/jordan-video.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+          <img src={policy.videoImg} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)' }} />
           <span style={{
             position: 'relative', width: 72, height: 72, borderRadius: '50%',
@@ -2781,7 +2787,7 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
                   key={i} policy={policy} index={i} isMobile={isMobile}
                   isOpen={openIndex === i}
                   onToggle={() => setOpenIndex(openIndex === i ? null : i)}
-                  onOpenVideo={() => setVideoPolicy(policy)}
+                  onOpenVideo={() => setVideoPolicy({ ...policy, videoImg: MANIFESTO_VIDEO_IMAGES[i % MANIFESTO_VIDEO_IMAGES.length] })}
                 />
               ))}
             </div>
