@@ -2539,28 +2539,30 @@ function ManifestoFlagMark() {
 
 // A policy "card" for Manifesto/vision — matching the Figma reference
 // exactly (file UdDv2zFOv9HEaHRllxY1X3, node 5627:5300 collapsed /
-// 5627:5704 expanded): a rounded #F3F2FF card with a tilted red/black
-// banner clipped to its top-left corner, a "Watch 2 min video" pill and
-// "READ MORE" toggle, and — expanded — the full sections breakdown.
-function ManifestoPolicyAccordion({ policy, index, isOpen, onToggle, isMobile, onOpenVideo }) {
-  const bannerBg = index % 2 === 0 ? '#FF4B33' : '#000'
+// 5627:5704 expanded): an outlined card (fills #F8EBFF when expanded) with
+// a tilted red banner flush to its top-left corner, a "Watch 2 min video"
+// pill and "READ MORE" toggle, and — expanded — the full sections breakdown.
+function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVideo }) {
   return (
     <div style={{
       position: 'relative', overflow: 'hidden', marginBottom: 16,
-      background: '#F3F2FF', border: '1px solid #D3D1E8', borderRadius: 8,
+      background: isOpen ? '#F8EBFF' : 'transparent', border: '1px solid #CCCCCC', borderRadius: 8,
+      transition: 'background-color 0.25s ease',
     }}>
       {/* Thin accent strip across the very top of the card. */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 5, background: '#BC506F' }} />
 
-      {/* Tilted banner — clipped by the card's own overflow:hidden, same
-          technique used for the housing/policies banners elsewhere. Sized
-          to fit the 24px heading so even the longest one ("Fighting
-          oppression and building solidarity") wraps to at most two lines. */}
+      {/* Tilted banner — flush to the card's exact top-left corner (the clip
+          path includes the (0,0) point itself), clipped by the card's own
+          overflow:hidden, same technique used for the housing/policies
+          banners elsewhere. Sized to fit the 24px heading so even the
+          longest one ("Fighting oppression and building solidarity")
+          wraps to at most two lines. */}
       <div style={{
         position: 'absolute', top: 0, left: 0,
         width: isMobile ? 270 : 340, height: isMobile ? 88 : 96,
-        background: bannerBg,
-        clipPath: 'polygon(0% 100%, 0.6% 10.6%, 93.9% 0%, 100% 82.2%)',
+        background: '#FF4B33',
+        clipPath: 'polygon(0% 100%, 0% 0%, 93.9% 0%, 100% 82.2%)',
         transform: 'rotate(0.8deg)', transformOrigin: 'top left',
         display: 'flex', alignItems: 'center', paddingLeft: isMobile ? 16 : 20, paddingRight: isMobile ? 24 : 30, paddingBottom: 6,
       }}>
@@ -2893,7 +2895,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
                 />
               )}
             </div>
-            {isHousing && (
+            {isHousing && plainView !== 'manifesto' && (
               <button
                 onClick={() => { setPlainView('policies'); window.scrollTo(0, 0) }}
                 style={{
