@@ -2775,15 +2775,15 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
                 <img src="/Manifesto-order.png" alt="Full election manifesto available — order your copy" style={{ width: '100%', maxWidth: 397, height: 'auto', display: 'block' }} />
               ) : (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
-                  <img src="/manifesto-booklet-desktop.png" alt="A Socialist Manifesto booklet" style={{ width: 220, height: 'auto', flexShrink: 0 }} />
+                  <img src="/manifesto-booklet-desktop.png" alt="A Socialist Manifesto booklet" style={{ width: 340, height: 'auto', flexShrink: 0 }} />
                   <div>
                     <h3 style={{
-                      margin: '0 0 16px', fontSize: 22, fontWeight: 800, color: '#000',
+                      margin: '0 0 16px', fontSize: 18, fontWeight: 600, color: '#000',
                       fontFamily: "'Work Sans', system-ui, sans-serif",
                     }}>Full election manifesto available</h3>
                     <a href="/manifesto-booklet.pdf" target="_blank" rel="noreferrer" style={{
                       display: 'inline-flex', alignItems: 'center', gap: 10,
-                      border: '1px solid #000', borderRadius: 34, padding: '10px 20px',
+                      border: '1px solid #000', borderRadius: 4, padding: '10px 20px',
                       fontSize: 15, fontWeight: 700, color: '#000', textDecoration: 'none',
                       fontFamily: "'Open Sans', system-ui, sans-serif",
                     }}>Order your copy <span style={{ fontSize: 17 }}>→</span></a>
