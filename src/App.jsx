@@ -2667,12 +2667,11 @@ function ManifestoLowerContent({ isMobile }) {
 
 // Flat-row policy accordion for the "Our full policy platform" tab — same
 // visual style as the "Accordion 2" card variation (plain rows with
-// dividers, icon + uppercase title, a +/− symbol, red on hover/open), but
-// driven by real content. Accordion 2's own row data is just 3 real titles
-// cycled with placeholder lorem-ipsum text to preview row density at scale,
-// so rather than repeat that placeholder text here, every individual policy
-// commitment (each POLICIES[].sections entry, not just the 5 parent
-// headings) becomes its own row — 20 real items in total.
+// dividers, icon + uppercase title, a +/− symbol, red on hover/open).
+// Headings are the platform's full topic list (given directly, not derived
+// from POLICIES); no body copy exists yet for these per-topic rows, so each
+// expands to the same lorem-ipsum placeholder already used elsewhere in this
+// file for "real heading, no real body yet" rows (ACCORDION_ROW_BODY).
 //
 // Rows cycle through the full set of policy-icon assets (rather than
 // reusing each row's parent-policy icon, which repeats the same icon for
@@ -2698,9 +2697,34 @@ function ManifestoRowIcon({ src, color = '#000', height = 28 }) {
   )
 }
 
-const MANIFESTO_ACCORDION_ROWS = POLICIES.flatMap((policy) =>
-  policy.sections.map((s) => ({ heading: s.heading, text: s.text }))
-).map((row, i) => ({ ...row, iconSrc: MANIFESTO_ICON_FILES[i % MANIFESTO_ICON_FILES.length] }))
+const MANIFESTO_ACCORDION_HEADINGS = [
+  'Arts and culture for the enjoyment of all',
+  'Housing for all',
+  'Addressing climate change and protecting our environment',
+  'Defend democracy and the right to protest',
+  'First Nations',
+  'Fix the health crisis',
+  'Make power affordable and sustainable',
+  'Opposing militarism',
+  'How will we pay for it?',
+  'Liveable cities',
+  'End homophobia and transphobia',
+  'End the harms of gambling',
+  'Banking for people, not profit',
+  'Treating addiction as a health issue',
+  'Early childhood, primary and secondary education',
+  'Good food and nutrition for all',
+  'Opposing racism – we’re stronger together',
+  'Our universities are not for profit',
+  'Put workers on a workers wage',
+  'Dignity and security for older people',
+  'A fair go for rural and regional Victoria',
+  'Workers’ power',
+]
+
+const MANIFESTO_ACCORDION_ROWS = MANIFESTO_ACCORDION_HEADINGS.map((heading, i) => ({
+  heading, text: ACCORDION_ROW_BODY, iconSrc: MANIFESTO_ICON_FILES[i % MANIFESTO_ICON_FILES.length],
+}))
 
 function ManifestoFullPolicyAccordion({ isMobile }) {
   const [openIndex, setOpenIndex] = useState(null)
