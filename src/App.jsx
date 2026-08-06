@@ -2765,7 +2765,7 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
           {/* Manifesto booklet promo panel */}
           <div style={{ paddingLeft: left, paddingRight: right, marginBottom: isMobile ? 28 : 36 }}>
             <div style={{ maxWidth: 680, background: '#fff', borderRadius: 8, padding: isMobile ? 16 : 20 }}>
-              <img src="/Manifesto-order.png" alt="Full election manifesto available — order your copy" style={{ width: '100%', height: 'auto', display: 'block' }} />
+              <img src="/Manifesto-order.png" alt="Full election manifesto available — order your copy" style={{ width: '100%', maxWidth: 397, height: 'auto', display: 'block' }} />
             </div>
           </div>
 
