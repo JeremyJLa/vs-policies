@@ -2562,6 +2562,94 @@ function ManifestoVideoModal({ policy, onClose }) {
   )
 }
 
+// "Lower content" — matches the Figma reference exactly (file
+// UdDv2zFOv9HEaHRllxY1X3, node 5682:17328): alternating black/red torn-paper
+// shapes peeking out from behind a photo, with a bold quote overlaid on the
+// exposed portion of the shape, interspersed with two plain heading +
+// paragraph sections. The shape geometry below is the literal clip-path
+// polygon extracted from that node's own SVG path data (not redrawn), and
+// the three photo crops all come from the same source image (Figma's
+// "DSCF3029"), matching the design's single-photo-multiple-crops technique.
+// All copy is Figma's own placeholder lorem ipsum — this section previews
+// purely as a layout, with no real copy assigned to it yet in the design.
+const LOWER_CONTENT_SHAPES = {
+  black1: { fill: '#000', clipPath: 'polygon(0.74% 0%, 100% 0%, 88.9% 100%, 0% 99.84%)', aspect: 635.565 / 420.67 },
+  red: { fill: '#FF4B33', clipPath: 'polygon(0% 0%, 79.39% 0%, 100% 100%, 0% 95.65%)', aspect: 651.273 / 424.653 },
+  black2: { fill: '#000', clipPath: 'polygon(1.4% 0%, 100% 0%, 87.57% 100%, 0% 97.03%)', aspect: 425.861 / 423.456 },
+}
+
+const LOWER_CONTENT_QUOTE = 'Lorem ipsum dolor sit amet consectetur. Lectus id sollicitudin urna ut ultricies. Ornare lectus proin quis pellentesque. Eget pellentesque purus turpis fringilla nunc odio arcu neque feugiat. Nunc ac aliquet proin eu convallis vitae. Et volutpat sed porttitor habitasse c'
+const LOWER_CONTENT_QUOTE_SHORT = 'Lorem ipsum dolor sit amet consectetur. Lectus id sollicitudin urna ut ultricies.'
+const LOWER_CONTENT_PARAGRAPH = 'Lorem ipsum dolor sit amet consectetur. Lectus id sollicitudin urna ut ultricies. Ornare lectus proin quis pellentesque. Eget pellentesque purus turpis fringilla nunc odio arcu neque feugiat. Nunc ac aliquet proin eu convallis vitae. Et volutpat sed porttitor habitasse consequat sollicitudin. Metus molestie integer ipsum facilisi tellus rutrum enim. Amet dolor amet volutpat eget. Faucibus fringilla vehicula diam sit aliquam faucibus ut dignissim. Donec nisi a morbi nibh diam viverra vehicula. Aliquet facilisis nisi semper laoreet nunc a. Cras amet euismod quam etiam amet ornare dictumst. Imperdiet sit in pellentesque non etiam dolor ipsum id interdum. Etiam euismod et vitae commodo fermentum ac ultricies sit cum. Risus tellus id amet nullam odio.'
+
+// A torn-shape band (peeking above a photo) — shapeHeight/photoHeight are
+// per-breakpoint pixel heights; the photo overlaps up into the shape's
+// bottom portion so only the top "peeking" strip of colour + quote shows.
+function LowerContentBand({ shape, quote, photoObjectPosition, isMobile }) {
+  const shapeHeight = isMobile ? 220 : 340
+  const photoHeight = isMobile ? 260 : 400
+  const overlap = isMobile ? 70 : 110
+  return (
+    <div style={{ position: 'relative' }}>
+      <div style={{
+        position: 'relative', width: '100%', height: shapeHeight,
+        background: shape.fill, clipPath: shape.clipPath,
+      }}>
+        <p style={{
+          position: 'absolute', top: isMobile ? 26 : 44, left: isMobile ? 24 : 56, right: isMobile ? 64 : '52%',
+          margin: 0, color: '#fff', fontWeight: 700, fontSize: isMobile ? 14 : 16, lineHeight: 1.5,
+          fontFamily: "'Work Sans', system-ui, sans-serif",
+        }}>{quote}</p>
+      </div>
+      <div style={{
+        position: 'relative', width: '100%', height: photoHeight, marginTop: -overlap,
+        overflow: 'hidden',
+      }}>
+        <img
+          src="/lower-content-photo.jpg" alt=""
+          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: photoObjectPosition, display: 'block' }}
+        />
+      </div>
+    </div>
+  )
+}
+
+function ManifestoLowerContent({ isMobile, isTablet }) {
+  const { left, right } = hPad(isMobile, isTablet)
+  return (
+    <div style={{ marginTop: isMobile ? 8 : 16 }}>
+      <LowerContentBand shape={LOWER_CONTENT_SHAPES.black1} quote={LOWER_CONTENT_QUOTE} photoObjectPosition="center 15%" isMobile={isMobile} />
+      <LowerContentBand shape={LOWER_CONTENT_SHAPES.red} quote={LOWER_CONTENT_QUOTE} photoObjectPosition="center 50%" isMobile={isMobile} />
+
+      <div style={{ paddingLeft: left, paddingRight: right, paddingTop: isMobile ? 32 : 48 }}>
+        <div style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
+          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Lorem ipsum dolor</h2>
+          <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>{LOWER_CONTENT_PARAGRAPH}</p>
+        </div>
+      </div>
+
+      <LowerContentBand shape={LOWER_CONTENT_SHAPES.black2} quote={LOWER_CONTENT_QUOTE_SHORT} photoObjectPosition="center 10%" isMobile={isMobile} />
+
+      <div style={{ paddingLeft: left, paddingRight: right, paddingTop: isMobile ? 32 : 48 }}>
+        <div style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
+          <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Lorem ipsum dolor</h2>
+          <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>{LOWER_CONTENT_PARAGRAPH}</p>
+        </div>
+      </div>
+
+      {/* Closing decorative shape — red torn edge into a solid black band,
+          matching the Figma frame's own transition out of this section. */}
+      <div style={{ position: 'relative', width: '100%', height: isMobile ? 90 : 140, marginTop: isMobile ? 24 : 32 }}>
+        <div style={{
+          position: 'absolute', inset: 0, background: LOWER_CONTENT_SHAPES.red.fill,
+          clipPath: 'polygon(0% 0%, 100% 0%, 100% 30%, 0% 100%)',
+        }} />
+      </div>
+      <div style={{ width: '100%', height: isMobile ? 60 : 90, background: '#000' }} />
+    </div>
+  )
+}
+
 // Flat-row policy accordion for the "Our full policy platform" tab — same
 // visual style as the "Accordion 2" card variation (plain rows with
 // dividers, icon + uppercase title, a +/− symbol, red on hover/open), but
@@ -2828,29 +2916,7 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
 
           {videoPolicy && <ManifestoVideoModal policy={videoPolicy} onClose={() => setVideoPolicy(null)} />}
 
-          {/* Trailing placeholder sections, matching the mockup's generic
-              "Heading" + lorem-ipsum blocks and interspersed photos. */}
-          <div style={{ paddingLeft: left, paddingRight: right }}>
-            <div style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
-              <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 18 : 22 }}>Heading</h2>
-              <p style={{ ...S.para, fontSize: isMobile ? 14 : 15 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lectus id sollicitudin urna ut ultricies. Ornare lectus quis pellentesque purus turpis fringilla nunc odio arcu neque feugiat. Nunc ac aliquet proin eu convallis vitae.</p>
-            </div>
-          </div>
-
-          <div style={{ width: '100%', height: isMobile ? 180 : 280, overflow: 'hidden', marginBottom: isMobile ? 28 : 36 }}>
-            <img src="/candidates.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          </div>
-
-          <div style={{ paddingLeft: left, paddingRight: right }}>
-            <div style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
-              <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 18 : 22 }}>Heading here</h2>
-              <p style={{ ...S.para, fontSize: isMobile ? 14 : 15 }}>Nisi a morbi nibh diam viverra vehicula. Aliquet facilisis nisi semper laoreet nunc a. Cras amet euismod lorem ipsum dolor sit amet, consectetur adipiscing elit. Eget pellentesque purus turpis fringilla nunc odio arcu.</p>
-            </div>
-            <div style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
-              <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 18 : 22 }}>Heading</h2>
-              <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lectus id sollicitudin urna ut ultricies. Ornare lectus quis pellentesque purus turpis fringilla nunc odio arcu neque feugiat.</p>
-            </div>
-          </div>
+          <ManifestoLowerContent isMobile={isMobile} isTablet={isTablet} />
         </>
       )}
     </div>
