@@ -2765,31 +2765,29 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
             </div>
           </div>
 
-          {/* Manifesto booklet promo panel — flat image on mobile (matches
-              the Figma mockup's own asset), rebuilt as real markup on
-              desktop so the booklet cover, heading and button are actual
-              elements rather than a stretched screenshot. */}
+          {/* Manifesto booklet promo panel — real markup on both breakpoints
+              (booklet cover, heading, button), not a stretched screenshot. */}
           <div style={{ paddingLeft: left, paddingRight: right, marginBottom: isMobile ? 28 : 36 }}>
             <div style={{ maxWidth: 680, background: '#fff', borderRadius: 8, padding: isMobile ? 16 : 20 }}>
-              {isMobile ? (
-                <img src="/Manifesto-order.png" alt="Full election manifesto available — order your copy" style={{ width: '100%', maxWidth: 397, height: 'auto', display: 'block' }} />
-              ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
-                  <img src="/manifesto-booklet-desktop.png" alt="A Socialist Manifesto booklet" style={{ width: 340, height: 'auto', flexShrink: 0 }} />
-                  <div>
-                    <h3 style={{
-                      margin: '0 0 16px', fontSize: 18, fontWeight: 600, color: '#000',
-                      fontFamily: "'Work Sans', system-ui, sans-serif",
-                    }}>Full election manifesto available</h3>
-                    <a href="/manifesto-booklet.pdf" target="_blank" rel="noreferrer" style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 10,
-                      border: '1px solid #000', borderRadius: 4, padding: '10px 20px',
-                      fontSize: 15, fontWeight: 700, color: '#000', textDecoration: 'none',
-                      fontFamily: "'Open Sans', system-ui, sans-serif",
-                    }}>Order your copy <span style={{ fontSize: 17 }}>→</span></a>
-                  </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 16 : 28 }}>
+                <img
+                  src={isMobile ? '/manifesto-booklet-mobile.png' : '/manifesto-booklet-desktop.png'}
+                  alt="A Socialist Manifesto booklet"
+                  style={{ width: isMobile ? 64 : 340, height: 'auto', flexShrink: 0 }}
+                />
+                <div>
+                  <h3 style={{
+                    margin: isMobile ? '0 0 10px' : '0 0 16px', fontSize: isMobile ? 15 : 18, fontWeight: 600, color: '#000',
+                    fontFamily: "'Work Sans', system-ui, sans-serif", whiteSpace: 'nowrap',
+                  }}>Full election manifesto available</h3>
+                  <a href="/manifesto-booklet.pdf" target="_blank" rel="noreferrer" style={{
+                    display: 'inline-flex', alignItems: 'center', gap: isMobile ? 8 : 10,
+                    border: '1px solid #000', borderRadius: 4, padding: isMobile ? '7px 14px' : '10px 20px',
+                    fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#000', textDecoration: 'none',
+                    fontFamily: "'Open Sans', system-ui, sans-serif",
+                  }}>Order your copy <span style={{ fontSize: isMobile ? 15 : 17 }}>→</span></a>
                 </div>
-              )}
+              </div>
             </div>
           </div>
 
