@@ -2542,7 +2542,7 @@ function ManifestoFlagMark() {
 // 5627:5704 expanded): a rounded #F3F2FF card with a tilted red/black
 // banner clipped to its top-left corner, a "Watch 2 min video" pill and
 // "READ MORE" toggle, and — expanded — the full sections breakdown.
-function ManifestoPolicyAccordion({ policy, index, isOpen, onToggle, isMobile }) {
+function ManifestoPolicyAccordion({ policy, index, isOpen, onToggle, isMobile, onOpenVideo }) {
   const bannerBg = index % 2 === 0 ? '#FF4B33' : '#000'
   return (
     <div style={{
@@ -2554,37 +2554,41 @@ function ManifestoPolicyAccordion({ policy, index, isOpen, onToggle, isMobile })
 
       {/* Tilted banner — clipped by the card's own overflow:hidden, same
           technique used for the housing/policies banners elsewhere. Sized
-          generously (and font kept small) so even the longest heading
-          ("Fighting oppression and building solidarity") wraps to at most
-          two lines, never three. */}
+          to fit the 24px heading so even the longest one ("Fighting
+          oppression and building solidarity") wraps to at most two lines. */}
       <div style={{
         position: 'absolute', top: 0, left: 0,
-        width: isMobile ? 230 : 280, height: isMobile ? 66 : 76,
+        width: isMobile ? 270 : 340, height: isMobile ? 88 : 96,
         background: bannerBg,
         clipPath: 'polygon(0% 100%, 0.6% 10.6%, 93.9% 0%, 100% 82.2%)',
         transform: 'rotate(0.8deg)', transformOrigin: 'top left',
         display: 'flex', alignItems: 'center', paddingLeft: isMobile ? 16 : 20, paddingRight: isMobile ? 24 : 30, paddingBottom: 6,
       }}>
         <span style={{
-          fontSize: isMobile ? 14 : 16, fontWeight: 800, color: '#fff', lineHeight: 1.15,
+          fontSize: isMobile ? 20 : 24, fontWeight: 800, color: '#fff', lineHeight: 1.15,
           fontFamily: "'Work Sans', system-ui, sans-serif",
         }}>{policy.heading}</span>
       </div>
 
-      <div style={{ paddingTop: isMobile ? 80 : 92, padding: `${isMobile ? 80 : 92}px ${isMobile ? 18 : 24}px ${isMobile ? 20 : 26}px` }}>
+      <div style={{ paddingTop: isMobile ? 100 : 110, padding: `${isMobile ? 100 : 110}px ${isMobile ? 18 : 24}px ${isMobile ? 20 : 26}px` }}>
         <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 20 }}>{policy.body}</p>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-          <a href="#" style={{
-            display: 'inline-flex', alignItems: 'center', gap: 10,
-            border: '1px solid #808080', borderRadius: 34, padding: isMobile ? '9px 16px' : '10px 18px',
-            textDecoration: 'none',
-          }}>
+          <button
+            type="button"
+            onClick={onOpenVideo}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 10,
+              border: '1px solid #808080', borderRadius: 34, padding: isMobile ? '9px 16px' : '10px 18px',
+              background: 'none', cursor: 'pointer',
+            }}
+          >
             <span style={{
-              width: 22, height: 22, borderRadius: '50%', background: '#000', color: '#fff',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, flexShrink: 0,
-            }}>▶</span>
+              width: 0, height: 0, flexShrink: 0,
+              borderTop: '7px solid transparent', borderBottom: '7px solid transparent',
+              borderLeft: '12px solid #000',
+            }} />
             <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Watch 2 min video</span>
-          </a>
+          </button>
           <button
             onClick={onToggle}
             style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
@@ -2619,13 +2623,55 @@ function ManifestoPolicyAccordion({ policy, index, isOpen, onToggle, isMobile })
   )
 }
 
+// Video modal for the Manifesto policy cards' "Watch 2 min video" button —
+// dark overlay, heading above the video, top-right close "×".
+function ManifestoVideoModal({ policy, onClose }) {
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.8)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
+      }}
+    >
+      <div onClick={(e) => e.stopPropagation()} style={{ position: 'relative', width: '100%', maxWidth: 720 }}>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          style={{
+            position: 'absolute', top: -40, right: 0, width: 32, height: 32,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'none', border: 'none', color: '#fff', fontSize: 26, lineHeight: 1, cursor: 'pointer',
+          }}
+        >×</button>
+        <h3 style={{
+          color: '#fff', fontSize: 20, fontWeight: 700, marginBottom: 16,
+          fontFamily: "'Work Sans', system-ui, sans-serif",
+        }}>{policy.heading}</h3>
+        <div style={{
+          width: '100%', aspectRatio: '16 / 9', background: '#111',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 4,
+        }}>
+          <span style={{
+            width: 0, height: 0,
+            borderTop: '16px solid transparent', borderBottom: '16px solid transparent',
+            borderLeft: '26px solid #fff',
+          }} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // "Manifesto/vision" — combines Vision and Policies into one page, matching
 // the mobile reference mockups (Manifesto-A.png collapsed, Manifesto-B.png
 // expanded). Reuses the real VISION_CONTENT intro and POLICIES data rather
 // than the mockup's placeholder blurbs.
 function ManifestoVisionPage({ isMobile, isTablet }) {
   const { left, right } = hPad(isMobile, isTablet)
-  const [openIndex, setOpenIndex] = useState(0)
+  const [openIndex, setOpenIndex] = useState(null)
+  const [videoPolicy, setVideoPolicy] = useState(null)
   const visionIntro = VISION_CONTENT.find(item => item.type === 'para')
 
   return (
@@ -2634,17 +2680,14 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
         {/* Our vision / Our policies tabs — simple anchor links down the page */}
         <div style={{ display: 'flex', gap: isMobile ? 20 : 28, borderBottom: '1px solid #E5E5E5', marginBottom: isMobile ? 24 : 32, paddingBottom: 12 }}>
           <a href="#manifesto-vision" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '4px', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Our vision</a>
-          <a href="#manifesto-policies" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 600, color: '#666', textDecoration: 'none', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Our policies</a>
+          {/* Not interactive for now — plain label, no link/href. */}
+          <span style={{ fontSize: isMobile ? 14 : 15, fontWeight: 600, color: '#666', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Our full policy platform</span>
         </div>
 
         {/* Our vision */}
         <div id="manifesto-vision" style={{ maxWidth: 680, marginBottom: isMobile ? 28 : 36 }}>
           <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Our vision for a better, fairer Victoria</h2>
-          <p style={{
-            ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 8,
-            display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden',
-          }}>{visionIntro.text}</p>
-          <a href="#" style={{ fontSize: isMobile ? 14 : 15, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Read more…</a>
+          <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>{visionIntro.text}</p>
         </div>
       </div>
 
@@ -2666,10 +2709,13 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
               key={i} policy={policy} index={i} isMobile={isMobile}
               isOpen={openIndex === i}
               onToggle={() => setOpenIndex(openIndex === i ? null : i)}
+              onOpenVideo={() => setVideoPolicy(policy)}
             />
           ))}
         </div>
       </div>
+
+      {videoPolicy && <ManifestoVideoModal policy={videoPolicy} onClose={() => setVideoPolicy(null)} />}
 
       {/* Trailing placeholder sections, matching the mockup's generic
           "Heading" + lorem-ipsum blocks and interspersed photos. */}
@@ -2856,7 +2902,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
               </button>
             )}
             <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 276, top: isHousing ? heroHeight - leftDrop : (isMobile ? 127 : 178), ...(isMobile && { padding: '4px 7px 16px' }) }}>
-              <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36, whiteSpace: 'pre-line' }}>{(!showVariations && version === 'B' && plainView === 'manifesto') ? 'Our vision\nand policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"}</h1>
+              <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36, whiteSpace: 'pre-line' }}>{(!showVariations && version === 'B' && plainView === 'manifesto') ? 'Vision and policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"}</h1>
             </div>
           </div>
         )
