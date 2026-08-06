@@ -2790,6 +2790,17 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
                   onOpenVideo={() => setVideoPolicy({ ...policy, videoImg: MANIFESTO_VIDEO_IMAGES[i % MANIFESTO_VIDEO_IMAGES.length] })}
                 />
               ))}
+              <div style={{ textAlign: 'center', marginTop: isMobile ? 24 : 32 }}>
+                <button
+                  type="button"
+                  onClick={() => { setActiveTab('policies'); window.scrollTo(0, 0) }}
+                  style={{
+                    font: 'inherit', fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px',
+                    background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                    fontSize: isMobile ? 14 : 15, fontFamily: "'Open Sans', system-ui, sans-serif",
+                  }}
+                >See all our policies</button>
+              </div>
             </div>
           </div>
 
