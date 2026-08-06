@@ -2524,46 +2524,94 @@ function CommentLayer({ pageKey }) {
 // One row of the Manifesto/vision "Our key policies" accordion — alternating
 // red/black bar headers with a white chevron, matching Manifesto-A.png
 // (collapsed) and Manifesto-B.png (expanded).
-function ManifestoPolicyAccordion({ policy, index, isOpen, onToggle, isMobile }) {
-  // Alternates the two heading banner images (with their own captions
-  // baked in) regardless of which policy follows — matching the Figma
-  // mockup exactly, which repeats these same two placeholder banners
-  // across every row rather than a distinct banner per category.
-  const headingSrc = index % 2 === 0 ? '/accordion-heading-a.png' : '/accordion-heading-b.png'
+// Small tilted flag mark next to each expanded sub-section heading,
+// matching the Figma reference's Vector 184 exactly.
+function ManifestoFlagMark() {
   return (
-    <div style={{ marginBottom: 14 }}>
-      <button
-        onClick={onToggle}
-        style={{
-          width: '100%', position: 'relative', display: 'block',
-          background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left',
-        }}
-      >
-        <img src={headingSrc} alt={policy.heading} style={{ display: 'block', width: '100%', height: 'auto' }} />
+    <span style={{
+      flexShrink: 0, width: 15, height: 10, marginTop: 7,
+      background: '#000',
+      clipPath: 'polygon(100% 1.5%, 0% 0%, 0.4% 85.9%, 85.3% 100%)',
+      transform: 'rotate(-4.5deg)',
+    }} />
+  )
+}
+
+// A policy "card" for Manifesto/vision — matching the Figma reference
+// exactly (file UdDv2zFOv9HEaHRllxY1X3, node 5627:5300 collapsed /
+// 5627:5704 expanded): a rounded #F3F2FF card with a tilted red/black
+// banner clipped to its top-left corner, a "Watch 2 min video" pill and
+// "READ MORE" toggle, and — expanded — the full sections breakdown.
+function ManifestoPolicyAccordion({ policy, index, isOpen, onToggle, isMobile }) {
+  const bannerBg = index % 2 === 0 ? '#FF4B33' : '#000'
+  return (
+    <div style={{
+      position: 'relative', overflow: 'hidden', marginBottom: 16,
+      background: '#F3F2FF', border: '1px solid #D3D1E8', borderRadius: 8,
+    }}>
+      {/* Thin accent strip across the very top of the card. */}
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 5, background: '#BC506F' }} />
+
+      {/* Tilted banner — clipped by the card's own overflow:hidden, same
+          technique used for the housing/policies banners elsewhere. Sized
+          generously (and font kept small) so even the longest heading
+          ("Fighting oppression and building solidarity") wraps to at most
+          two lines, never three. */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0,
+        width: isMobile ? 230 : 280, height: isMobile ? 66 : 76,
+        background: bannerBg,
+        clipPath: 'polygon(0% 100%, 0.6% 10.6%, 93.9% 0%, 100% 82.2%)',
+        transform: 'rotate(0.8deg)', transformOrigin: 'top left',
+        display: 'flex', alignItems: 'center', paddingLeft: isMobile ? 16 : 20, paddingRight: isMobile ? 24 : 30, paddingBottom: 6,
+      }}>
         <span style={{
-          position: 'absolute', right: isMobile ? 14 : 20, top: '50%',
-          flexShrink: 0, display: 'inline-block', width: 13, height: 8,
-          backgroundColor: '#000',
-          WebkitMaskImage: 'url(/accordion-chevron.png)', maskImage: 'url(/accordion-chevron.png)',
-          WebkitMaskSize: 'contain', maskSize: 'contain',
-          WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
-          WebkitMaskPosition: 'center', maskPosition: 'center',
-          transform: isOpen ? 'translateY(-50%) rotate(180deg)' : 'translateY(-50%) rotate(0deg)',
-          transition: 'transform 0.25s ease',
-        }} />
-      </button>
-      <div style={{ maxHeight: isOpen ? 600 : 0, overflow: 'hidden', transition: 'max-height 0.4s ease', background: '#fff' }}>
-        <div style={{ padding: isMobile ? '16px' : '20px' }}>
-          <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 16 }}>{policy.body}</p>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-            <a href="#" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 700, color: '#000', textDecoration: 'none', fontFamily: "'Open Sans', system-ui, sans-serif" }}>
-              <span style={{
-                width: 22, height: 22, borderRadius: '50%', background: '#000', color: '#fff',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, flexShrink: 0,
-              }}>▶</span>
-              Watch 2 min video
-            </a>
-            <a href="#" style={{ fontSize: 13, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif" }}>READ MORE</a>
+          fontSize: isMobile ? 14 : 16, fontWeight: 800, color: '#fff', lineHeight: 1.15,
+          fontFamily: "'Work Sans', system-ui, sans-serif",
+        }}>{policy.heading}</span>
+      </div>
+
+      <div style={{ paddingTop: isMobile ? 80 : 92, padding: `${isMobile ? 80 : 92}px ${isMobile ? 18 : 24}px ${isMobile ? 20 : 26}px` }}>
+        <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 20 }}>{policy.body}</p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+          <a href="#" style={{
+            display: 'inline-flex', alignItems: 'center', gap: 10,
+            border: '1px solid #808080', borderRadius: 34, padding: isMobile ? '9px 16px' : '10px 18px',
+            textDecoration: 'none',
+          }}>
+            <span style={{
+              width: 22, height: 22, borderRadius: '50%', background: '#000', color: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, flexShrink: 0,
+            }}>▶</span>
+            <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Watch 2 min video</span>
+          </a>
+          <button
+            onClick={onToggle}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+          >
+            <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif" }}>READ MORE</span>
+            <span style={{
+              display: 'inline-block', width: 13, height: 8, backgroundColor: '#000',
+              WebkitMaskImage: 'url(/accordion-chevron.png)', maskImage: 'url(/accordion-chevron.png)',
+              WebkitMaskSize: 'contain', maskSize: 'contain',
+              WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
+              WebkitMaskPosition: 'center', maskPosition: 'center',
+              transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.25s ease',
+            }} />
+          </button>
+        </div>
+
+        <div style={{ maxHeight: isOpen ? 4000 : 0, overflow: 'hidden', transition: 'max-height 0.6s ease' }}>
+          <div style={{ paddingTop: 24 }}>
+            {policy.sections.map((s, i) => (
+              <div key={i} style={{ display: 'flex', gap: 10, marginBottom: i === policy.sections.length - 1 ? 0 : 22 }}>
+                <ManifestoFlagMark />
+                <div>
+                  <h4 style={{ fontSize: isMobile ? 16 : 18, fontWeight: 600, fontFamily: "'Work Sans', system-ui, sans-serif", margin: '0 0 8px', color: '#000' }}>{s.heading}</h4>
+                  <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, margin: 0 }}>{s.text}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
