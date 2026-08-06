@@ -2644,7 +2644,10 @@ function ManifestoFullPolicyAccordion({ isMobile }) {
             </button>
             <div style={{ maxHeight: isOpen ? 800 : 0, overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
               <div style={{ padding: `0 24px ${isMobile ? 20 : 24}px ${isMobile ? 36 : 48}px` }}>
-                <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, margin: 0 }}>{row.text}</p>
+                <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 16 }}>{row.text}</p>
+                <a href="#" style={{ display: 'inline-block', fontSize: 14, fontWeight: 700, fontFamily: "'Open Sans', system-ui, sans-serif", color: '#000', textDecoration: 'underline', letterSpacing: '0.02em' }}>
+                  See full policy ›
+                </a>
               </div>
             </div>
           </div>
@@ -2672,7 +2675,7 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
     <div style={{ paddingBottom: isMobile ? 60 : 80 }}>
       <div style={{ paddingLeft: left, paddingRight: right, paddingTop: isMobile ? 24 : 32 }}>
         {/* Our vision / Our full policy platform tabs */}
-        <div style={{ display: 'flex', gap: isMobile ? 20 : 28, borderBottom: '1px solid #E5E5E5', marginBottom: isMobile ? 24 : 32, paddingBottom: 12 }}>
+        <div style={{ display: 'flex', gap: isMobile ? 20 : 28, marginBottom: isMobile ? 24 : 32, paddingBottom: 12 }}>
           <button
             type="button"
             onClick={() => setActiveTab('vision')}
