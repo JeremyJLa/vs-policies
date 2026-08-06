@@ -2916,7 +2916,9 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
 
           {videoPolicy && <ManifestoVideoModal policy={videoPolicy} onClose={() => setVideoPolicy(null)} />}
 
-          <ManifestoLowerContent isMobile={isMobile} isTablet={isTablet} />
+          {/* Not yet matching Figma closely enough on desktop — hold it to
+              mobile only until the layout is refined further. */}
+          {isMobile && <ManifestoLowerContent isMobile={isMobile} isTablet={isTablet} />}
         </>
       )}
     </div>
