@@ -2630,7 +2630,7 @@ function ManifestoVideoModal({ policy, onClose }) {
     <div
       onClick={onClose}
       style={{
-        position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.8)',
+        position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.95)',
         display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
       }}
     >
@@ -2650,14 +2650,22 @@ function ManifestoVideoModal({ policy, onClose }) {
           fontFamily: "'Work Sans', system-ui, sans-serif",
         }}>{policy.heading}</h3>
         <div style={{
-          width: '100%', aspectRatio: '16 / 9', background: '#111',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 4,
+          position: 'relative', width: '100%', aspectRatio: '16 / 9', borderRadius: 4, overflow: 'hidden',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
+          <img src="/imageA.jpeg" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)' }} />
           <span style={{
-            width: 0, height: 0,
-            borderTop: '16px solid transparent', borderBottom: '16px solid transparent',
-            borderLeft: '26px solid #fff',
-          }} />
+            position: 'relative', width: 72, height: 72, borderRadius: '50%',
+            background: 'rgba(0,0,0,0.4)', border: '2px solid #fff',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <span style={{
+              width: 0, height: 0, marginLeft: 5,
+              borderTop: '16px solid transparent', borderBottom: '16px solid transparent',
+              borderLeft: '26px solid #fff',
+            }} />
+          </span>
         </div>
       </div>
     </div>
