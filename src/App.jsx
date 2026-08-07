@@ -2758,7 +2758,7 @@ function ManifestoFullPolicyAccordion({ isMobile }) {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 14 : 20 }}>
-                <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 32 : 40} color={isRed ? '#FF4B33' : '#000'} />
+                <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 40 : 40} color={isRed ? '#FF4B33' : '#000'} />
                 <h3 style={{
                   margin: 0, fontSize: isMobile ? 15 : 18, fontWeight: 800, lineHeight: 1.2,
                   fontFamily: "'Work Sans', system-ui, sans-serif",
