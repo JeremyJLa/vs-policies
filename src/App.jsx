@@ -118,7 +118,7 @@ const POLICIES = [
   {
     title: 'HOMES\nFOR ALL',
     heading: 'Homes for all',
-    body: "Melbourne's housing market has become a casino for speculators. We'll build 150,000 new public housing units over ten years, cut rents by 25 percent and then freeze them for five years, so every Victorian has a safe, secure and affordable home.",
+    body: "Everyone deserves a safe, affordable home. We believe housing should serve people, not investors, developers or property speculation.",
     Icon: HousingIcon,
     sections: [
       {
@@ -142,7 +142,7 @@ const POLICIES = [
   {
     title: 'MAKING\nEVERYDAY LIFE\nBETTER',
     heading: 'Making everyday life easier and better',
-    body: "From free, publicly owned child care five days a week, to free public transport and $100 price-cap trolleys and cost-price food hubs in every community, we want to make the basics of daily life easier and more affordable for everyone.",
+    body: "Make everyday life more affordable with free childcare, school lunches, public transport and practical measures to reduce the cost of living.",
     Icon: EverydayIcon,
     sections: [
       {
@@ -174,7 +174,7 @@ const POLICIES = [
   {
     title: 'INVESTING IN\nBETTER SERVICES',
     heading: 'Investing in better services',
-    body: "Everyone deserves quality education, health care, aged care and other public services—not a system run down by decades of underfunding. We'll expand publicly run aged care with more places and in-home support as part of our Universal Living Guarantee.",
+    body: "Increase funding for public schools, health, aged care, disability services and publicly owned renewable energy.",
     Icon: HealthIcon,
     sections: [
       {
@@ -198,7 +198,7 @@ const POLICIES = [
   {
     title: 'IMPROVING\nLIVABILITY AND\nSUSTAINABILITY',
     heading: 'Improving livability and sustainability',
-    body: "The climate emergency is getting worse every year. We'll drive a rapid transition to renewable energy, stop new fossil fuel projects, and build a Victoria that's more liveable and sustainable for everyone—including through our energy policy.",
+    body: "Invest in more livable communities and take urgent action on climate change by expanding public housing and cutting emissions.",
     Icon: ClimateIcon,
     sections: [
       {
@@ -214,7 +214,7 @@ const POLICIES = [
   {
     title: 'FIGHTING\nOPPRESSION &\nSOLIDARITY',
     heading: 'Fighting oppression and building solidarity',
-    body: "Victorian Socialists stand with the Palestine solidarity movement, the fight for climate justice, and anti-racist and anti-fascist campaigns. We're building solidarity between everyone fighting oppression, at home and around the world.",
+    body: "Support First Nations self-determination, stand against homophobia, transphobia and racism, and fight for women's liberation.",
     Icon: WorkersIcon,
     sections: [
       {
@@ -2433,13 +2433,14 @@ function ManifestoFlagMark() {
 // 5627:5704 expanded): an outlined card (fills #F3F2FF when expanded) with
 // a tilted red banner flush to its top-left corner, a "Watch 2 min video"
 // pill and "READ MORE" toggle, and — expanded — the full sections breakdown.
-function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVideo }) {
+function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVideo, cardRef }) {
   const isShortHeading = policy.heading === 'Homes for all'
   return (
-    <div style={{
+    <div ref={cardRef} style={{
       position: 'relative', overflow: 'hidden', marginBottom: 16,
       background: isOpen ? '#F3F2FF' : 'transparent', border: '1px solid #CCCCCC', borderRadius: 8,
       transition: 'background-color 0.25s ease',
+      scrollMarginTop: isMobile ? 30 + 82 : 82,
     }}>
       {/* Tilted banner — flush to the card's exact top-left corner (the clip
           path includes the (0,0) point itself), clipped by the card's own
@@ -2722,8 +2723,13 @@ const MANIFESTO_ACCORDION_HEADINGS = [
   'Workers’ power',
 ]
 
+const MANIFESTO_ACCORDION_BODY_OVERRIDES = {
+  'How will we pay for it?': 'Fund these policies with new taxes on billionaires, big corporations and the super-rich.',
+}
+
 const MANIFESTO_ACCORDION_ROWS = MANIFESTO_ACCORDION_HEADINGS.map((heading, i) => ({
-  heading, text: ACCORDION_ROW_BODY, iconSrc: MANIFESTO_ICON_FILES[i % MANIFESTO_ICON_FILES.length],
+  heading, text: MANIFESTO_ACCORDION_BODY_OVERRIDES[heading] ?? ACCORDION_ROW_BODY,
+  iconSrc: MANIFESTO_ICON_FILES[i % MANIFESTO_ICON_FILES.length],
 }))
 
 function ManifestoFullPolicyAccordion({ isMobile }) {
@@ -2797,6 +2803,13 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
   const visionParas = VISION_CONTENT.filter(item => item.type === 'para')
   const visionIntro = visionParas[0]
   const visionExtra = visionParas.slice(1, 4)
+  const cardRefs = useRef([])
+  const openCard = (i) => {
+    setOpenIndex(openIndex === i ? null : i)
+    if (openIndex !== i) {
+      requestAnimationFrame(() => cardRefs.current[i]?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+    }
+  }
 
   return (
     <div style={{ paddingBottom: isMobile ? 60 : 80 }}>
@@ -2857,7 +2870,7 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
                       type="button"
                       onClick={() => setVisionExpanded(true)}
                       style={{
-                        font: 'inherit', fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px',
+                        font: 'inherit', fontWeight: 600, width: 130, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px',
                         background: 'none', border: 'none', padding: 0, cursor: 'pointer',
                       }}
                     >Read more</button>
@@ -2878,7 +2891,7 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
                               type="button"
                               onClick={() => setVisionExpanded(false)}
                               style={{
-                                font: 'inherit', fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px',
+                                font: 'inherit', fontWeight: 600, width: 130, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px',
                                 background: 'none', border: 'none', padding: 0, cursor: 'pointer',
                               }}
                             >Read less</button>
@@ -2920,7 +2933,7 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
 
           {/* Grayscale candidates photo, full-bleed */}
           <div style={{ width: '100%', height: isMobile ? 200 : 320, overflow: 'hidden', marginBottom: isMobile ? 28 : 36 }}>
-            <img src="/candidates.png" alt="Victorian Socialists candidates" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(1) contrast(1.1)' }} />
+            <img src="/candidates.png" alt="Victorian Socialists candidates" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', filter: 'grayscale(1) contrast(1.1)' }} />
           </div>
 
           <div style={{ paddingLeft: left, paddingRight: right }}>
@@ -2935,7 +2948,8 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
                 <ManifestoPolicyAccordion
                   key={i} policy={policy} index={i} isMobile={isMobile}
                   isOpen={openIndex === i}
-                  onToggle={() => setOpenIndex(openIndex === i ? null : i)}
+                  onToggle={() => openCard(i)}
+                  cardRef={(el) => { cardRefs.current[i] = el }}
                   onOpenVideo={() => setVideoPolicy({ ...policy, videoImg: MANIFESTO_VIDEO_IMAGES[i % MANIFESTO_VIDEO_IMAGES.length] })}
                 />
               ))}
