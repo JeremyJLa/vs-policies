@@ -2458,7 +2458,7 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
           wraps to at most two lines. */}
       <div style={{
         position: 'absolute', top: 0, left: 0,
-        width: isShortHeading ? (isMobile ? 190 : 250) : (isMobile ? 270 : 340),
+        width: isShortHeading ? (isMobile ? 190 : 250) : (isMobile ? 300 : 380),
         height: isShortHeading ? (isMobile ? 64 : 70) : (isMobile ? 88 : 96),
         background: hovered ? '#FF4B33' : '#000',
         clipPath: 'polygon(0% 100%, 0% 0%, 93.9% 0%, 100% 82.2%)',
@@ -2466,7 +2466,7 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
         transition: 'background-color 0.2s ease',
       }}>
         <span style={{
-          fontSize: 26, fontWeight: 800, color: '#fff', lineHeight: '24px',
+          fontSize: 24, fontWeight: 800, color: '#fff', lineHeight: '24px',
           textTransform: 'uppercase', fontFamily: "'Work Sans', system-ui, sans-serif",
         }}>{policy.heading}</span>
       </div>
