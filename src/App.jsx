@@ -2836,7 +2836,7 @@ const MANIFESTO_CARD_SUMMARY = 'Everyone deserves a safe, affordable home. We be
 // back to the accordion's mapping (MANIFESTO_HEADING_ICONS).
 const MANIFESTO_CARD_ICON_OVERRIDES = {
   'How will we pay for it?': '/icons2/how-we-pay-for-it.png',
-  'Liveable cities': '/icons2/liveable-city.png',
+  'Liveable cities': '/icons2/liveable-city-2.png',
   'End homophobia and transphobia': '/icons2/lgbtqi-2.png',
   'End the harms of gambling': '/icons2/gambling-2.png',
   'Banking for people, not profit': '/icons2/banks.png',
@@ -2844,7 +2844,7 @@ const MANIFESTO_CARD_ICON_OVERRIDES = {
   'Early childhood, primary and secondary education': '/icons2/early-learning-childcare.png',
   'Good food and nutrition for all': '/icons2/food.png',
   'Our universities are not for profit': '/icons2/university.png',
-  'Put workers on a workers wage': '/icons2/workers-wage-2.png',
+  'Put workers on a workers wage': '/icons2/workers-wage-3.png',
   'Dignity and security for older people': '/icons2/aged-care-2.png',
   'A fair go for rural and regional Victoria': '/icons2/rural-3.png',
   'Workers’ power': '/icons2/workers-rights.png',
