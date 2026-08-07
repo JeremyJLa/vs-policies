@@ -2674,17 +2674,37 @@ function ManifestoLowerContent({ isMobile }) {
 // from POLICIES); no body copy exists yet for these per-topic rows, so each
 // expands to the same lorem-ipsum placeholder already used elsewhere in this
 // file for "real heading, no real body yet" rows (ACCORDION_ROW_BODY).
-//
-// Rows cycle through the full set of policy-icon assets (rather than
-// reusing each row's parent-policy icon, which repeats the same icon for
-// several consecutive rows) so no two adjacent rows show the same icon.
-const MANIFESTO_ICON_FILES = [
-  '/icons/housing.svg', '/icons/health.svg', '/icons/climate.svg',
-  '/icons/civil-rights.svg', '/icons/first-nations.svg', '/icons/power.svg',
-  '/icons/public-ownership.svg', '/icons/tax-the-rich.svg',
-  '/icons/workers-and-unions.svg', '/icons/workers-wage.svg',
-  '/icons/oppose-racism.svg', '/icons/oppose-military.svg',
-]
+
+// Explicit heading → icon mapping so each topic shows its own matching
+// icon (housing heading gets the housing icon, health gets the heart,
+// power gets the lightbulb, etc.) rather than an arbitrary cycle. Only 13
+// distinct icon assets exist for 22 headings, so topics without a direct
+// match reuse the closest thematically-related icon (e.g. gambling harm,
+// addiction, nutrition and aged care all reuse the health icon).
+const MANIFESTO_HEADING_ICONS = {
+  'Arts and culture for the enjoyment of all': '/arts-icon.svg',
+  'Housing for all': '/icons/housing.svg',
+  'Addressing climate change and protecting our environment': '/icons/climate.svg',
+  'Defend democracy and the right to protest': '/icons/civil-rights.svg',
+  'First Nations': '/icons/first-nations.svg',
+  'Fix the health crisis': '/icons/health.svg',
+  'Make power affordable and sustainable': '/icons/power.svg',
+  'Opposing militarism': '/icons/oppose-military.svg',
+  'How will we pay for it?': '/icons/tax-the-rich.svg',
+  'Liveable cities': '/icons/climate.svg',
+  'End homophobia and transphobia': '/icons/civil-rights.svg',
+  'End the harms of gambling': '/icons/health.svg',
+  'Banking for people, not profit': '/icons/public-ownership.svg',
+  'Treating addiction as a health issue': '/icons/health.svg',
+  'Early childhood, primary and secondary education': '/icons/public-ownership.svg',
+  'Good food and nutrition for all': '/icons/health.svg',
+  'Opposing racism – we’re stronger together': '/icons/oppose-racism.svg',
+  'Our universities are not for profit': '/icons/public-ownership.svg',
+  'Put workers on a workers wage': '/icons/workers-wage.svg',
+  'Dignity and security for older people': '/icons/health.svg',
+  'A fair go for rural and regional Victoria': '/icons/civil-rights.svg',
+  'Workers’ power': '/icons/workers-and-unions.svg',
+}
 
 function ManifestoRowIcon({ src, color = '#000', height = 28 }) {
   return (
@@ -2728,9 +2748,9 @@ const MANIFESTO_ACCORDION_BODY_OVERRIDES = {
   'How will we pay for it?': 'Fund these policies with new taxes on billionaires, big corporations and the super-rich.',
 }
 
-const MANIFESTO_ACCORDION_ROWS = MANIFESTO_ACCORDION_HEADINGS.map((heading, i) => ({
+const MANIFESTO_ACCORDION_ROWS = MANIFESTO_ACCORDION_HEADINGS.map((heading) => ({
   heading, text: MANIFESTO_ACCORDION_BODY_OVERRIDES[heading] ?? ACCORDION_ROW_BODY,
-  iconSrc: MANIFESTO_ICON_FILES[i % MANIFESTO_ICON_FILES.length],
+  iconSrc: MANIFESTO_HEADING_ICONS[heading],
 }))
 
 function ManifestoFullPolicyAccordion({ isMobile }) {
@@ -2805,7 +2825,7 @@ const MANIFESTO_CARD_SUMMARY = 'Everyone deserves a safe, affordable home. We be
 const MANIFESTO_CARD_ROWS = MANIFESTO_ACCORDION_HEADINGS.map((heading, i) => ({
   heading,
   summary: MANIFESTO_ACCORDION_BODY_OVERRIDES[heading] ?? MANIFESTO_CARD_SUMMARY,
-  iconSrc: MANIFESTO_ICON_FILES[i % MANIFESTO_ICON_FILES.length],
+  iconSrc: MANIFESTO_HEADING_ICONS[heading],
   videoImg: MANIFESTO_VIDEO_IMAGES[i % MANIFESTO_VIDEO_IMAGES.length],
 }))
 
