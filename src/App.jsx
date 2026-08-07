@@ -506,7 +506,7 @@ const S = {
   },
   nav: {
     background: '#111',
-    height: 82,
+    height: 60,
     flexShrink: 0,
     display: 'flex',
     alignItems: 'center',
@@ -1972,7 +1972,7 @@ function HousingJumpBar({ isMobile, isTablet, label = 'Jump to', plainLabel = fa
     <div style={{
       // Locks in flush against the bottom of the sticky black nav bar
       // (82px tall, plus the 30px mobile status strip above it).
-      position: 'sticky', top: isMobile ? 30 + 82 : 82, zIndex: 40,
+      position: 'sticky', top: isMobile ? 30 + 60 : 60, zIndex: 40,
       background: '#F1ECF2', borderBottom: '1px solid rgba(0,0,0,0.1)',
     }}>
       <div style={{
@@ -2111,7 +2111,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
   const p = HOUSING_POLICY_V2
   // Jump-to bar clears the sticky nav (82px, plus the 30px mobile status
   // strip) once it locks in, so anchors need the same clearance.
-  const navClearance = isMobile ? 30 + 82 : 82
+  const navClearance = isMobile ? 30 + 60 : 60
   // Clears the sticky nav (82px), plus the locked Jump-to bar's height
   // (measured at 60px) when that interaction is enabled, with a little
   // extra breathing room so headings never land partially behind either.
@@ -2431,7 +2431,7 @@ function ManifestoFlagMark() {
 
 // A policy "card" for Manifesto/vision — matching the Figma reference
 // exactly (file UdDv2zFOv9HEaHRllxY1X3, node 5627:5300 collapsed /
-// 5627:5704 expanded): an outlined card (fills #F3F2FF when expanded) with
+// 5627:5704 expanded): an outlined card (fills #F7F6FF when expanded or hovered) with
 // a tilted red banner flush to its top-left corner, a "Watch 2 min video"
 // pill and "READ MORE" toggle, and — expanded — the full sections breakdown.
 function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVideo, cardRef }) {
@@ -2442,12 +2442,12 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
       ref={cardRef}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={onToggle}
       style={{
-        position: 'relative', overflow: 'hidden', marginBottom: 16,
-        background: isOpen ? '#F3F2FF' : 'transparent', border: '1px solid #CCCCCC', borderRadius: 8,
-        boxShadow: hovered ? '0 4px 20px rgba(0,0,0,0.08)' : 'none',
-        transition: 'background-color 0.25s ease, box-shadow 0.2s ease',
-        scrollMarginTop: isMobile ? 30 + 82 : 82,
+        position: 'relative', overflow: 'hidden', marginBottom: 16, cursor: 'pointer',
+        background: (isOpen || hovered) ? '#F7F6FF' : 'transparent', border: '1px solid #CCCCCC', borderRadius: 8,
+        transition: 'background-color 0.25s ease',
+        scrollMarginTop: isMobile ? 30 + 60 : 60,
       }}
     >
       {/* Tilted banner — flush to the card's exact top-left corner (the clip
@@ -2460,14 +2460,14 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
         position: 'absolute', top: 0, left: 0,
         width: isShortHeading ? (isMobile ? 190 : 250) : (isMobile ? 270 : 340),
         height: isShortHeading ? (isMobile ? 64 : 70) : (isMobile ? 88 : 96),
-        background: hovered ? '#000' : '#FF4B33',
+        background: hovered ? '#FF4B33' : '#000',
         clipPath: 'polygon(0% 100%, 0% 0%, 93.9% 0%, 100% 82.2%)',
         display: 'flex', alignItems: 'center', paddingLeft: isMobile ? 16 : 20, paddingRight: isMobile ? 24 : 30, paddingBottom: 6,
         transition: 'background-color 0.2s ease',
       }}>
         <span style={{
-          fontSize: isMobile ? 20 : 24, fontWeight: 800, color: '#fff', lineHeight: 1.15,
-          fontFamily: "'Work Sans', system-ui, sans-serif",
+          fontSize: 26, fontWeight: 800, color: '#fff', lineHeight: '24px',
+          textTransform: 'uppercase', fontFamily: "'Work Sans', system-ui, sans-serif",
         }}>{policy.heading}</span>
       </div>
 
@@ -2476,7 +2476,7 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <button
             type="button"
-            onClick={onOpenVideo}
+            onClick={(e) => { e.stopPropagation(); onOpenVideo() }}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 10,
               border: '1px solid #808080', borderRadius: 34, padding: isMobile ? '9px 16px' : '10px 18px',
@@ -2728,13 +2728,13 @@ function ManifestoRowIcon({ src, color = '#000', height = 28 }) {
 }
 
 const MANIFESTO_ACCORDION_HEADINGS = [
-  'Arts and culture for the enjoyment of all',
   'Housing for all',
   'Addressing climate change and protecting our environment',
   'Defend democracy and the right to protest',
   'First Nations',
   'Fix the health crisis',
   'Make power affordable and sustainable',
+  'Arts and culture for the enjoyment of all',
   'Opposing militarism',
   'How will we pay for it?',
   'Liveable cities',
@@ -2884,21 +2884,33 @@ function ManifestoFullPolicyCards({ isMobile, onOpenVideo }) {
             onMouseLeave={() => !isMobile && setHoveredIndex(null)}
             onTouchStart={() => isMobile && onTap(i)}
             style={{
+              position: 'relative', overflow: 'hidden',
               border: '1px solid #CCCCCC', borderRadius: 8,
-              padding: isMobile ? 20 : 24, marginBottom: 16,
+              marginBottom: 16,
               boxShadow: isHovered ? '0 4px 20px rgba(0,0,0,0.08)' : 'none',
               transition: 'box-shadow 0.2s ease',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 14 : 18 }}>
-              <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 44 : 52} color={fg} />
-              <h3 style={{
-                margin: 0, fontSize: isMobile ? 22 : 28, fontWeight: 800, lineHeight: 1.15,
-                fontFamily: "'Work Sans', system-ui, sans-serif", color: fg, transition: 'color 0.2s ease',
-              }}>{row.heading}</h3>
-            </div>
-            <p style={{ ...S.para, fontSize: 15, fontWeight: 500, marginTop: isMobile ? 16 : 20, marginBottom: 0 }}>{row.summary}</p>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginTop: isMobile ? 16 : 20 }}>
+            {/* Trial: purple shape behind the icon, top 3 cards only —
+                matching IMAGES/icon shape.png. */}
+            {i < 3 && (
+              <div style={{
+                position: 'absolute', top: 0, left: 0,
+                width: isMobile ? 76 : 96, height: isMobile ? 68 : 86,
+                background: '#E4E4F0',
+                clipPath: 'polygon(0% 0%, 100% 0%, 78% 100%, 0% 100%)',
+              }} />
+            )}
+            <div style={{ position: 'relative', padding: isMobile ? 20 : 24 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 14 : 18 }}>
+                <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 44 : 52} color={fg} />
+                <h3 style={{
+                  margin: 0, fontSize: isMobile ? 22 : 28, fontWeight: 800, lineHeight: 1.15,
+                  fontFamily: "'Work Sans', system-ui, sans-serif", color: fg, transition: 'color 0.2s ease',
+                }}>{row.heading}</h3>
+              </div>
+              <p style={{ ...S.para, fontSize: 15, fontWeight: 500, marginTop: isMobile ? 16 : 20, marginBottom: 0 }}>{row.summary}</p>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginTop: isMobile ? 16 : 20 }}>
               <button
                 type="button"
                 onClick={() => onOpenVideo(row)}
@@ -2919,6 +2931,7 @@ function ManifestoFullPolicyCards({ isMobile, onOpenVideo }) {
                 <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: isVideoHovered ? '#FF4B33' : '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif", transition: 'color 0.2s ease' }}>Watch 2 min video</span>
               </button>
               <a href="#" style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: fg, textDecoration: 'none', fontFamily: "'Open Sans', system-ui, sans-serif", whiteSpace: 'nowrap', transition: 'color 0.2s ease' }}>See full policy ›</a>
+              </div>
             </div>
           </div>
         )
@@ -2942,9 +2955,16 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false }) {
   const visionExtra = visionParas.slice(1, 4)
   const cardRefs = useRef([])
   const openCard = (i) => {
+    const wasAnotherOpen = openIndex !== null && openIndex !== i
     setOpenIndex(openIndex === i ? null : i)
     if (openIndex !== i) {
-      requestAnimationFrame(() => cardRefs.current[i]?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+      // If a different card was open, its collapse animation (max-height
+      // 0.6s ease) keeps shrinking the layout above for a while after this
+      // click — scrolling immediately targets a position that then drifts
+      // out of view as that card finishes collapsing. Wait for it to
+      // settle before scrolling. No previous card open -> scroll right away.
+      const delay = wasAnotherOpen ? 620 : 0
+      setTimeout(() => cardRefs.current[i]?.scrollIntoView({ behavior: 'smooth', block: 'start' }), delay)
     }
   }
 
@@ -3054,7 +3074,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false }) {
                 <img
                   src={isMobile ? '/manifesto-booklet-mobile.png' : '/manifesto-booklet-desktop.png'}
                   alt="A Socialist Manifesto booklet"
-                  style={{ width: isMobile ? 64 : 340, height: 'auto', flexShrink: 0 }}
+                  style={{ width: isMobile ? 83 : 340, height: 'auto', flexShrink: 0 }}
                 />
                 <div>
                   <h3 style={{
@@ -3072,8 +3092,15 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false }) {
             </div>
           </div>
 
-          {/* Grayscale candidates photo, full-bleed */}
-          <div style={{ width: '100%', height: isMobile ? 200 : 320, overflow: 'hidden', marginBottom: isMobile ? 28 : 36 }}>
+          {/* Grayscale candidates photo, full-bleed. Bottom edge is angled
+              the opposite way to the top header shape — same drop
+              magnitudes as that shape's leftDrop/rightDrop, but swapped
+              left<->right, so it slopes down from bottom-right to
+              bottom-left instead of bottom-left to bottom-right. */}
+          <div style={{
+            width: '100%', height: isMobile ? 250 : 370, overflow: 'hidden', marginBottom: isMobile ? 28 : 36,
+            clipPath: `polygon(0 0, 100% 0, 100% calc(100% - ${isMobile ? 57 : 103.6}px), 0 calc(100% - ${isMobile ? 44.1 : 61.1}px))`,
+          }}>
             <img src="/candidates.png" alt="Victorian Socialists candidates" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', filter: 'grayscale(1) contrast(1.1)' }} />
           </div>
 
@@ -3213,10 +3240,12 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
       {(() => {
         const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3' || plainView === 'manifesto' || plainView === 'manifesto2')
         const fullHeight = isMobile ? 190 : 280
-        // The photo header (housing3) gets more height than the solid-colour
-        // Housing pages so more of the image is visible, not just a thin
-        // cropped sliver.
-        const heroHeight = plainView === 'housing3' ? (isMobile ? 150 : fullHeight * 0.8) : isHousing ? fullHeight / 2 : fullHeight
+        // The photo headers (housing3, manifesto/manifesto2) get more height
+        // than the solid-colour Housing pages so more of the image is
+        // visible, not just a thin cropped sliver.
+        const heroHeight = plainView === 'housing3' ? (isMobile ? 150 : fullHeight * 0.8)
+          : (plainView === 'manifesto' || plainView === 'manifesto2') ? fullHeight * 0.7 + 40
+          : isHousing ? fullHeight / 2 : fullHeight
         // Fixed pixel drops (not percentages) so the diagonal's angle stays
         // identical even when the container's height is halved for Housing.
         // Manifesto's diagonal is tuned to an exact -1.9° (against a 1280px/
@@ -3294,11 +3323,11 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
 
 
       {!combined && (
-        <div ref={tabBarRef} style={{ ...S.tabBar, padding: isMobile ? '0 16px' : isTablet ? '0 40px' : '0 300px', gap: isMobile ? 16 : 24, ...(isMobile && { position: 'sticky', top: 30 + 82, zIndex: 40, boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }) }}>
-          <button style={{ ...S.tabBtn(tab === 'platform'), fontSize: isMobile ? 15 : 18 }} onClick={() => { setTab('platform'); isMobile && tabBarRef.current && window.scrollTo(0, tabBarRef.current.offsetTop - (30 + 82)) }}>
+        <div ref={tabBarRef} style={{ ...S.tabBar, padding: isMobile ? '0 16px' : isTablet ? '0 40px' : '0 300px', gap: isMobile ? 16 : 24, ...(isMobile && { position: 'sticky', top: 30 + 60, zIndex: 40, boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }) }}>
+          <button style={{ ...S.tabBtn(tab === 'platform'), fontSize: isMobile ? 15 : 18 }} onClick={() => { setTab('platform'); isMobile && tabBarRef.current && window.scrollTo(0, tabBarRef.current.offsetTop - (30 + 60)) }}>
             Our vision
           </button>
-          <button style={{ ...S.tabBtn(tab === 'policies'), fontSize: isMobile ? 15 : 18 }} onClick={() => { setTab('policies'); isMobile && tabBarRef.current && window.scrollTo(0, tabBarRef.current.offsetTop - (30 + 82)) }}>
+          <button style={{ ...S.tabBtn(tab === 'policies'), fontSize: isMobile ? 15 : 18 }} onClick={() => { setTab('policies'); isMobile && tabBarRef.current && window.scrollTo(0, tabBarRef.current.offsetTop - (30 + 60)) }}>
             Our policies
           </button>
         </div>
