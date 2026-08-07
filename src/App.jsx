@@ -2436,13 +2436,20 @@ function ManifestoFlagMark() {
 // pill and "READ MORE" toggle, and — expanded — the full sections breakdown.
 function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVideo, cardRef }) {
   const isShortHeading = policy.heading === 'Homes for all'
+  const [hovered, setHovered] = useState(false)
   return (
-    <div ref={cardRef} style={{
-      position: 'relative', overflow: 'hidden', marginBottom: 16,
-      background: isOpen ? '#F3F2FF' : 'transparent', border: '1px solid #CCCCCC', borderRadius: 8,
-      transition: 'background-color 0.25s ease',
-      scrollMarginTop: isMobile ? 30 + 82 : 82,
-    }}>
+    <div
+      ref={cardRef}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position: 'relative', overflow: 'hidden', marginBottom: 16,
+        background: isOpen ? '#F3F2FF' : 'transparent', border: '1px solid #CCCCCC', borderRadius: 8,
+        boxShadow: hovered ? '0 4px 20px rgba(0,0,0,0.08)' : 'none',
+        transition: 'background-color 0.25s ease, box-shadow 0.2s ease',
+        scrollMarginTop: isMobile ? 30 + 82 : 82,
+      }}
+    >
       {/* Tilted banner — flush to the card's exact top-left corner (the clip
           path includes the (0,0) point itself), clipped by the card's own
           overflow:hidden, same technique used for the housing/policies
@@ -2453,9 +2460,10 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
         position: 'absolute', top: 0, left: 0,
         width: isShortHeading ? (isMobile ? 190 : 250) : (isMobile ? 270 : 340),
         height: isShortHeading ? (isMobile ? 64 : 70) : (isMobile ? 88 : 96),
-        background: '#FF4B33',
+        background: hovered ? '#000' : '#FF4B33',
         clipPath: 'polygon(0% 100%, 0% 0%, 93.9% 0%, 100% 82.2%)',
         display: 'flex', alignItems: 'center', paddingLeft: isMobile ? 16 : 20, paddingRight: isMobile ? 24 : 30, paddingBottom: 6,
+        transition: 'background-color 0.2s ease',
       }}>
         <span style={{
           fontSize: isMobile ? 20 : 24, fontWeight: 800, color: '#fff', lineHeight: 1.15,
@@ -2486,14 +2494,14 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
             onClick={onToggle}
             style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
           >
-            <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif" }}>READ MORE</span>
+            <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: hovered ? '#FF4B33' : '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif", transition: 'color 0.2s ease' }}>READ MORE</span>
             <span style={{
-              display: 'inline-block', width: 13, height: 8, backgroundColor: '#000',
+              display: 'inline-block', width: 13, height: 8, backgroundColor: hovered ? '#FF4B33' : '#000',
               WebkitMaskImage: 'url(/accordion-chevron.png)', maskImage: 'url(/accordion-chevron.png)',
               WebkitMaskSize: 'contain', maskSize: 'contain',
               WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
               WebkitMaskPosition: 'center', maskPosition: 'center',
-              transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.25s ease',
+              transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.25s ease, background-color 0.2s ease',
             }} />
           </button>
         </div>
@@ -2822,50 +2830,100 @@ function ManifestoFullPolicyAccordion({ isMobile }) {
 // summary given directly for this design).
 const MANIFESTO_CARD_SUMMARY = 'Everyone deserves a safe, affordable home. We believe housing should serve people, not investors, developers or property speculation.'
 
+// Icon set for Manifesto/vision-2's cards specifically (IMAGES/policy icons
+// set 2/) — a more precisely-matched set than the accordion's icons, but it
+// doesn't cover every heading, so topics without a dedicated icon here fall
+// back to the accordion's mapping (MANIFESTO_HEADING_ICONS).
+const MANIFESTO_CARD_ICON_OVERRIDES = {
+  'Housing for all': '/icons2/housing.png',
+  'How will we pay for it?': '/icons2/how-we-pay-for-it.png',
+  'Liveable cities': '/icons2/liveable-city.png',
+  'End homophobia and transphobia': '/icons2/lgbtqi.png',
+  'End the harms of gambling': '/icons2/gambling.png',
+  'Banking for people, not profit': '/icons2/banks.png',
+  'Treating addiction as a health issue': '/icons2/addiction.png',
+  'Early childhood, primary and secondary education': '/icons2/early-learning-childcare.png',
+  'Good food and nutrition for all': '/icons2/food.png',
+  'Our universities are not for profit': '/icons2/university.png',
+  'Put workers on a workers wage': '/icons2/workers-wage.png',
+  'Dignity and security for older people': '/icons2/aged-care.png',
+  'A fair go for rural and regional Victoria': '/icons2/rural.png',
+  'Workers’ power': '/icons2/workers-rights.png',
+}
+
 const MANIFESTO_CARD_ROWS = MANIFESTO_ACCORDION_HEADINGS.map((heading, i) => ({
   heading,
   summary: MANIFESTO_ACCORDION_BODY_OVERRIDES[heading] ?? MANIFESTO_CARD_SUMMARY,
-  iconSrc: MANIFESTO_HEADING_ICONS[heading],
+  iconSrc: MANIFESTO_CARD_ICON_OVERRIDES[heading] ?? MANIFESTO_HEADING_ICONS[heading],
   videoImg: MANIFESTO_VIDEO_IMAGES[i % MANIFESTO_VIDEO_IMAGES.length],
 }))
 
 function ManifestoFullPolicyCards({ isMobile, onOpenVideo }) {
+  const [hoveredIndex, setHoveredIndex] = useState(null)
+  const [videoHoverIndex, setVideoHoverIndex] = useState(null)
+  const tapTimeout = useRef(null)
+
+  const clearTapFlash = () => {
+    if (tapTimeout.current) clearTimeout(tapTimeout.current)
+  }
+  const onTap = (i) => {
+    clearTapFlash()
+    setHoveredIndex(i)
+    tapTimeout.current = setTimeout(() => setHoveredIndex(null), 350)
+  }
+
   return (
     <div style={{ width: '100%', maxWidth: isMobile ? '100%' : 600 }}>
-      {MANIFESTO_CARD_ROWS.map((row, i) => (
-        <div key={i} style={{
-          border: '1px solid #CCCCCC', borderRadius: 8,
-          padding: isMobile ? 20 : 24, marginBottom: 16,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 14 : 18 }}>
-            <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 44 : 52} color="#000" />
-            <h3 style={{
-              margin: 0, fontSize: isMobile ? 22 : 28, fontWeight: 800, lineHeight: 1.15,
-              fontFamily: "'Work Sans', system-ui, sans-serif", color: '#000',
-            }}>{row.heading}</h3>
+      {MANIFESTO_CARD_ROWS.map((row, i) => {
+        const isHovered = hoveredIndex === i && videoHoverIndex !== i
+        const isVideoHovered = videoHoverIndex === i
+        const fg = isHovered ? '#FF4B33' : '#000'
+        return (
+          <div
+            key={i}
+            onMouseEnter={() => !isMobile && setHoveredIndex(i)}
+            onMouseLeave={() => !isMobile && setHoveredIndex(null)}
+            onTouchStart={() => isMobile && onTap(i)}
+            style={{
+              border: '1px solid #CCCCCC', borderRadius: 8,
+              padding: isMobile ? 20 : 24, marginBottom: 16,
+              boxShadow: isHovered ? '0 4px 20px rgba(0,0,0,0.08)' : 'none',
+              transition: 'box-shadow 0.2s ease',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 14 : 18 }}>
+              <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 44 : 52} color={fg} />
+              <h3 style={{
+                margin: 0, fontSize: isMobile ? 22 : 28, fontWeight: 800, lineHeight: 1.15,
+                fontFamily: "'Work Sans', system-ui, sans-serif", color: fg, transition: 'color 0.2s ease',
+              }}>{row.heading}</h3>
+            </div>
+            <p style={{ ...S.para, fontSize: 15, fontWeight: 500, marginTop: isMobile ? 16 : 20, marginBottom: 0 }}>{row.summary}</p>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginTop: isMobile ? 16 : 20 }}>
+              <button
+                type="button"
+                onClick={() => onOpenVideo(row)}
+                onMouseEnter={() => setVideoHoverIndex(i)}
+                onMouseLeave={() => setVideoHoverIndex(null)}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 10,
+                  border: `1px solid ${isVideoHovered ? '#FF4B33' : '#808080'}`, borderRadius: 34, padding: isMobile ? '9px 16px' : '10px 18px',
+                  background: 'none', cursor: 'pointer', transition: 'border-color 0.2s ease',
+                }}
+              >
+                <span style={{
+                  width: 0, height: 0, flexShrink: 0,
+                  borderTop: '7px solid transparent', borderBottom: '7px solid transparent',
+                  borderLeft: `12px solid ${isVideoHovered ? '#FF4B33' : '#000'}`,
+                  transition: 'border-left-color 0.2s ease',
+                }} />
+                <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: isVideoHovered ? '#FF4B33' : '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif", transition: 'color 0.2s ease' }}>Watch 2 min video</span>
+              </button>
+              <a href="#" style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: fg, textDecoration: 'none', fontFamily: "'Open Sans', system-ui, sans-serif", whiteSpace: 'nowrap', transition: 'color 0.2s ease' }}>See full policy ›</a>
+            </div>
           </div>
-          <p style={{ ...S.para, fontSize: 15, fontWeight: 500, marginTop: isMobile ? 16 : 20, marginBottom: 0 }}>{row.summary}</p>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginTop: isMobile ? 16 : 20 }}>
-            <button
-              type="button"
-              onClick={() => onOpenVideo(row)}
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: 10,
-                border: '1px solid #808080', borderRadius: 34, padding: isMobile ? '9px 16px' : '10px 18px',
-                background: 'none', cursor: 'pointer',
-              }}
-            >
-              <span style={{
-                width: 0, height: 0, flexShrink: 0,
-                borderTop: '7px solid transparent', borderBottom: '7px solid transparent',
-                borderLeft: '12px solid #000',
-              }} />
-              <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Watch 2 min video</span>
-            </button>
-            <a href="#" style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: '#000', textDecoration: 'none', fontFamily: "'Open Sans', system-ui, sans-serif", whiteSpace: 'nowrap' }}>See full policy ›</a>
-          </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
