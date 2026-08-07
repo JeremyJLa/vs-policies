@@ -2437,6 +2437,10 @@ function ManifestoFlagMark() {
 function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVideo, cardRef }) {
   const isShortHeading = policy.heading === 'Homes for all'
   const [hovered, setHovered] = useState(false)
+  const [videoHovered, setVideoHovered] = useState(false)
+  // The video button gets its own isolated hover state — hovering it turns
+  // just the button red without triggering the card-wide hover styling.
+  const cardHovered = hovered && !videoHovered
   return (
     <div
       ref={cardRef}
@@ -2445,7 +2449,7 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
       onClick={onToggle}
       style={{
         position: 'relative', overflow: 'hidden', marginBottom: 16, cursor: 'pointer',
-        background: (isOpen || hovered) ? '#F7F6FF' : 'transparent', border: '1px solid #CCCCCC', borderRadius: 8,
+        background: (isOpen || cardHovered) ? '#F7F6FF' : 'transparent', border: '1px solid #CCCCCC', borderRadius: 8,
         transition: 'background-color 0.25s ease',
         scrollMarginTop: isMobile ? 30 + 60 : 60,
       }}
@@ -2460,7 +2464,7 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
         position: 'absolute', top: 0, left: 0,
         width: isShortHeading ? (isMobile ? 190 : 250) : (isMobile ? 300 : 380),
         height: isShortHeading ? (isMobile ? 64 : 70) : (isMobile ? 88 : 96),
-        background: hovered ? '#FF4B33' : '#000',
+        background: cardHovered ? '#FF4B33' : '#000',
         clipPath: 'polygon(0% 100%, 0% 0%, 93.9% 0%, 100% 82.2%)',
         display: 'flex', alignItems: 'center', paddingLeft: isMobile ? 16 : 20, paddingRight: isMobile ? 24 : 30, paddingBottom: 6,
         transition: 'background-color 0.2s ease',
@@ -2477,26 +2481,29 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); onOpenVideo() }}
+            onMouseEnter={() => setVideoHovered(true)}
+            onMouseLeave={() => setVideoHovered(false)}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 10,
-              border: '1px solid #808080', borderRadius: 34, padding: isMobile ? '9px 16px' : '10px 18px',
-              background: 'none', cursor: 'pointer',
+              border: `1px solid ${videoHovered ? '#FF4B33' : '#808080'}`, borderRadius: 34, padding: isMobile ? '9px 16px' : '10px 18px',
+              background: 'none', cursor: 'pointer', transition: 'border-color 0.2s ease',
             }}
           >
             <span style={{
               width: 0, height: 0, flexShrink: 0,
               borderTop: '7px solid transparent', borderBottom: '7px solid transparent',
-              borderLeft: '12px solid #000',
+              borderLeft: `12px solid ${videoHovered ? '#FF4B33' : '#000'}`,
+              transition: 'border-left-color 0.2s ease',
             }} />
-            <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif" }}>Watch 2 min video</span>
+            <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: videoHovered ? '#FF4B33' : '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif", transition: 'color 0.2s ease' }}>Watch 2 min video</span>
           </button>
           <button
             onClick={onToggle}
             style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
           >
-            <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: hovered ? '#FF4B33' : '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif", transition: 'color 0.2s ease' }}>READ MORE</span>
+            <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: cardHovered ? '#FF4B33' : '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif", transition: 'color 0.2s ease' }}>READ MORE</span>
             <span style={{
-              display: 'inline-block', width: 13, height: 8, backgroundColor: hovered ? '#FF4B33' : '#000',
+              display: 'inline-block', width: 13, height: 8, backgroundColor: cardHovered ? '#FF4B33' : '#000',
               WebkitMaskImage: 'url(/accordion-chevron.png)', maskImage: 'url(/accordion-chevron.png)',
               WebkitMaskSize: 'contain', maskSize: 'contain',
               WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
@@ -2606,7 +2613,7 @@ function ManifestoLowerContent({ isMobile }) {
     fontFamily: "'Open Sans', system-ui, sans-serif",
   }
   return (
-    <div style={{ position: 'relative', width: '100%', height: 3603, overflow: 'hidden', marginTop: 30 }}>
+    <div style={{ position: 'relative', width: '100%', height: 3603, overflow: 'hidden', marginTop: 0 }}>
       {/* Shape 1 — black, quote 1 */}
       <div style={{
         position: 'absolute', left: pct(-48.81), width: pct(420.67), top: 123.94, height: 635.57,
