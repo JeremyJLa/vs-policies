@@ -2870,7 +2870,7 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
                       type="button"
                       onClick={() => setVisionExpanded(true)}
                       style={{
-                        font: 'inherit', fontWeight: 600, width: 130, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px',
+                        font: 'inherit', fontWeight: 600, width: 130, textAlign: 'left', color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px',
                         background: 'none', border: 'none', padding: 0, cursor: 'pointer',
                       }}
                     >Read more</button>
@@ -2891,7 +2891,7 @@ function ManifestoVisionPage({ isMobile, isTablet }) {
                               type="button"
                               onClick={() => setVisionExpanded(false)}
                               style={{
-                                font: 'inherit', fontWeight: 600, width: 130, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px',
+                                font: 'inherit', fontWeight: 600, width: 130, textAlign: 'left', color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px',
                                 background: 'none', border: 'none', padding: 0, cursor: 'pointer',
                               }}
                             >Read less</button>
