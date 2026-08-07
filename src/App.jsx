@@ -2470,7 +2470,7 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
         transition: 'background-color 0.2s ease',
       }}>
         <span style={{
-          fontSize: 24, fontWeight: 800, color: '#fff', lineHeight: '24px',
+          fontSize: 22, fontWeight: 800, color: '#fff', lineHeight: '24px',
           textTransform: 'uppercase', fontFamily: "'Work Sans', system-ui, sans-serif",
         }}>{policy.heading}</span>
       </div>
