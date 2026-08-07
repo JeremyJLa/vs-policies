@@ -2844,9 +2844,9 @@ const MANIFESTO_CARD_ICON_OVERRIDES = {
   'Early childhood, primary and secondary education': '/icons2/early-learning-childcare.png',
   'Good food and nutrition for all': '/icons2/food.png',
   'Our universities are not for profit': '/icons2/university.png',
-  'Put workers on a workers wage': '/icons2/workers-wage.png',
+  'Put workers on a workers wage': '/icons2/workers-wage-2.png',
   'Dignity and security for older people': '/icons2/aged-care-2.png',
-  'A fair go for rural and regional Victoria': '/icons2/rural-2.png',
+  'A fair go for rural and regional Victoria': '/icons2/rural-3.png',
   'Workers’ power': '/icons2/workers-rights.png',
 }
 
