@@ -2831,7 +2831,7 @@ const MANIFESTO_CARD_ROWS = MANIFESTO_ACCORDION_HEADINGS.map((heading, i) => ({
 
 function ManifestoFullPolicyCards({ isMobile, onOpenVideo }) {
   return (
-    <div style={{ width: '100%' }}>
+    <div style={{ width: '100%', maxWidth: isMobile ? '100%' : 600 }}>
       {MANIFESTO_CARD_ROWS.map((row, i) => (
         <div key={i} style={{
           border: '1px solid #CCCCCC', borderRadius: 8,
