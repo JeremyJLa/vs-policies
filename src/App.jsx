@@ -2903,7 +2903,7 @@ function ManifestoFullPolicyCards({ isMobile, onOpenVideo }) {
             {i < 3 && (
               <div style={{
                 position: 'absolute', top: 0, left: 0,
-                width: isMobile ? 76 : 96, height: isMobile ? 68 : 86,
+                width: isMobile ? 96 : 122, height: isMobile ? 86 : 108,
                 background: '#E4E4F0',
                 clipPath: 'polygon(0% 0%, 100% 0%, 78% 100%, 0% 100%)',
               }} />
@@ -2970,8 +2970,11 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false }) {
       // click — scrolling immediately targets a position that then drifts
       // out of view as that card finishes collapsing. Wait for it to
       // settle before scrolling. No previous card open -> scroll right away.
+      // Instant (not smooth) so there's a single decisive jump to the
+      // card's top rather than an animated scroll competing visually with
+      // the collapse/expand transitions already happening.
       const delay = wasAnotherOpen ? 620 : 0
-      setTimeout(() => cardRefs.current[i]?.scrollIntoView({ behavior: 'smooth', block: 'start' }), delay)
+      setTimeout(() => cardRefs.current[i]?.scrollIntoView({ behavior: 'auto', block: 'start' }), delay)
     }
   }
 
