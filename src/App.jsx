@@ -2429,12 +2429,22 @@ function ManifestoFlagMark() {
   )
 }
 
+// Mobile-only line-break control: forces an exact 2-line split at a
+// specific point (rather than leaving it to natural word-wrap, which at
+// this width breaks these two headings onto 3 lines) via a literal
+// newline + white-space:pre-line on the heading span.
+const MANIFESTO_MOBILE_HEADING_BREAKS = {
+  'Making everyday life easier and better': 'Making everyday life easier\nand better',
+  'Improving livability and sustainability': 'Improving livability\nand sustainability',
+  'Fighting oppression and building solidarity': 'Fighting oppression and\nbuilding solidarity',
+}
+
 // A policy "card" for Manifesto/vision — matching the Figma reference
 // exactly (file UdDv2zFOv9HEaHRllxY1X3, node 5627:5300 collapsed /
 // 5627:5704 expanded): an outlined card (fills #F7F6FF when expanded or hovered) with
 // a tilted red banner flush to its top-left corner, a "Watch 2 min video"
 // pill and "READ MORE" toggle, and — expanded — the full sections breakdown.
-function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVideo, cardRef }) {
+function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVideo, cardRef, skipCollapseAnim }) {
   const isShortHeading = policy.heading === 'Homes for all'
   const [hovered, setHovered] = useState(false)
   const [videoHovered, setVideoHovered] = useState(false)
@@ -2462,7 +2472,7 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
           wraps to at most two lines. */}
       <div style={{
         position: 'absolute', top: 0, left: 0,
-        width: isShortHeading ? (isMobile ? 190 : 250) : (isMobile ? 300 : 380),
+        width: isShortHeading ? (isMobile ? 230 : 250) : (isMobile ? 340 : 380),
         height: isShortHeading ? (isMobile ? 64 : 70) : (isMobile ? 88 : 96),
         background: cardHovered ? '#FF4B33' : '#000',
         clipPath: 'polygon(0% 100%, 0% 0%, 93.9% 0%, 100% 82.2%)',
@@ -2470,9 +2480,14 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
         transition: 'background-color 0.2s ease',
       }}>
         <span style={{
-          fontSize: 22, fontWeight: 800, color: '#fff', lineHeight: '24px',
+          fontSize: isMobile ? 18 : 22, fontWeight: 800, color: '#fff', lineHeight: isMobile ? '21px' : '24px',
           textTransform: 'uppercase', fontFamily: "'Work Sans', system-ui, sans-serif",
-        }}>{policy.heading}</span>
+          whiteSpace: isMobile && isShortHeading ? 'nowrap' : isMobile ? 'pre-line' : 'normal',
+        }}>
+          {isMobile
+            ? MANIFESTO_MOBILE_HEADING_BREAKS[policy.heading] ?? policy.heading
+            : policy.heading}
+        </span>
       </div>
 
       <div style={{ padding: `${isShortHeading ? (isMobile ? 76 : 86) : (isMobile ? 100 : 110)}px ${isMobile ? 18 : 24}px ${isMobile ? 20 : 26}px` }}>
@@ -2513,7 +2528,7 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
           </button>
         </div>
 
-        <div style={{ maxHeight: isOpen ? 4000 : 0, overflow: 'hidden', transition: 'max-height 0.6s ease' }}>
+        <div style={{ maxHeight: isOpen ? 4000 : 0, overflow: 'hidden', transition: skipCollapseAnim ? 'none' : 'max-height 0.6s ease' }}>
           <div style={{ paddingTop: 24 }}>
             {policy.sections.map((s, i) => (
               <div key={i} style={{ display: 'flex', gap: 10, marginBottom: i === policy.sections.length - 1 ? 0 : 22 }}>
@@ -2613,37 +2628,37 @@ function ManifestoLowerContent({ isMobile }) {
     fontFamily: "'Open Sans', system-ui, sans-serif",
   }
   return (
-    <div style={{ position: 'relative', width: '100%', height: 3603, overflow: 'hidden', marginTop: 0 }}>
+    <div style={{ position: 'relative', width: '100%', height: 3493, overflow: 'hidden', marginTop: 0 }}>
       {/* Shape 1 — black, quote 1 */}
       <div style={{
-        position: 'absolute', left: pct(-48.81), width: pct(420.67), top: 123.94, height: 635.57,
+        position: 'absolute', left: pct(-48.81), width: pct(420.67), top: 13.94, height: 635.57,
         background: '#000', clipPath: 'polygon(0.74% 0%, 100% 0%, 88.9% 100%, 0% 99.84%)',
       }} />
-      <p style={{ ...quoteStyle, left: pct(51.78), top: 184.48 }}>{LOWER_CONTENT_QUOTE}</p>
+      <p style={{ ...quoteStyle, left: pct(51.78), top: 74.48 }}>{LOWER_CONTENT_QUOTE}</p>
 
       {/* Photo A — inset left, bleeds off the right edge */}
-      <div style={{ position: 'absolute', left: pct(85.59), width: pct(507.61), top: 538.31, height: 288.27, overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', left: pct(85.59), width: pct(507.61), top: 428.31, height: 288.27, overflow: 'hidden' }}>
         <img src="/lower-content-photo.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 25%', display: 'block' }} />
       </div>
 
       {/* Shape 2 — red, quote 2 */}
       <div style={{
-        position: 'absolute', left: pct(-40.36), width: pct(424.65), top: 876.24, height: 651.27,
+        position: 'absolute', left: pct(-40.36), width: pct(424.65), top: 766.24, height: 651.27,
         background: '#FF4B33', clipPath: 'polygon(0% 0%, 79.39% 0%, 100% 100%, 0% 95.65%)',
       }} />
-      <p style={{ ...quoteStyle, left: pct(51.98), top: 944.21, color: '#F0EBEB' }}>{LOWER_CONTENT_QUOTE}</p>
+      <p style={{ ...quoteStyle, left: pct(51.98), top: 834.21, color: '#F0EBEB' }}>{LOWER_CONTENT_QUOTE}</p>
 
       {/* Photo B — bleeds off the left edge, inset right */}
-      <div style={{ position: 'absolute', left: pct(-207.11), width: pct(507.61), top: 1280.29, height: 338.45, overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', left: pct(-207.11), width: pct(507.61), top: 1170.29, height: 338.45, overflow: 'hidden' }}>
         <img src="/lower-content-photo.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 50%', display: 'block' }} />
       </div>
 
       {/* Heading + paragraph 1 (three paragraphs) */}
-      <h2 style={{ ...headingStyle, left: pct(46.46), width: 335, top: 1664.33 }}>Lorem ipsum dolor</h2>
+      <h2 style={{ ...headingStyle, left: pct(46.46), width: 335, top: 1554.33 }}>Lorem ipsum dolor</h2>
       {/* Height-capped + clipped so text never runs under shape 3, which
-          sits at a fixed top:2119.29 (415.98px below this block's own top)
+          sits at a fixed top:2009.29 (415.98px below this block's own top)
           regardless of how much text is here. */}
-      <div style={{ position: 'absolute', left: pct(44.98), width: 335, top: 1703.31, height: 2119.29 - 1703.31, overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', left: pct(44.98), width: 335, top: 1593.31, height: 2009.29 - 1593.31, overflow: 'hidden' }}>
         <p style={{ ...paraStyle, position: 'static', marginBottom: 16 }}>{LOWER_CONTENT_PARAGRAPH_1}</p>
         <p style={{ ...paraStyle, position: 'static', marginBottom: 16 }}>{LOWER_CONTENT_PARAGRAPH_1}</p>
         <p style={{ ...paraStyle, position: 'static' }}>{LOWER_CONTENT_PARAGRAPH_1_EXTRA}</p>
@@ -2651,33 +2666,33 @@ function ManifestoLowerContent({ isMobile }) {
 
       {/* Shape 3 — black, quote 3 */}
       <div style={{
-        position: 'absolute', left: pct(-51.59), width: pct(423.46), top: 2119.29, height: 425.86,
+        position: 'absolute', left: pct(-51.59), width: pct(423.46), top: 2009.29, height: 425.86,
         background: '#000', clipPath: 'polygon(1.4% 0%, 100% 0%, 87.57% 100%, 0% 97.03%)',
       }} />
-      <p style={{ ...quoteStyle, left: pct(51.78), top: 2155.81 }}>{LOWER_CONTENT_QUOTE}</p>
+      <p style={{ ...quoteStyle, left: pct(51.78), top: 2045.81 }}>{LOWER_CONTENT_QUOTE}</p>
 
       {/* Photo C — inset left, bleeds off the right edge */}
-      <div style={{ position: 'absolute', left: pct(69.21), width: pct(507.61), top: 2500.69, height: 206.79, overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', left: pct(69.21), width: pct(507.61), top: 2390.69, height: 206.79, overflow: 'hidden' }}>
         <img src="/lower-content-photo.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 15%', display: 'block' }} />
       </div>
 
       {/* Heading 2 */}
-      <h2 style={{ ...headingStyle, left: pct(46.46), width: 335, top: 2762.14 }}>Lorem ipsum dolor</h2>
+      <h2 style={{ ...headingStyle, left: pct(46.46), width: 335, top: 2652.14 }}>Lorem ipsum dolor</h2>
 
       {/* Closing shape — red, bleeding far left, growing wider toward the
           bottom, into a solid black band; both clipped by the frame's own
           bottom edge exactly as in the reference. Painted before paragraph 2
           so the paragraph's tail can overlap on top of it. */}
       <div style={{
-        position: 'absolute', left: pct(-114.93), width: pct(424.65), top: 3035.44, height: 651.27,
+        position: 'absolute', left: pct(-114.93), width: pct(424.65), top: 2925.44, height: 651.27,
         background: '#FF4B33', clipPath: 'polygon(0% 0%, 79.39% 0%, 100% 100%, 0% 95.65%)',
       }} />
-      <div style={{ position: 'absolute', left: pct(-43.48), width: pct(476.37), top: 3454.33, height: 214.63, background: '#000' }} />
+      <div style={{ position: 'absolute', left: pct(-43.48), width: pct(476.37), top: 3344.33, height: 214.63, background: '#000' }} />
 
       {/* White backdrop card so the end of paragraph 2 stays legible where
           it overlaps the red shape above. */}
-      <div style={{ position: 'absolute', left: pct(26.62), width: pct(301.68), top: 2975.04, height: 230.82, background: '#fff' }} />
-      <p style={{ ...paraStyle, left: pct(44.98), width: 335, top: 2801.11, height: 384.75, overflow: 'hidden' }}>{LOWER_CONTENT_PARAGRAPH_2}</p>
+      <div style={{ position: 'absolute', left: pct(26.62), width: pct(301.68), top: 2865.04, height: 230.82, background: '#fff' }} />
+      <p style={{ ...paraStyle, left: pct(44.98), width: 335, top: 2691.11, height: 384.75, overflow: 'hidden' }}>{LOWER_CONTENT_PARAGRAPH_2}</p>
     </div>
   )
 }
@@ -2879,7 +2894,10 @@ function ManifestoFullPolicyCards({ isMobile, onOpenVideo }) {
   }
 
   return (
-    <div style={{ width: '100%', maxWidth: isMobile ? '100%' : 600 }}>
+    <div style={{
+      width: '100%', maxWidth: isMobile ? '100%' : 1000,
+      display: isMobile ? 'block' : 'grid', gridTemplateColumns: isMobile ? undefined : '1fr 1fr', gap: isMobile ? 0 : 16,
+    }}>
       {MANIFESTO_CARD_ROWS.map((row, i) => {
         const isHovered = hoveredIndex === i && videoHoverIndex !== i
         const isVideoHovered = videoHoverIndex === i
@@ -2893,7 +2911,7 @@ function ManifestoFullPolicyCards({ isMobile, onOpenVideo }) {
             style={{
               position: 'relative', overflow: 'hidden',
               border: '1px solid #CCCCCC', borderRadius: 8,
-              marginBottom: 16,
+              marginBottom: isMobile ? 16 : 0,
               boxShadow: isHovered ? '0 4px 20px rgba(0,0,0,0.08)' : 'none',
               transition: 'box-shadow 0.2s ease',
             }}
@@ -2903,14 +2921,16 @@ function ManifestoFullPolicyCards({ isMobile, onOpenVideo }) {
             {i < 3 && (
               <div style={{
                 position: 'absolute', top: 0, left: 0,
-                width: isMobile ? 96 : 122, height: isMobile ? 86 : 108,
+                width: isMobile ? 96 : 122, height: isMobile ? 66 : 80,
                 background: '#E4E4F0',
                 clipPath: 'polygon(0% 0%, 100% 0%, 78% 100%, 0% 100%)',
               }} />
             )}
             <div style={{ position: 'relative', padding: isMobile ? 20 : 24 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 14 : 18 }}>
-                <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 44 : 52} color={fg} />
+                <div style={{ marginTop: i < 3 ? (isMobile ? -8 : -10) : 0 }}>
+                  <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 44 : 52} color={fg} />
+                </div>
                 <h3 style={{
                   margin: 0, fontSize: isMobile ? 22 : 28, fontWeight: 800, lineHeight: 1.15,
                   fontFamily: "'Work Sans', system-ui, sans-serif", color: fg, transition: 'color 0.2s ease',
@@ -2961,20 +2981,20 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false }) {
   const visionIntro = visionParas[0]
   const visionExtra = visionParas.slice(1, 4)
   const cardRefs = useRef([])
+  // When switching from one open card to another, the previously-open
+  // card's collapse used to animate over 0.6s — that 0.6s window of the
+  // page reflowing (shrinking above the new target) is what caused the
+  // "scrolls down then up" / "still scrolls" reports, no matter how the
+  // follow-up scroll was timed. Fix: collapse the previous card instantly
+  // (no transition) instead of trying to time a correction around its
+  // animation, then scroll to the new card's top in the same tick — a
+  // single synchronous layout change, nothing left to visually drift.
+  const [skipCollapseAnim, setSkipCollapseAnim] = useState(null)
   const openCard = (i) => {
-    const wasAnotherOpen = openIndex !== null && openIndex !== i
+    setSkipCollapseAnim(openIndex !== null && openIndex !== i ? openIndex : null)
     setOpenIndex(openIndex === i ? null : i)
     if (openIndex !== i) {
-      // If a different card was open, its collapse animation (max-height
-      // 0.6s ease) keeps shrinking the layout above for a while after this
-      // click — scrolling immediately targets a position that then drifts
-      // out of view as that card finishes collapsing. Wait for it to
-      // settle before scrolling. No previous card open -> scroll right away.
-      // Instant (not smooth) so there's a single decisive jump to the
-      // card's top rather than an animated scroll competing visually with
-      // the collapse/expand transitions already happening.
-      const delay = wasAnotherOpen ? 620 : 0
-      setTimeout(() => cardRefs.current[i]?.scrollIntoView({ behavior: 'auto', block: 'start' }), delay)
+      requestAnimationFrame(() => cardRefs.current[i]?.scrollIntoView({ behavior: 'auto', block: 'start' }))
     }
   }
 
@@ -3084,12 +3104,12 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false }) {
                 <img
                   src={isMobile ? '/manifesto-booklet-mobile.png' : '/manifesto-booklet-desktop.png'}
                   alt="A Socialist Manifesto booklet"
-                  style={{ width: isMobile ? 83 : 340, height: 'auto', flexShrink: 0 }}
+                  style={{ width: isMobile ? 108 : 340, height: 'auto', flexShrink: 0 }}
                 />
                 <div>
                   <h3 style={{
                     margin: isMobile ? '0 0 10px' : '0 0 16px', fontSize: isMobile ? 15 : 18, fontWeight: 600, color: '#000',
-                    fontFamily: "'Work Sans', system-ui, sans-serif", whiteSpace: 'nowrap',
+                    fontFamily: "'Work Sans', system-ui, sans-serif", whiteSpace: isMobile ? 'normal' : 'nowrap',
                   }}>Full election manifesto available</h3>
                   <a href="/manifesto-booklet.pdf" target="_blank" rel="noreferrer" style={{
                     display: 'inline-flex', alignItems: 'center', gap: isMobile ? 8 : 10,
@@ -3126,6 +3146,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false }) {
                 <ManifestoPolicyAccordion
                   key={i} policy={policy} index={i} isMobile={isMobile}
                   isOpen={openIndex === i}
+                  skipCollapseAnim={skipCollapseAnim === i}
                   onToggle={() => openCard(i)}
                   cardRef={(el) => { cardRefs.current[i] = el }}
                   onOpenVideo={() => setVideoPolicy({ ...policy, videoImg: MANIFESTO_VIDEO_IMAGES[i % MANIFESTO_VIDEO_IMAGES.length] })}
