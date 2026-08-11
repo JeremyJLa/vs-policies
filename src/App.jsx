@@ -2603,107 +2603,6 @@ function ManifestoVideoModal({ policy, onClose }) {
   )
 }
 
-// "Lower content" — traced directly from IMAGES/Lower content.png, a
-// 402x3603 full-resolution export of Figma node 5682:17328 (file
-// UdDv2zFOv9HEaHRllxY1X3) at its native mobile frame size. Every position
-// below is that PNG's own pixel geometry: left/width expressed as a percent
-// of the 402px reference frame (so bleeds/insets scale with any container
-// width), top/height in the frame's own px. Shape fills use the literal
-// clip-path polygon extracted from the node's SVG path data. All three
-// photo crops come from the same source image (Figma's "DSCF3029"). Copy is
-// Figma's own placeholder lorem ipsum — no real copy exists for this
-// section in the design yet. Mobile-only for now.
-const LOWER_CONTENT_QUOTE = 'Lorem ipsum dolor sit amet consectetur. Lectus id sollicitudin urna ut ultricies. Ornare lectus proin quis pellentesque. Eget pellentesque purus turpis fringilla nunc odio arcu neque feugiat. Nunc ac aliquet proin eu convallis vitae. Et volutpat sed porttitor habitasse c'
-const LOWER_CONTENT_PARAGRAPH_1 = 'Lorem ipsum dolor sit amet consectetur. Lectus id sollicitudin urna ut ultricies. Ornare lectus proin quis pellentesque. Eget pellentesque purus turpis fringilla nunc odio arcu neque feugiat. Nunc ac aliquet proin eu convallis vitae. Et volutpat sed porttitor habitasse consequat sollicitudin. Metus molestie integer ipsum facilisi tellus rutrum enim. Amet dolor amet volutpat eget. Faucibus fringilla vehicula diam sit aliquam faucibus ut dignissim. Donec nisi a morbi nibh diam viverra vehicula. Aliquet facilisis nisi semper laoreet nunc a. Cras amet euismod quam'
-const LOWER_CONTENT_PARAGRAPH_1_EXTRA = 'Lorem ipsum dolor sit amet consectetur. Lectus id sollicitudin urna ut ultricies. Ornare lectus proin quis pellentesque. Eget pellentesque purus turpis fringilla nunc odio arcu neque feugiat. Nunc ac aliquet proin eu convallis vitae. Et volutpat sed porttitor habitasse consequat sollicitudin. Metus molestie integer ipsum facilisi tellus rutrum enim. Amet dolor amet volutpat eget. Faucibus fringilla vehicula diam sit '
-const LOWER_CONTENT_PARAGRAPH_2 = 'Metus molestie integer ipsum facilisi tellus rutrum enim. Amet dolor amet volutpat eget. Faucibus fringilla vehicula diam sit aliquam faucibus ut dignissim. Donec nisi a morbi nibh diam viverra vehicula. Aliquet facilisis nisi semper laoreet nunc a. Cras amet euismod quam etiam amet ornare dictumst. Imperdiet sit in pellentesque non etiam dolor ipsum id interdum. Etiam euismod et vitae commodo fermentum ac ultricies sit cum. Risus tellus id amet nullam odio. Lorem ipsum dolor sit amet consectetur. Lectus id sollicitudin urna ut ultricies. Ornare lectus proin quis pellentesque. Eget pellentesque purus turpis fringilla nunc odio arcu neque feugiat.'
-
-// left/width as % of the 402px reference frame; top/height in frame px.
-function pct(px) { return `${(px / 402 * 100).toFixed(2)}%` }
-
-function ManifestoLowerContent({ isMobile }) {
-  if (!isMobile) return null
-  const quoteStyle = {
-    position: 'absolute', margin: 0, color: '#fff', fontWeight: 700, width: 229,
-    fontSize: 18, lineHeight: '26px', fontFamily: "'Work Sans', system-ui, sans-serif",
-  }
-  const headingStyle = {
-    position: 'absolute', margin: 0, fontWeight: 800, fontSize: 18, color: '#000',
-    fontFamily: "'Work Sans', system-ui, sans-serif",
-  }
-  const paraStyle = {
-    position: 'absolute', margin: 0, fontSize: 13, lineHeight: 1.41, color: '#000',
-    fontFamily: "'Open Sans', system-ui, sans-serif",
-  }
-  return (
-    <div style={{ position: 'relative', width: '100%', height: 3493, overflow: 'hidden', marginTop: 0 }}>
-      {/* Shape 1 — black, quote 1 */}
-      <div style={{
-        position: 'absolute', left: pct(-48.81), width: pct(420.67), top: 13.94, height: 635.57,
-        background: '#000', clipPath: 'polygon(0.74% 0%, 100% 0%, 88.9% 100%, 0% 99.84%)',
-      }} />
-      <p style={{ ...quoteStyle, left: pct(51.78), top: 74.48 }}>{LOWER_CONTENT_QUOTE}</p>
-
-      {/* Photo A — inset left, bleeds off the right edge */}
-      <div style={{ position: 'absolute', left: pct(85.59), width: pct(507.61), top: 428.31, height: 288.27, overflow: 'hidden' }}>
-        <img src="/lower-content-photo.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 25%', display: 'block' }} />
-      </div>
-
-      {/* Shape 2 — red, quote 2 */}
-      <div style={{
-        position: 'absolute', left: pct(-40.36), width: pct(424.65), top: 766.24, height: 651.27,
-        background: '#FF4B33', clipPath: 'polygon(0% 0%, 79.39% 0%, 100% 100%, 0% 95.65%)',
-      }} />
-      <p style={{ ...quoteStyle, left: pct(51.98), top: 834.21, color: '#F0EBEB' }}>{LOWER_CONTENT_QUOTE}</p>
-
-      {/* Photo B — bleeds off the left edge, inset right */}
-      <div style={{ position: 'absolute', left: pct(-207.11), width: pct(507.61), top: 1170.29, height: 338.45, overflow: 'hidden' }}>
-        <img src="/lower-content-photo.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 50%', display: 'block' }} />
-      </div>
-
-      {/* Heading + paragraph 1 (three paragraphs) */}
-      <h2 style={{ ...headingStyle, left: pct(46.46), width: 335, top: 1554.33 }}>Lorem ipsum dolor</h2>
-      {/* Height-capped + clipped so text never runs under shape 3, which
-          sits at a fixed top:2009.29 (415.98px below this block's own top)
-          regardless of how much text is here. */}
-      <div style={{ position: 'absolute', left: pct(44.98), width: 335, top: 1593.31, height: 2009.29 - 1593.31, overflow: 'hidden' }}>
-        <p style={{ ...paraStyle, position: 'static', marginBottom: 16 }}>{LOWER_CONTENT_PARAGRAPH_1}</p>
-        <p style={{ ...paraStyle, position: 'static', marginBottom: 16 }}>{LOWER_CONTENT_PARAGRAPH_1}</p>
-        <p style={{ ...paraStyle, position: 'static' }}>{LOWER_CONTENT_PARAGRAPH_1_EXTRA}</p>
-      </div>
-
-      {/* Shape 3 — black, quote 3 */}
-      <div style={{
-        position: 'absolute', left: pct(-51.59), width: pct(423.46), top: 2009.29, height: 425.86,
-        background: '#000', clipPath: 'polygon(1.4% 0%, 100% 0%, 87.57% 100%, 0% 97.03%)',
-      }} />
-      <p style={{ ...quoteStyle, left: pct(51.78), top: 2045.81 }}>{LOWER_CONTENT_QUOTE}</p>
-
-      {/* Photo C — inset left, bleeds off the right edge */}
-      <div style={{ position: 'absolute', left: pct(69.21), width: pct(507.61), top: 2390.69, height: 206.79, overflow: 'hidden' }}>
-        <img src="/lower-content-photo.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 15%', display: 'block' }} />
-      </div>
-
-      {/* Heading 2 */}
-      <h2 style={{ ...headingStyle, left: pct(46.46), width: 335, top: 2652.14 }}>Lorem ipsum dolor</h2>
-
-      {/* Closing shape — red, bleeding far left, growing wider toward the
-          bottom, into a solid black band; both clipped by the frame's own
-          bottom edge exactly as in the reference. Painted before paragraph 2
-          so the paragraph's tail can overlap on top of it. */}
-      <div style={{
-        position: 'absolute', left: pct(-114.93), width: pct(424.65), top: 2925.44, height: 651.27,
-        background: '#FF4B33', clipPath: 'polygon(0% 0%, 79.39% 0%, 100% 100%, 0% 95.65%)',
-      }} />
-      <div style={{ position: 'absolute', left: pct(-43.48), width: pct(476.37), top: 3344.33, height: 214.63, background: '#000' }} />
-
-      {/* White backdrop card so the end of paragraph 2 stays legible where
-          it overlaps the red shape above. */}
-      <div style={{ position: 'absolute', left: pct(26.62), width: pct(301.68), top: 2865.04, height: 230.82, background: '#fff' }} />
-      <p style={{ ...paraStyle, left: pct(44.98), width: 335, top: 2691.11, height: 384.75, overflow: 'hidden' }}>{LOWER_CONTENT_PARAGRAPH_2}</p>
-    </div>
-  )
-}
 
 // Flat-row policy accordion for the "Our full policy platform" tab — same
 // visual style as the "Accordion 2" card variation (plain rows with
@@ -2946,8 +2845,7 @@ function ManifestoFullPolicyCards({ isMobile, onOpenVideo, onOpenHousing }) {
                   <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 44 : 52} color={fg} />
                 </div>
                 <h3 style={{
-                  margin: 0, fontSize: isMobile ? 19 : 25, fontWeight: 800, lineHeight: 1,
-                  textTransform: 'uppercase',
+                  margin: 0, fontSize: 21, fontWeight: 800, lineHeight: '27px',
                   fontFamily: "'Work Sans', system-ui, sans-serif", color: fg, transition: 'color 0.2s ease',
                 }}>{row.heading}</h3>
               </div>
@@ -3033,7 +2931,12 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, activeT
         const rect = el.getBoundingClientRect()
         const headingComfortablyVisible = rect.top >= clearance && rect.top <= window.innerHeight - 100
         if (!headingComfortablyVisible) {
-          el.scrollIntoView({ behavior: 'auto', block: 'start' })
+          // 'auto' defers to the page's CSS scroll-behavior, which is set to
+          // smooth globally — that turned this "instant" correction into a
+          // ~500ms animated scroll layered on top of the card's own instant
+          // collapse, which is what read as a strange extra scroll motion.
+          // 'instant' bypasses that and always jumps immediately.
+          el.scrollIntoView({ behavior: 'instant', block: 'start' })
         }
       })
     }
@@ -3182,7 +3085,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, activeT
               <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>Below are some of the key policies we're taking to this election. They form part of a broader and more detailed platform developed in recent months with input from Victorian Socialists members.</p>
             </div>
 
-            <div style={{ maxWidth: 680, marginBottom: isMobile ? 0 : 44 }}>
+            <div style={{ maxWidth: 680, marginBottom: isMobile ? 0 : 44, overflowAnchor: 'none' }}>
               {POLICIES.map((policy, i) => (
                 <ManifestoPolicyAccordion
                   key={i} policy={policy} index={i} isMobile={isMobile}
@@ -3207,9 +3110,9 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, activeT
             </div>
           </div>
 
-          {/* Not yet matching Figma closely enough on desktop — hold it to
-              mobile only until the layout is refined further. */}
-          {isMobile && <ManifestoLowerContent isMobile={isMobile} />}
+          {/* Mobile-only closing graphic, replacing the hand-built section
+              below with the finished design export directly. */}
+          {isMobile && <img src="/lower-content.svg" alt="" style={{ width: '100%', height: 'auto', display: 'block' }} />}
         </>
       )}
       {videoPolicy && <ManifestoVideoModal policy={videoPolicy} onClose={() => setVideoPolicy(null)} />}
