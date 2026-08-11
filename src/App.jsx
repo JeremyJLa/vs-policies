@@ -2521,7 +2521,7 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
             <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: videoHovered ? '#FF4B33' : '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif", transition: 'color 0.2s ease' }}>Watch 2 min video</span>
           </button>
           <button
-            onClick={onToggle}
+            onClick={(e) => { e.stopPropagation(); onToggle() }}
             style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
           >
             <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: cardHovered ? '#FF4B33' : '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif", transition: 'color 0.2s ease' }}>READ MORE</span>
