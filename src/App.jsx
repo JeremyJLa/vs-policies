@@ -3488,7 +3488,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
                     ref={housingHeroImgRef}
                     style={{
                       position: 'absolute', inset: 0,
-                      background: 'url(/housing-header.jpg) center / cover no-repeat',
+                      background: 'url(/housing.png) center / cover no-repeat',
                       filter: 'grayscale(1) brightness(0.9) contrast(1.1)',
                       transform: 'scale(1)', transition: 'transform 3.5s ease-out', willChange: 'transform',
                     }}
