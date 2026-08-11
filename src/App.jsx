@@ -2194,7 +2194,12 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
             padding: '20px 20px 20px 0',
             marginBottom: isMobile ? 32 : 40, maxWidth: 680,
           }}>
-            <p style={{ ...S.para, color: '#FF4B33', fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 24 }}>{p.summary}</p>
+            <p style={{ ...S.para, fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 24 }}>
+              <span style={{
+                background: '#000', color: '#fff', padding: '3px 8px',
+                WebkitBoxDecorationBreak: 'clone', boxDecorationBreak: 'clone',
+              }}>{p.summary}</span>
+            </p>
             <div style={{
               fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#7d7d7d',
               fontFamily: "'Open Sans', system-ui, sans-serif",
