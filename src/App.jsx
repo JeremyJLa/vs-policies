@@ -2662,7 +2662,7 @@ const MANIFESTO_ICON_ASPECT = {
   '/icons2/how-we-pay-for-it.png': 0.783,
   '/icons2/liveable-city-2.png': 0.997,
   '/icons2/lgbtqi-2.png': 1.304,
-  '/icons2/gambling-2.png': 0.723,
+  '/icons2/gambling-2.svg': 1.105,
   '/icons2/banks.png': 0.965,
   '/icons2/addiction.png': 0.916,
   '/icons2/early-learning-childcare.png': 1.078,
@@ -2674,8 +2674,20 @@ const MANIFESTO_ICON_ASPECT = {
   '/icons2/workers-rights.png': 0.921,
 }
 
+// Manual size corrections on top of the aspect-ratio fit above, for icons
+// that still read as too small/large next to the others once their
+// aspect ratio alone is accounted for (e.g. a narrow icon that fills its
+// box height but has little visual mass, so it still looks small).
+const MANIFESTO_ICON_SCALE = {
+  '/icons/first-nations.svg': 0.9,
+  '/icons/power.svg': 1.3,
+  '/arts-icon.svg': 1.12,
+}
+
 function ManifestoRowIcon({ src, color = '#000', height = 28 }) {
   const aspect = MANIFESTO_ICON_ASPECT[src] ?? 1
+  const scale = MANIFESTO_ICON_SCALE[src] ?? 1
+  height = height * scale
   return (
     <span style={{
       display: 'inline-block', flexShrink: 0, width: height * aspect, height,
@@ -2799,7 +2811,7 @@ const MANIFESTO_CARD_ICON_OVERRIDES = {
   'How will we pay for it?': '/icons2/how-we-pay-for-it.png',
   'Liveable cities': '/icons2/liveable-city-2.png',
   'End homophobia and transphobia': '/icons2/lgbtqi-2.png',
-  'End the harms of gambling': '/icons2/gambling-2.png',
+  'End the harms of gambling': '/icons2/gambling-2.svg',
   'Banking for people, not profit': '/icons2/banks.png',
   'Treating addiction as a health issue': '/icons2/addiction.png',
   'Early childhood, primary and secondary education': '/icons2/early-learning-childcare.png',
