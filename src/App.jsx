@@ -2318,6 +2318,7 @@ function ControlsBar({ showVariations, tab, plainView, version, cardView, policy
               <button onClick={() => setPlainView('manifesto')} style={linkStyle(plainView === 'manifesto')}>Manifesto/vision</button>
               <button onClick={() => setPlainView('manifesto2')} style={linkStyle(plainView === 'manifesto2')}>Manifesto/vision-2</button>
               <button onClick={() => setPlainView('manifesto3')} style={linkStyle(plainView === 'manifesto3')}>Manifesto/vision-3</button>
+              <button onClick={() => setPlainView('manifesto4')} style={linkStyle(plainView === 'manifesto4')}>Manifesto/vision-4</button>
             </>
           )}
         </div>
@@ -2639,10 +2640,45 @@ const MANIFESTO_HEADING_ICONS = {
   'Workers’ power': '/icons/workers-and-unions.svg',
 }
 
+// Each icon's own content aspect ratio (width/height of its actual drawn
+// shape, not its canvas) — measured by rendering every icon as a mask and
+// reading back its ink bounding box. Fitting a non-square icon (e.g. the
+// wide/flat civil-rights or oppose-military glyphs) into a fixed SQUARE box
+// via mask-size:contain leaves it under-filling the box vertically, so next
+// to more square/tall icons in the same row it visibly reads as smaller.
+// Sizing the box itself to each icon's real aspect ratio (instead of always
+// square) makes every icon fill its box edge-to-edge, so they all present
+// at a consistent visual size regardless of the source asset's shape.
+const MANIFESTO_ICON_ASPECT = {
+  '/icons/housing.svg': 1.217,
+  '/icons/climate.svg': 1.119,
+  '/icons/civil-rights.svg': 1.373,
+  '/icons/first-nations.svg': 1.798,
+  '/icons/health.svg': 1.126,
+  '/icons/power.svg': 0.641,
+  '/arts-icon.svg': 0.930,
+  '/icons/oppose-military.svg': 1.401,
+  '/icons/oppose-racism.svg': 1.481,
+  '/icons2/how-we-pay-for-it.png': 0.783,
+  '/icons2/liveable-city-2.png': 0.997,
+  '/icons2/lgbtqi-2.png': 1.304,
+  '/icons2/gambling-2.png': 0.723,
+  '/icons2/banks.png': 0.965,
+  '/icons2/addiction.png': 0.916,
+  '/icons2/early-learning-childcare.png': 1.078,
+  '/icons2/food.png': 1.018,
+  '/icons2/university.png': 0.818,
+  '/icons2/workers-wage-3.png': 0.976,
+  '/icons2/aged-care-2.png': 1.127,
+  '/icons2/rural-3.png': 1.038,
+  '/icons2/workers-rights.png': 0.921,
+}
+
 function ManifestoRowIcon({ src, color = '#000', height = 28 }) {
+  const aspect = MANIFESTO_ICON_ASPECT[src] ?? 1
   return (
     <span style={{
-      display: 'inline-block', flexShrink: 0, width: height, height,
+      display: 'inline-block', flexShrink: 0, width: height * aspect, height,
       backgroundColor: color,
       WebkitMaskImage: `url(${src})`, maskImage: `url(${src})`,
       WebkitMaskSize: 'contain', maskSize: 'contain',
@@ -2965,6 +3001,110 @@ function ManifestoFullPolicyCards3Col({ isMobile, onOpenVideo, onOpenHousing }) 
   )
 }
 
+// Manifesto/vision-4's "Our full policy platform" cards — same 3-column
+// layout as ManifestoFullPolicyCards3Col, restyled per IMAGES/new-policy
+// card mockup.png: no border, two alternating tinted backgrounds (traced
+// from new-card-bgA.png / new-card-bgB.png) each with a diagonal wedge
+// accent behind the icon, all-caps heading, "View policy ›" instead of
+// "See full policy ›".
+const MANIFESTO_CARD_V2_BG = [
+  { fill: '#E8E8F5', wedge: '#D8D8EE' },
+  { fill: '#F4EFF7', wedge: '#EAE1F0' },
+]
+
+function ManifestoFullPolicyCards3ColV2({ isMobile, onOpenVideo, onOpenHousing }) {
+  const [hoveredIndex, setHoveredIndex] = useState(null)
+  const [videoHoverIndex, setVideoHoverIndex] = useState(null)
+  const tapTimeout = useRef(null)
+
+  const clearTapFlash = () => {
+    if (tapTimeout.current) clearTimeout(tapTimeout.current)
+  }
+  const onTap = (i) => {
+    clearTapFlash()
+    setHoveredIndex(i)
+    tapTimeout.current = setTimeout(() => setHoveredIndex(null), 350)
+  }
+
+  return (
+    <div style={{
+      width: '100%', maxWidth: isMobile ? '100%' : 1000,
+      display: isMobile ? 'block' : 'grid', gridTemplateColumns: isMobile ? undefined : 'repeat(3, 1fr)', gap: isMobile ? 0 : 16,
+    }}>
+      {MANIFESTO_CARD_ROWS.map((row, i) => {
+        const isHovered = hoveredIndex === i && videoHoverIndex !== i
+        const isVideoHovered = videoHoverIndex === i
+        const fg = isHovered ? '#FF4B33' : '#000'
+        const isLinked = row.heading === 'Housing for all'
+        const bg = MANIFESTO_CARD_V2_BG[i % 2]
+        return (
+          <div
+            key={i}
+            onClick={() => isLinked && onOpenHousing?.()}
+            onMouseEnter={() => !isMobile && setHoveredIndex(i)}
+            onMouseLeave={() => !isMobile && setHoveredIndex(null)}
+            onTouchStart={() => isMobile && onTap(i)}
+            style={{
+              position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column',
+              background: bg.fill, borderRadius: 12,
+              marginBottom: isMobile ? 16 : 0,
+              boxShadow: isHovered ? '0 4px 20px rgba(0,0,0,0.08)' : 'none',
+              transition: 'box-shadow 0.2s ease',
+              cursor: isLinked ? 'pointer' : 'default',
+              padding: isMobile ? 20 : 24,
+            }}
+          >
+            <div style={{
+              position: 'absolute', top: 0, left: 0,
+              width: isMobile ? 88 : 95, height: isMobile ? 75 : 82,
+              background: bg.wedge,
+              clipPath: 'polygon(0% 0%, 100% 0%, 73% 100%, 0% 100%)',
+            }} />
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+              <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 44 : 48} color={fg} />
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onOpenVideo(row) }}
+                onMouseEnter={() => setVideoHoverIndex(i)}
+                onMouseLeave={() => setVideoHoverIndex(null)}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 8, flexShrink: 0,
+                  border: `1px solid ${isVideoHovered ? '#FF4B33' : '#808080'}`, borderRadius: 34, padding: isMobile ? '8px 14px' : '9px 16px',
+                  background: 'none', cursor: 'pointer', transition: 'border-color 0.2s ease',
+                }}
+              >
+                <span style={{
+                  width: 0, height: 0, flexShrink: 0,
+                  borderTop: '6px solid transparent', borderBottom: '6px solid transparent',
+                  borderLeft: `10px solid ${isVideoHovered ? '#FF4B33' : '#000'}`,
+                  transition: 'border-left-color 0.2s ease',
+                }} />
+                <span style={{ fontSize: isMobile ? 12 : 13, fontWeight: 700, color: isVideoHovered ? '#FF4B33' : '#000', fontFamily: "'Open Sans', system-ui, sans-serif", whiteSpace: 'nowrap', transition: 'color 0.2s ease' }}>2 min video</span>
+              </button>
+            </div>
+            <h3 style={{
+              position: 'relative', margin: '18px 0 0', fontSize: 24, fontWeight: 800, lineHeight: '26px', textTransform: 'uppercase',
+              fontFamily: "'Work Sans', system-ui, sans-serif", color: fg, transition: 'color 0.2s ease',
+            }}>{row.heading}</h3>
+            <p style={{ ...S.para, position: 'relative', fontSize: 15, lineHeight: '17px', fontWeight: 500, marginTop: 12, marginBottom: 0 }}>{row.summary}</p>
+            <div style={{ position: 'relative', marginTop: 'auto', paddingTop: 20, textAlign: 'right' }}>
+              {isLinked ? (
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); onOpenHousing?.() }}
+                  style={{ font: 'inherit', fontSize: isMobile ? 13 : 14, fontWeight: 700, color: fg, textDecoration: 'none', fontFamily: "'Open Sans', system-ui, sans-serif", whiteSpace: 'nowrap', transition: 'color 0.2s ease', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+                >View policy ›</button>
+              ) : (
+                <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: fg, fontFamily: "'Open Sans', system-ui, sans-serif", whiteSpace: 'nowrap', transition: 'color 0.2s ease' }}>View policy ›</span>
+              )}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 // "Manifesto/vision" — combines Vision and Policies into one page, matching
 // the mobile reference mockups (Manifesto-A.png collapsed, Manifesto-B.png
 // expanded). Reuses the real VISION_CONTENT intro and POLICIES data rather
@@ -3055,7 +3195,9 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
             <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0, marginTop: 0 }}>Below is our full platform of key policies we're taking to this election.</p>
           </div>
           <div style={{ marginBottom: isMobile ? 32 : 44 }}>
-            {useCardStyle && cardLayout === '3col' ? (
+            {useCardStyle && cardLayout === '3col-v2' ? (
+              <ManifestoFullPolicyCards3ColV2 isMobile={isMobile} isTablet={isTablet} onOpenVideo={(row) => setVideoPolicy({ heading: row.heading, videoImg: row.videoImg })} onOpenHousing={onOpenHousing} />
+            ) : useCardStyle && cardLayout === '3col' ? (
               <ManifestoFullPolicyCards3Col isMobile={isMobile} isTablet={isTablet} onOpenVideo={(row) => setVideoPolicy({ heading: row.heading, videoImg: row.videoImg })} onOpenHousing={onOpenHousing} />
             ) : useCardStyle ? (
               <ManifestoFullPolicyCards isMobile={isMobile} isTablet={isTablet} onOpenVideo={(row) => setVideoPolicy({ heading: row.heading, videoImg: row.videoImg })} onOpenHousing={onOpenHousing} />
@@ -3302,7 +3444,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
       <nav style={{ ...S.nav, padding: isMobile ? '0 16px' : '0 24px', position: 'sticky', top: isMobile ? 30 : 0, zIndex: 45 }} />
 
       {(() => {
-        const isManifesto = plainView === 'manifesto' || plainView === 'manifesto2' || plainView === 'manifesto3'
+        const isManifesto = plainView === 'manifesto' || plainView === 'manifesto2' || plainView === 'manifesto3' || plainView === 'manifesto4'
         const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3' || isManifesto)
         const fullHeight = isMobile ? 190 : 280
         // The photo headers (housing3, manifesto/manifesto2/manifesto3) get
@@ -3420,6 +3562,12 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
             isMobile={isMobile} isTablet={isTablet} useCardStyle cardLayout="3col"
             activeTab={manifestoTab} setActiveTab={setManifestoTab}
             onOpenHousing={() => { setHousingBackTo('manifesto3'); setPlainView('housing3'); window.scrollTo(0, 0) }}
+          />
+        ) : (!showVariations && version === 'B' && plainView === 'manifesto4') ? (
+          <ManifestoVisionPage
+            isMobile={isMobile} isTablet={isTablet} useCardStyle cardLayout="3col-v2"
+            activeTab={manifestoTab} setActiveTab={setManifestoTab}
+            onOpenHousing={() => { setHousingBackTo('manifesto4'); setPlainView('housing3'); window.scrollTo(0, 0) }}
           />
         ) : (!showVariations && version === 'B' && plainView === 'policies') ? (
           <div style={{ paddingTop: 15, paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
