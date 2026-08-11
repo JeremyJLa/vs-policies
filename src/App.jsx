@@ -2417,12 +2417,7 @@ function ControlsBar({ showVariations, tab, plainView, version, cardView, policy
 // matching the Figma reference's Vector 184 exactly.
 function ManifestoFlagMark() {
   return (
-    <span style={{
-      flexShrink: 0, width: 15, height: 10, marginTop: 7,
-      background: '#000',
-      clipPath: 'polygon(100% 1.5%, 0% 0%, 0.4% 85.9%, 85.3% 100%)',
-      transform: 'rotate(-4.5deg)',
-    }} />
+    <img src="/bullet-triangle.png" alt="" style={{ flexShrink: 0, width: 15, height: 13, marginTop: 6 }} />
   )
 }
 
@@ -2821,6 +2816,7 @@ function ManifestoFullPolicyCards({ isMobile, onOpenVideo, onOpenHousing }) {
             onTouchStart={() => isMobile && onTap(i)}
             style={{
               position: 'relative', overflow: 'hidden',
+              background: i % 2 === 0 ? '#FDF9FF' : '#F8F8FF',
               border: '1px solid #CCCCCC', borderRadius: 8,
               marginBottom: isMobile ? 16 : 0,
               boxShadow: isHovered ? '0 4px 20px rgba(0,0,0,0.08)' : 'none',
@@ -2828,22 +2824,9 @@ function ManifestoFullPolicyCards({ isMobile, onOpenVideo, onOpenHousing }) {
               cursor: isLinked ? 'pointer' : 'default',
             }}
           >
-            {/* Trial: purple shape behind the icon, top 3 cards only —
-                matching IMAGES/icon shape.png. */}
-            {i < 3 && (
-              <div style={{
-                position: 'absolute', top: 0, left: 0,
-                width: isMobile ? 96 : 122,
-                height: (isMobile ? 66 : 80) + (row.heading === 'Climate action and environmental protection' ? 15 : 0),
-                background: '#E4E4F0',
-                clipPath: 'polygon(0% 0%, 100% 0%, 78% 100%, 0% 100%)',
-              }} />
-            )}
             <div style={{ position: 'relative', padding: isMobile ? 20 : 24 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 14 : 18 }}>
-                <div style={{ marginTop: i < 3 ? (isMobile ? -8 : -10) : 0 }}>
-                  <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 44 : 52} color={fg} />
-                </div>
+                <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 44 : 52} color={fg} />
                 <h3 style={{
                   margin: 0, fontSize: 21, fontWeight: 800, lineHeight: '27px',
                   fontFamily: "'Work Sans', system-ui, sans-serif", color: fg, transition: 'color 0.2s ease',
@@ -3048,7 +3031,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, activeT
                 <img
                   src={isMobile ? '/manifesto-booklet-mobile.png' : '/manifesto-booklet-desktop.png'}
                   alt="A Socialist Manifesto booklet"
-                  style={{ width: isMobile ? 140 : 340, height: 'auto', flexShrink: 0 }}
+                  style={{ width: isMobile ? 168 : 340, height: 'auto', flexShrink: 0 }}
                 />
                 <div>
                   <h3 style={{
@@ -3112,7 +3095,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, activeT
 
           {/* Mobile-only closing graphic, replacing the hand-built section
               below with the finished design export directly. */}
-          {isMobile && <img src="/lower-content.svg" alt="" style={{ width: '100%', height: 'auto', display: 'block' }} />}
+          {isMobile && <img src="/lower-content.webp" alt="" style={{ width: '100%', height: 'auto', display: 'block' }} />}
         </>
       )}
       {videoPolicy && <ManifestoVideoModal policy={videoPolicy} onClose={() => setVideoPolicy(null)} />}
@@ -3286,17 +3269,17 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
             {isHousing && plainView !== 'manifesto' && plainView !== 'manifesto2' && (
               <button
                 onClick={() => { setPlainView(housingBackTo); window.scrollTo(0, 0) }}
+                aria-label="Back"
                 style={{
-                  position: 'absolute', display: 'flex', alignItems: 'center', gap: 6,
-                  left: isMobile ? 4 : (isTablet ? 40 : 276) - 90,
-                  top: (heroHeight - leftDrop) + (isMobile ? 34 : 40),
+                  position: 'absolute', display: 'flex', alignItems: 'center',
+                  left: (isMobile ? 20 : isTablet ? 40 : 276) - 17,
+                  top: (heroHeight - leftDrop) + (isMobile ? 9 : 12),
                   background: 'none', border: 'none', padding: 0, cursor: 'pointer',
                 }}
               >
                 <svg width={9} height={16} viewBox="0 0 14 24" fill="none" style={{ flexShrink: 0 }}>
                   <path d="M11 2L2 12L11 22" stroke="#000" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                <span style={{ fontSize: 16, fontWeight: 700, color: '#000', fontFamily: "'Open Sans', system-ui, sans-serif", whiteSpace: 'nowrap' }}>Back</span>
               </button>
             )}
             <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 276, top: isHousing ? heroHeight - leftDrop : (isMobile ? 127 : 178), ...(isMobile && { padding: '4px 7px 16px' }) }}>
