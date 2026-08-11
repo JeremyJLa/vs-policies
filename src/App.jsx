@@ -2679,8 +2679,8 @@ const MANIFESTO_ICON_ASPECT = {
 // aspect ratio alone is accounted for (e.g. a narrow icon that fills its
 // box height but has little visual mass, so it still looks small).
 const MANIFESTO_ICON_SCALE = {
-  '/icons/first-nations.svg': 0.9,
-  '/icons/power.svg': 1.3,
+  '/icons/first-nations.svg': 0.77,
+  '/icons/power.svg': 1.5,
   '/arts-icon.svg': 1.12,
 }
 
@@ -3068,7 +3068,7 @@ function ManifestoFullPolicyCards3ColV2({ isMobile, onOpenVideo, onOpenHousing }
           >
             <div style={{
               position: 'absolute', top: 0, left: 0,
-              width: isMobile ? 88 : 95, height: isMobile ? 75 : 82,
+              width: isMobile ? 96 : 104, height: isMobile ? 75 : 82,
               background: bg.wedge,
               clipPath: 'polygon(0% 0%, 100% 0%, 73% 100%, 0% 100%)',
             }} />
