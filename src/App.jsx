@@ -2640,8 +2640,9 @@ const MANIFESTO_HEADING_ICONS = {
   'Good food and nutrition for all': '/icons/health.svg',
   'Opposing racism – we’re stronger together': '/icons/oppose-racism.svg',
   'Our universities are not for profit': '/icons/public-ownership.svg',
-  'Put workers on a workers wage': '/icons/workers-wage.svg',
+  'Put politicians on a workers wage': '/icons/workers-wage.svg',
   'Dignity and security for older people': '/icons/health.svg',
+  'Disability justice': '/icons2/disability.png',
   'A fair go for rural and regional Victoria': '/icons/civil-rights.svg',
   'Workers’ power': '/icons/workers-and-unions.svg',
 }
@@ -2665,19 +2666,24 @@ const MANIFESTO_ICON_ASPECT = {
   '/arts-icon.svg': 0.930,
   '/icons/oppose-military.svg': 1.401,
   '/icons/oppose-racism.svg': 1.481,
+  '/icons2/housing2.png': 1.236,
+  '/icons2/disability.png': 0.919,
+  '/icons2/power-2.svg': 0.91,
+  '/icons2/bank2.svg': 1.058,
+  '/icons2/health2.svg': 1.125,
   '/icons2/how-we-pay-for-it.png': 0.783,
   '/icons2/liveable-city-2.png': 0.997,
   '/icons2/lgbtqi-2.png': 1.304,
-  '/icons2/gambling-2.svg': 1.105,
+  '/icons2/gambling-4.svg': 1.047,
   '/icons2/banks.png': 0.965,
   '/icons2/addiction.png': 0.916,
-  '/icons2/early-learning-childcare.png': 1.078,
+  '/icons2/early-learning-childcare-2.svg': 1.081,
   '/icons2/food.png': 1.018,
   '/icons2/university.png': 0.818,
-  '/icons2/workers-wage-3.png': 0.976,
+  '/icons2/workers-wage-2.png': 1.021,
   '/icons2/aged-care-2.png': 1.127,
   '/icons2/rural-3.png': 1.038,
-  '/icons2/workers-rights.png': 0.921,
+  '/icons2/workers-rights-2.svg': 1.065,
 }
 
 // Manual size corrections on top of the aspect-ratio fit above, for icons
@@ -2688,6 +2694,7 @@ const MANIFESTO_ICON_SCALE = {
   '/icons/first-nations.svg': 0.77,
   '/icons/power.svg': 1.5,
   '/arts-icon.svg': 1.12,
+  '/icons2/health2.svg': 1.3,
 }
 
 // The power icon's 1.5x scale (above) makes it noticeably taller than the
@@ -2697,15 +2704,24 @@ const MANIFESTO_ICON_SCALE = {
 // doesn't need this — callers opt in explicitly via offsetY).
 const MANIFESTO_ICON_OFFSET = {
   '/icons/power.svg': -14,
+  '/icons2/health2.svg': -8,
+}
+
+// Horizontal nudge for icons whose drawn shape isn't centred in its own
+// bounding box (e.g. the health2 heart reads as shifted right within its
+// box), so it lines up with the other icons' left edge.
+const MANIFESTO_ICON_OFFSET_X = {
+  '/icons2/health2.svg': -6,
 }
 
 function ManifestoRowIcon({ src, color = '#000', height = 28, offsetY = 0 }) {
   const aspect = MANIFESTO_ICON_ASPECT[src] ?? 1
   const scale = MANIFESTO_ICON_SCALE[src] ?? 1
+  const offsetX = MANIFESTO_ICON_OFFSET_X[src] ?? 0
   height = height * scale
   return (
     <span style={{
-      display: 'inline-block', flexShrink: 0, width: height * aspect, height, marginTop: offsetY,
+      display: 'inline-block', flexShrink: 0, width: height * aspect, height, marginTop: offsetY, marginLeft: offsetX,
       backgroundColor: color,
       WebkitMaskImage: `url(${src})`, maskImage: `url(${src})`,
       WebkitMaskSize: 'contain', maskSize: 'contain',
@@ -2734,8 +2750,9 @@ const MANIFESTO_ACCORDION_HEADINGS = [
   'Good food and nutrition for all',
   'Opposing racism – we’re stronger together',
   'Our universities are not for profit',
-  'Put workers on a workers wage',
+  'Put politicians on a workers wage',
   'Dignity and security for older people',
+  'Disability justice',
   'A fair go for rural and regional Victoria',
   'Workers’ power',
 ]
@@ -2823,19 +2840,22 @@ const MANIFESTO_CARD_SUMMARY = 'Everyone deserves a safe, affordable home. We be
 // doesn't cover every heading, so topics without a dedicated icon here fall
 // back to the accordion's mapping (MANIFESTO_HEADING_ICONS).
 const MANIFESTO_CARD_ICON_OVERRIDES = {
+  'Housing for all': '/icons2/housing2.png',
+  'Make power affordable and sustainable': '/icons2/power-2.svg',
+  'Fix the health crisis': '/icons2/health2.svg',
   'How will we pay for it?': '/icons2/how-we-pay-for-it.png',
   'Liveable cities': '/icons2/liveable-city-2.png',
   'End homophobia and transphobia': '/icons2/lgbtqi-2.png',
-  'End the harms of gambling': '/icons2/gambling-2.svg',
-  'Banking for people, not profit': '/icons2/banks.png',
+  'End the harms of gambling': '/icons2/gambling-4.svg',
+  'Banking for people, not profit': '/icons2/bank2.svg',
   'Treating addiction as a health issue': '/icons2/addiction.png',
-  'Early childhood, primary and secondary education': '/icons2/early-learning-childcare.png',
+  'Early childhood, primary and secondary education': '/icons2/early-learning-childcare-2.svg',
   'Good food and nutrition for all': '/icons2/food.png',
   'Our universities are not for profit': '/icons2/university.png',
-  'Put workers on a workers wage': '/icons2/workers-wage-3.png',
+  'Put politicians on a workers wage': '/icons2/workers-wage-2.png',
   'Dignity and security for older people': '/icons2/aged-care-2.png',
   'A fair go for rural and regional Victoria': '/icons2/rural-3.png',
-  'Workers’ power': '/icons2/workers-rights.png',
+  'Workers’ power': '/icons2/workers-rights-2.svg',
 }
 
 const MANIFESTO_CARD_ROWS = MANIFESTO_ACCORDION_HEADINGS.map((heading, i) => ({
