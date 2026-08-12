@@ -2443,6 +2443,7 @@ const MANIFESTO_MOBILE_HEADING_BREAKS = {
 // leaving a big gap between the heading's right edge and the box's right edge.
 const MANIFESTO_MOBILE_BANNER_WIDTH_OVERRIDES = {
   'Homes for all': 190,
+  'Making everyday life easier and better': 264,
   'Improving livability and sustainability': 256,
   'Fighting oppression and building solidarity': 300,
 }
@@ -2482,7 +2483,7 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
         position: 'absolute', top: 0, left: 0,
         width: isMobile
           ? (MANIFESTO_MOBILE_BANNER_WIDTH_OVERRIDES[policy.heading] ?? (isShortHeading ? 230 : 340))
-          : (isShortHeading ? 250 : 380),
+          : (isShortHeading ? 230 : 380),
         height: isShortHeading ? (isMobile ? 64 : 70) : (isMobile ? 88 : 96),
         background: cardHovered ? '#FF4B33' : '#000',
         clipPath: 'polygon(0% 100%, 0% 0%, 93.9% 0%, 100% 82.2%)',
@@ -2501,7 +2502,7 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
       </div>
 
       <div style={{ padding: `${isShortHeading ? (isMobile ? 76 : 86) : (isMobile ? 100 : 110)}px ${isMobile ? 18 : 24}px ${isMobile ? 20 : 26}px` }}>
-        <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 20 }}>{policy.body}</p>
+        <p style={{ ...S.para, fontSize: 15, marginBottom: 20 }}>{policy.body}</p>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <button
             type="button"
@@ -2689,13 +2690,22 @@ const MANIFESTO_ICON_SCALE = {
   '/arts-icon.svg': 1.12,
 }
 
-function ManifestoRowIcon({ src, color = '#000', height = 28 }) {
+// The power icon's 1.5x scale (above) makes it noticeably taller than the
+// other icons in a top-aligned row, which pushes the heading below it
+// further down than on other cards. Pulling it up compensates, without
+// affecting the flat accordion row (which centers its icon instead, so
+// doesn't need this — callers opt in explicitly via offsetY).
+const MANIFESTO_ICON_OFFSET = {
+  '/icons/power.svg': -14,
+}
+
+function ManifestoRowIcon({ src, color = '#000', height = 28, offsetY = 0 }) {
   const aspect = MANIFESTO_ICON_ASPECT[src] ?? 1
   const scale = MANIFESTO_ICON_SCALE[src] ?? 1
   height = height * scale
   return (
     <span style={{
-      display: 'inline-block', flexShrink: 0, width: height * aspect, height,
+      display: 'inline-block', flexShrink: 0, width: height * aspect, height, marginTop: offsetY,
       backgroundColor: color,
       WebkitMaskImage: `url(${src})`, maskImage: `url(${src})`,
       WebkitMaskSize: 'contain', maskSize: 'contain',
@@ -2974,7 +2984,7 @@ function ManifestoFullPolicyCards3Col({ isMobile, onOpenVideo, onOpenHousing }) 
             }}
           >
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-              <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 44 : 48} color={fg} />
+              <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 44 : 48} color={fg} offsetY={MANIFESTO_ICON_OFFSET[row.iconSrc] ?? 0} />
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); onOpenVideo(row) }}
@@ -3078,7 +3088,7 @@ function ManifestoFullPolicyCards3ColV2({ isMobile, onOpenVideo, onOpenHousing }
               clipPath: 'polygon(0% 0%, 100% 0%, 73% 100%, 0% 100%)',
             }} />
             <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-              <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 44 : 48} color={fg} />
+              <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 44 : 48} color={fg} offsetY={MANIFESTO_ICON_OFFSET[row.iconSrc] ?? 0} />
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); onOpenVideo(row) }}
@@ -3286,7 +3296,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
                 <img
                   src={isMobile ? '/manifesto-booklet-mobile.png' : '/manifesto-booklet-desktop.png'}
                   alt="A Socialist Manifesto booklet"
-                  style={{ width: isMobile ? 168 : 340, height: 'auto', flexShrink: 0 }}
+                  style={{ width: isMobile ? 143 : 340, height: 'auto', flexShrink: 0 }}
                 />
                 <div>
                   <h3 style={{
@@ -3522,25 +3532,29 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
                 />
               )}
             </div>
-            {isHousing && !isManifesto && (
-              <button
-                onClick={() => { setPlainView(housingBackTo); window.scrollTo(0, 0) }}
-                aria-label="Back"
-                style={{
-                  position: 'absolute', display: 'flex', alignItems: 'center',
-                  left: (isMobile ? 20 : isTablet ? 40 : 276) - 17,
-                  top: (heroHeight - leftDrop) + (isMobile ? 9 : 12),
-                  background: 'none', border: 'none', padding: 0, cursor: 'pointer',
-                }}
-              >
-                <svg width={9} height={16} viewBox="0 0 14 24" fill="none" style={{ flexShrink: 0 }}>
-                  <path d="M11 2L2 12L11 22" stroke="#000" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
-            )}
             <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 276, top: isHousing ? heroHeight - leftDrop : (isMobile ? 127 : 178), ...(isMobile && { padding: '4px 7px 16px' }) }}>
               <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36, whiteSpace: 'pre-line' }}>{(!showVariations && version === 'B' && isManifesto) ? 'Vision and policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"}</h1>
             </div>
+          </div>
+        )
+      })()}
+      {(() => {
+        const isManifesto = plainView === 'manifesto' || plainView === 'manifesto2' || plainView === 'manifesto3' || plainView === 'manifesto4'
+        const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3' || isManifesto)
+        return isHousing && !isManifesto && (
+          <div style={{ paddingLeft: isMobile ? 20 : isTablet ? 40 : 276, paddingRight: isMobile ? 20 : isTablet ? 40 : 276, paddingTop: isMobile ? 16 : 24 }}>
+            <button
+              onClick={() => { setPlainView(housingBackTo); window.scrollTo(0, 0) }}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+              }}
+            >
+              <svg width={9} height={16} viewBox="0 0 14 24" fill="none" style={{ flexShrink: 0 }}>
+                <path d="M11 2L2 12L11 22" stroke="#000" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span style={{ fontSize: 16, fontWeight: 700, color: '#000', fontFamily: "'Open Sans', system-ui, sans-serif", whiteSpace: 'nowrap' }}>Back to policies</span>
+            </button>
           </div>
         )
       })()}
