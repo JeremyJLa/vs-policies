@@ -2673,7 +2673,7 @@ const MANIFESTO_ICON_ASPECT = {
   '/icons2/health2.svg': 1.125,
   '/icons2/how-we-pay-for-it.png': 0.783,
   '/icons2/liveable-city-2.png': 0.997,
-  '/icons2/lgbtiq-plus-2.png': 0.867,
+  '/icons2/lgbtiq-plus-2.png': 1.059,
   '/icons2/gambling-4.svg': 1.047,
   '/icons2/banks.png': 0.965,
   '/icons2/addiction.png': 0.916,
