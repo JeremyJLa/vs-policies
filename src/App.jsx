@@ -2237,7 +2237,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
             )}
           </div>
         </div>
-        {videoOpen && <ManifestoVideoModal policy={{ heading: p.title, videoImg: MANIFESTO_VIDEO_IMAGES[0] }} onClose={() => setVideoOpen(false)} />}
+        {videoOpen && <ManifestoVideoModal policy={{ heading: p.title, videoImg: MANIFESTO_VIDEO_IMAGES[0] }} onClose={() => setVideoOpen(false)} isMobile={isMobile} />}
 
         {/* Locked-in view: only rendered once the in-box row above has
             scrolled up to the nav; by then the real row is already hidden
@@ -2591,7 +2591,7 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
 
 // Video modal for the Manifesto policy cards' "Watch 2 min video" button —
 // dark overlay, heading above the video, top-right close "×".
-function ManifestoVideoModal({ policy, onClose }) {
+function ManifestoVideoModal({ policy, onClose, isMobile }) {
   return (
     <div
       onClick={onClose}
@@ -2621,17 +2621,19 @@ function ManifestoVideoModal({ policy, onClose }) {
         }}>
           <img src={policy.videoImg} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)' }} />
-          <span style={{
-            position: 'relative', width: 72, height: 72, borderRadius: '50%',
-            background: 'rgba(0,0,0,0.4)', border: '2px solid #fff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
+          {isMobile && (
             <span style={{
-              width: 0, height: 0, marginLeft: 5,
-              borderTop: '16px solid transparent', borderBottom: '16px solid transparent',
-              borderLeft: '26px solid #fff',
-            }} />
-          </span>
+              position: 'relative', width: 72, height: 72, borderRadius: '50%',
+              background: 'rgba(0,0,0,0.4)', border: '2px solid #fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <span style={{
+                width: 0, height: 0, marginLeft: 5,
+                borderTop: '16px solid transparent', borderBottom: '16px solid transparent',
+                borderLeft: '26px solid #fff',
+              }} />
+            </span>
+          )}
         </div>
       </div>
     </div>
@@ -3415,7 +3417,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
           {isMobile && <img src="/lower-content.webp" alt="" style={{ width: '100%', height: 'auto', display: 'block' }} />}
         </>
       )}
-      {videoPolicy && <ManifestoVideoModal policy={videoPolicy} onClose={() => setVideoPolicy(null)} />}
+      {videoPolicy && <ManifestoVideoModal policy={videoPolicy} onClose={() => setVideoPolicy(null)} isMobile={isMobile} />}
     </div>
   )
 }
