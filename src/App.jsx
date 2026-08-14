@@ -2124,6 +2124,8 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
   const sideNavAnchorRef = useRef(null)
   const [sideNavLocked, setSideNavLocked] = useState(false)
   const [sideNavOpacity, setSideNavOpacity] = useState(0)
+  const [videoOpen, setVideoOpen] = useState(false)
+  const [videoHovered, setVideoHovered] = useState(false)
 
   // The in-box "Jump to" row stays exactly where it is (inside the summary
   // box) until scrolling carries it up to the black nav bar — only then
@@ -2187,25 +2189,75 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         )}
 
         <div style={{ paddingLeft: left, paddingRight: right, marginTop: -2 }}>
-          {/* Introductory summary panel — bordered, no fill, matching the
-              Figma frame (title isn't repeated here; the hero above covers it) */}
-          <div style={{
-            ...(SUMMARY_BOX_BORDER_ENABLED && { border: '1px solid #cecece' }), borderRadius: 8,
-            padding: '20px 20px 20px 0',
-            marginBottom: isMobile ? 32 : 40, maxWidth: 680,
-          }}>
-            <p style={{ ...S.para, fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 24 }}>
-              <span style={{
-                background: '#000', color: '#fff', padding: '3px 8px',
-                WebkitBoxDecorationBreak: 'clone', boxDecorationBreak: 'clone',
-              }}>{p.summary}</span>
-            </p>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start', flexWrap: 'wrap', gap: isMobile ? 20 : 40 }}>
+            {/* Introductory summary panel — bordered, no fill, matching the
+                Figma frame (title isn't repeated here; the hero above covers it) */}
             <div style={{
-              fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#7d7d7d',
-              fontFamily: "'Open Sans', system-ui, sans-serif",
-            }}>{p.readTime}</div>
+              ...(SUMMARY_BOX_BORDER_ENABLED && { border: '1px solid #cecece' }), borderRadius: 8,
+              padding: '20px 20px 20px 0',
+              marginBottom: isMobile ? 32 : 40, maxWidth: 680,
+            }}>
+              <p style={{ ...S.para, fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 24 }}>
+                <span style={{
+                  background: '#000', color: '#fff', padding: '3px 8px',
+                  WebkitBoxDecorationBreak: 'clone', boxDecorationBreak: 'clone',
+                }}>{p.summary}</span>
+              </p>
+              <div style={{
+                fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#7d7d7d',
+                fontFamily: "'Open Sans', system-ui, sans-serif",
+              }}>{p.readTime}</div>
+            </div>
+            {isMobile ? (
+              <button
+                type="button"
+                onClick={() => setVideoOpen(true)}
+                onMouseEnter={() => setVideoHovered(true)}
+                onMouseLeave={() => setVideoHovered(false)}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 10, flexShrink: 0,
+                  border: `1px solid ${videoHovered ? '#FF4B33' : '#808080'}`, borderRadius: 34, padding: '9px 16px',
+                  background: 'none', cursor: 'pointer', transition: 'border-color 0.2s ease',
+                }}
+              >
+                <span style={{
+                  width: 0, height: 0, flexShrink: 0,
+                  borderTop: '7px solid transparent', borderBottom: '7px solid transparent',
+                  borderLeft: `12px solid ${videoHovered ? '#FF4B33' : '#000'}`,
+                  transition: 'border-left-color 0.2s ease',
+                }} />
+                <span style={{ fontSize: 13, fontWeight: 700, color: videoHovered ? '#FF4B33' : '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif", transition: 'color 0.2s ease' }}>Watch 2 min video</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setVideoOpen(true)}
+                onMouseEnter={() => setVideoHovered(true)}
+                onMouseLeave={() => setVideoHovered(false)}
+                style={{
+                  position: 'relative', flexShrink: 0, width: 220, aspectRatio: '16 / 9', borderRadius: 6, overflow: 'hidden',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  border: 'none', padding: 0, cursor: 'pointer',
+                }}
+              >
+                <img src={MANIFESTO_VIDEO_IMAGES[0]} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                <div style={{ position: 'absolute', inset: 0, background: videoHovered ? 'rgba(0,0,0,0.35)' : 'rgba(0,0,0,0.45)', transition: 'background 0.2s ease' }} />
+                <span style={{
+                  position: 'relative', width: 44, height: 44, borderRadius: '50%',
+                  background: 'rgba(0,0,0,0.4)', border: '2px solid #fff',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <span style={{
+                    width: 0, height: 0, marginLeft: 3,
+                    borderTop: '9px solid transparent', borderBottom: '9px solid transparent',
+                    borderLeft: '15px solid #fff',
+                  }} />
+                </span>
+              </button>
+            )}
           </div>
         </div>
+        {videoOpen && <ManifestoVideoModal policy={{ heading: p.title, videoImg: MANIFESTO_VIDEO_IMAGES[0] }} onClose={() => setVideoOpen(false)} />}
 
         {/* Locked-in view: only rendered once the in-box row above has
             scrolled up to the nav; by then the real row is already hidden
@@ -3263,7 +3315,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
             padding: `${isMobile ? 20 : 32}px ${right}px ${isMobile ? 24 : 36}px ${left}px`,
           }}>
             <div style={{ maxWidth: 680 }}>
-              <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Our vision for a better, fairer Victoria</h2>
+              <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>A better, fairer Victoria</h2>
               <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>
                 {visionIntro.text}
                 {!visionExpanded && (
@@ -3553,7 +3605,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
               )}
             </div>
             <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 276, top: isHousing ? heroHeight - leftDrop : (isMobile ? 127 : 178), ...(isMobile && { padding: '4px 7px 16px' }) }}>
-              <h1 style={{ ...S.pageTitle, fontSize: isMobile ? 22 : 36, whiteSpace: 'pre-line' }}>{(!showVariations && version === 'B' && isManifesto) ? 'Vision and policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"}</h1>
+              <h1 style={{ ...S.pageTitle, fontSize: isMobile ? (plainView === 'manifesto4' ? 26 : 22) : 36, whiteSpace: 'pre-line' }}>{(!showVariations && version === 'B' && isManifesto) ? 'Vision and policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"}</h1>
             </div>
           </div>
         )
@@ -3562,7 +3614,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
         const isManifesto = plainView === 'manifesto' || plainView === 'manifesto2' || plainView === 'manifesto3' || plainView === 'manifesto4'
         const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3' || isManifesto)
         return isHousing && !isManifesto && (
-          <div style={{ paddingLeft: isMobile ? 20 : isTablet ? 40 : 276, paddingRight: isMobile ? 20 : isTablet ? 40 : 276, paddingTop: isMobile ? 16 : 24 }}>
+          <div style={{ paddingLeft: isMobile ? 20 : isTablet ? 40 : 276, paddingRight: isMobile ? 20 : isTablet ? 40 : 276, paddingTop: isMobile ? 2 : 6 }}>
             <button
               onClick={() => { setPlainView(housingBackTo); window.scrollTo(0, 0) }}
               style={{
