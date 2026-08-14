@@ -2215,7 +2215,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
                 onMouseEnter={() => setVideoHovered(true)}
                 onMouseLeave={() => setVideoHovered(false)}
                 style={{
-                  position: 'relative', width: '100%', maxWidth: 700, aspectRatio: '16 / 9', borderRadius: 6, overflow: 'hidden',
+                  position: 'relative', width: '100%', maxWidth: 483, aspectRatio: '16 / 9', borderRadius: 6, overflow: 'hidden',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   border: 'none', padding: 0, cursor: 'pointer',
                 }}
@@ -2223,14 +2223,14 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
                 <img src={MANIFESTO_VIDEO_IMAGES[0]} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                 <div style={{ position: 'absolute', inset: 0, background: videoHovered ? 'rgba(0,0,0,0.35)' : 'rgba(0,0,0,0.45)', transition: 'background 0.2s ease' }} />
                 <span style={{
-                  position: 'relative', width: 72, height: 72, borderRadius: '50%',
+                  position: 'relative', width: 60, height: 60, borderRadius: '50%',
                   background: 'rgba(0,0,0,0.4)', border: '2px solid #fff',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
                   <span style={{
-                    width: 0, height: 0, marginLeft: 5,
-                    borderTop: '16px solid transparent', borderBottom: '16px solid transparent',
-                    borderLeft: '26px solid #fff',
+                    width: 0, height: 0, marginLeft: 4,
+                    borderTop: '13px solid transparent', borderBottom: '13px solid transparent',
+                    borderLeft: '21px solid #fff',
                   }} />
                 </span>
               </button>
