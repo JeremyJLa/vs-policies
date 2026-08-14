@@ -3348,15 +3348,15 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
                 <img
                   src={isMobile ? '/manifesto-booklet-mobile.png' : '/manifesto-booklet-desktop.png'}
                   alt="A Socialist Manifesto booklet"
-                  style={{ width: isMobile ? 143 : 340, height: 'auto', flexShrink: 0 }}
+                  style={{ width: isMobile ? 108 : 340, height: 'auto', flexShrink: 0 }}
                 />
-                <div>
+                <div style={{ minWidth: 0 }}>
                   <h3 style={{
-                    margin: isMobile ? '0 0 10px' : '0 0 16px', fontSize: isMobile ? 15 : 18, fontWeight: 600, color: '#000',
-                    fontFamily: "'Work Sans', system-ui, sans-serif", whiteSpace: isMobile ? 'normal' : 'nowrap',
+                    margin: isMobile ? '0 0 10px' : '0 0 16px', fontSize: isMobile ? 14 : 18, fontWeight: 600, color: '#000',
+                    fontFamily: "'Work Sans', system-ui, sans-serif", whiteSpace: 'nowrap',
                   }}>Full election manifesto available</h3>
                   <a href="/manifesto-booklet.pdf" target="_blank" rel="noreferrer" style={{
-                    display: 'inline-flex', alignItems: 'center', gap: isMobile ? 8 : 10,
+                    display: 'inline-flex', alignItems: 'center', gap: isMobile ? 8 : 10, whiteSpace: 'nowrap',
                     border: '1px solid #000', borderRadius: 4, padding: isMobile ? '7px 14px' : '10px 20px',
                     fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#000', textDecoration: 'none',
                     fontFamily: "'Open Sans', system-ui, sans-serif",
