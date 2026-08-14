@@ -553,6 +553,7 @@ const S = {
     padding: '4px 24px 16px',
   },
   pageTitle: {
+    margin: 0,
     fontSize: 36,
     fontWeight: 900,
     letterSpacing: '0.02em',
@@ -2102,9 +2103,6 @@ function HousingSideNav({ areas, locked, lockedTop, opacity = 1 }) {
 // scroll" interaction. Disabled per request, but the tracking logic below
 // is left intact so it can be switched back on later.
 const JUMP_LOCK_ENABLED = false
-// Toggle for the summary box's outline. Disabled per request, easy to
-// bring back later.
-const SUMMARY_BOX_BORDER_ENABLED = false
 
 function HousingPolicyPageV2({ isMobile, isTablet }) {
   const { left, right } = hPad(isMobile, isTablet)
@@ -2189,25 +2187,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         )}
 
         <div style={{ paddingLeft: left, paddingRight: right, marginTop: -2 }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start', flexWrap: 'wrap', gap: isMobile ? 20 : 40 }}>
-            {/* Introductory summary panel — bordered, no fill, matching the
-                Figma frame (title isn't repeated here; the hero above covers it) */}
-            <div style={{
-              ...(SUMMARY_BOX_BORDER_ENABLED && { border: '1px solid #cecece' }), borderRadius: 8,
-              padding: '20px 20px 20px 0',
-              marginBottom: isMobile ? 32 : 40, maxWidth: 680,
-            }}>
-              <p style={{ ...S.para, fontWeight: 600, fontSize: 18, lineHeight: '24px', marginBottom: 24 }}>
-                <span style={{
-                  background: '#000', color: '#fff', padding: '3px 8px',
-                  WebkitBoxDecorationBreak: 'clone', boxDecorationBreak: 'clone',
-                }}>{p.summary}</span>
-              </p>
-              <div style={{
-                fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#7d7d7d',
-                fontFamily: "'Open Sans', system-ui, sans-serif",
-              }}>{p.readTime}</div>
-            </div>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start', flexWrap: 'wrap', gap: isMobile ? 20 : 40, marginBottom: isMobile ? 32 : 40 }}>
             {isMobile ? (
               <button
                 type="button"
