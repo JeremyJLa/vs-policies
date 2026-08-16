@@ -2485,7 +2485,7 @@ const MANIFESTO_MOBILE_BANNER_WIDTH_OVERRIDES = {
 // 5627:5704 expanded): an outlined card (fills #F7F6FF when expanded or hovered) with
 // a tilted red banner flush to its top-left corner, a "Watch 2 min video"
 // pill and "READ MORE" toggle, and — expanded — the full sections breakdown.
-function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVideo, cardRef, skipCollapseAnim }) {
+function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVideo, cardRef, skipCollapseAnim, lowercaseHeading = false }) {
   const isShortHeading = policy.heading === 'Homes for all'
   const [hovered, setHovered] = useState(false)
   const [videoHovered, setVideoHovered] = useState(false)
@@ -2523,8 +2523,8 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
         transition: 'background-color 0.2s ease',
       }}>
         <span style={{
-          fontSize: isMobile ? 18 : 22, fontWeight: 800, color: '#fff', lineHeight: isMobile ? '21px' : '24px',
-          textTransform: 'uppercase', fontFamily: "'Work Sans', system-ui, sans-serif",
+          fontSize: (isMobile ? 18 : 22) + (lowercaseHeading ? 1 : 0), fontWeight: 800, color: '#fff', lineHeight: isMobile ? '21px' : '24px',
+          textTransform: lowercaseHeading ? 'none' : 'uppercase', fontFamily: "'Work Sans', system-ui, sans-serif",
           whiteSpace: isMobile && isShortHeading ? 'nowrap' : isMobile ? 'pre-line' : 'normal',
         }}>
           {isMobile
@@ -3396,6 +3396,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
                   onToggle={() => openCard(i)}
                   cardRef={(el) => { cardRefs.current[i] = el }}
                   onOpenVideo={() => setVideoPolicy({ ...policy, videoImg: MANIFESTO_VIDEO_IMAGES[i % MANIFESTO_VIDEO_IMAGES.length] })}
+                  lowercaseHeading={cardLayout === '3col-v2'}
                 />
               ))}
               <div style={{ textAlign: 'center', marginTop: isMobile ? 24 : 32 }}>
