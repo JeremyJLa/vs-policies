@@ -3164,7 +3164,7 @@ function ManifestoFullPolicyCards3ColV2({ isMobile, onOpenVideo, onOpenHousing }
               </button>
             </div>
             <h3 style={{
-              position: 'relative', margin: '18px 0 0', fontSize: 24, fontWeight: 800, lineHeight: '26px', textTransform: 'uppercase',
+              position: 'relative', margin: '18px 0 0', fontSize: 25, fontWeight: 800, lineHeight: '26px',
               fontFamily: "'Work Sans', system-ui, sans-serif", color: fg, transition: 'color 0.2s ease',
             }}>{row.heading}</h3>
             <p style={{ ...S.para, position: 'relative', fontSize: 15, lineHeight: '17px', fontWeight: 500, marginTop: 12, marginBottom: 0 }}>{row.summary}</p>
@@ -3596,7 +3596,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
         const isManifesto = plainView === 'manifesto' || plainView === 'manifesto2' || plainView === 'manifesto3' || plainView === 'manifesto4'
         const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3' || isManifesto)
         return isHousing && !isManifesto && (
-          <div style={{ paddingLeft: isMobile ? 20 : isTablet ? 40 : 276, paddingRight: isMobile ? 20 : isTablet ? 40 : 276, paddingTop: isMobile ? 2 : 6 }}>
+          <div style={{ paddingLeft: isMobile ? 20 : isTablet ? 40 : 276, paddingRight: isMobile ? 20 : isTablet ? 40 : 276, marginTop: isMobile ? -20 : -49 }}>
             <button
               onClick={() => { setPlainView(housingBackTo); window.scrollTo(0, 0) }}
               style={{
