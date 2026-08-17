@@ -3509,7 +3509,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
   )
 }
 
-function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vision', onVersionChange, onNavigateHome }) {
+function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'manifesto4', onVersionChange, onNavigateHome }) {
   // Default view is the clean "No icon" style with no variations picker.
   // ?clean=1 in the URL shows the full "Card design variations" picker and
   // all the in-progress style options, for internal review.
@@ -3977,7 +3977,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
 export default function App() {
   const [version, setVersion] = useState('B')
   const [initialTab, setInitialTab] = useState('policies')
-  const [initialPlainView, setInitialPlainView] = useState('vision')
+  const [initialPlainView, setInitialPlainView] = useState('manifesto4')
 
   if (version === 'home') {
     return (
