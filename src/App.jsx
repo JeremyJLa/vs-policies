@@ -2880,10 +2880,13 @@ function ManifestoFullPolicyAccordion({ isMobile, onOpenHousing }) {
         const isOpen = openIndex === i
         const isHovered = hoveredIndex === i
         const isRed = isOpen || isHovered
-        // Match the body text's left edge to where the heading text itself
-        // starts (icon width varies per row, so this can't be a fixed value).
-        const iconWidth = 40 * (MANIFESTO_ICON_ASPECT[row.iconSrc] ?? 1)
-        const headingIndent = iconWidth + (isMobile ? 14 : 20)
+        // Icons render at a fixed height but varying width depending on
+        // their own aspect ratio, so a fixed-width slot (rather than each
+        // icon's own width) is what keeps every row's heading — and the
+        // expanded body text below it — aligned to the same left edge,
+        // regardless of how wide or narrow that row's icon happens to be.
+        const iconSlotWidth = 44
+        const headingIndent = iconSlotWidth + (isMobile ? 14 : 20)
         return (
           <div key={i} style={{ borderBottom: '1px solid #C4C4C4', ...(i === 0 ? { borderTop: '1px solid #C4C4C4' } : {}) }}>
             <button
@@ -2899,7 +2902,9 @@ function ManifestoFullPolicyAccordion({ isMobile, onOpenHousing }) {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 14 : 20 }}>
-                <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 40 : 40} color={isRed ? '#FF4B33' : '#000'} />
+                <div style={{ width: iconSlotWidth, display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                  <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 40 : 40} color={isRed ? '#FF4B33' : '#000'} />
+                </div>
                 <h3 style={{
                   margin: 0, fontSize: isMobile ? 15 : 18, fontWeight: 800, lineHeight: 1.2,
                   fontFamily: "'Work Sans', system-ui, sans-serif",
@@ -3333,7 +3338,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
               background: 'none', border: 'none', padding: 0, cursor: 'pointer',
               fontSize: isMobile ? 14 : 15, fontWeight: activeTab === 'vision' ? 700 : 600,
               color: activeTab === 'vision' ? '#000' : '#666',
-              textDecoration: activeTab === 'vision' ? 'underline' : 'none', textUnderlineOffset: '4px', textDecorationThickness: '2px',
+              textDecoration: activeTab === 'vision' ? 'underline' : 'none', textUnderlineOffset: '4px', textDecorationThickness: '3px',
               fontFamily: "'Open Sans', system-ui, sans-serif",
             }}
           >Our vision</button>
@@ -3344,7 +3349,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
               background: 'none', border: 'none', padding: 0, cursor: 'pointer',
               fontSize: isMobile ? 14 : 15, fontWeight: activeTab === 'policies' ? 700 : 600,
               color: activeTab === 'policies' ? '#000' : '#666',
-              textDecoration: activeTab === 'policies' ? 'underline' : 'none', textUnderlineOffset: '4px', textDecorationThickness: '2px',
+              textDecoration: activeTab === 'policies' ? 'underline' : 'none', textUnderlineOffset: '4px', textDecorationThickness: '3px',
               fontFamily: "'Open Sans', system-ui, sans-serif",
             }}
           >Our full policy platform</button>
