@@ -2886,7 +2886,8 @@ function ManifestoFullPolicyAccordion({ isMobile, onOpenHousing }) {
         // expanded body text below it — aligned to the same left edge,
         // regardless of how wide or narrow that row's icon happens to be.
         const iconSlotWidth = 44
-        const headingIndent = iconSlotWidth + (isMobile ? 14 : 20)
+        const iconHeadingGap = 12
+        const headingIndent = iconSlotWidth + iconHeadingGap
         return (
           <div key={i} style={{ borderBottom: '1px solid #C4C4C4', ...(i === 0 ? { borderTop: '1px solid #C4C4C4' } : {}) }}>
             <button
@@ -2901,8 +2902,8 @@ function ManifestoFullPolicyAccordion({ isMobile, onOpenHousing }) {
                 textAlign: 'left',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 14 : 20 }}>
-                <div style={{ width: iconSlotWidth, display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: iconHeadingGap }}>
+                <div style={{ width: iconSlotWidth, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <ManifestoRowIcon src={row.iconSrc} height={isMobile ? 40 : 40} color={isRed ? '#FF4B33' : '#000'} />
                 </div>
                 <h3 style={{
