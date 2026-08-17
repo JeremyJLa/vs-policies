@@ -3701,7 +3701,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
         const isManifesto = plainView === 'manifesto' || plainView === 'manifesto2' || plainView === 'manifesto3' || plainView === 'manifesto4' || plainView === 'manifesto5'
         const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3' || plainView === 'policyDetail' || isManifesto)
         return isHousing && !isManifesto && (
-          <div style={{ paddingLeft: isMobile ? 20 : isTablet ? 40 : 276, paddingRight: isMobile ? 20 : isTablet ? 40 : 276, marginTop: isMobile ? 5 : -24 }}>
+          <div style={{ paddingLeft: isMobile ? 20 : isTablet ? 40 : 276, paddingRight: isMobile ? 20 : isTablet ? 40 : 276, marginTop: isMobile ? 5 : -24, position: 'relative', zIndex: 10 }}>
             <a
               href="#"
               onClick={(e) => { e.preventDefault(); window.history.back() }}
