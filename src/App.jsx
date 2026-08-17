@@ -3857,8 +3857,8 @@ export default function App() {
   if (version === 'home') {
     return (
       <HomePage
-        onNavigateToPolicies={() => { setInitialTab('policies'); setInitialPlainView('policies'); setVersion('B'); window.scrollTo(0, 0) }}
-        onNavigateToVision={() => { setInitialTab('platform'); setInitialPlainView('vision'); setVersion('B'); window.scrollTo(0, 0) }}
+        onNavigateToPolicies={() => { setInitialTab('policies'); setInitialPlainView('manifesto4'); setVersion('B'); window.scrollTo(0, 0) }}
+        onNavigateToVision={() => { setInitialTab('platform'); setInitialPlainView('manifesto4'); setVersion('B'); window.scrollTo(0, 0) }}
       />
     )
   }
