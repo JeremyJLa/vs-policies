@@ -3435,7 +3435,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
   // the Housing policy page: clicking the Housing card from "Our full
   // policy platform" should land back on that same tab, not reset to "Our
   // vision".
-  const [manifestoTab, setManifestoTab] = useState('vision')
+  const [manifestoTab, setManifestoTab] = useState(() => initialTab === 'policies' ? 'policies' : 'vision')
   // Which plainView the Housing policy page's Back button should return
   // to — the accordion Policies page by default, or wherever the visitor
   // actually came from (e.g. Manifesto/vision-2's policy cards).
