@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import './index.css'
 import HomePage from './HomePage'
 
@@ -3560,6 +3560,15 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
   const policiesRef = useRef(null)
   const heroImgRef = useRef(null)
   const housingHeroImgRef = useRef(null)
+  const heroSectionRef = useRef(null)
+  const titleBoxRef = useRef(null)
+  // The heading + "Back to policies" box is absolutely positioned over the
+  // hero image, so a long (wrapping) heading can make it taller than the
+  // hero section's own fixed height without pushing the content below it
+  // down automatically. Measuring the actual overflow and feeding it into
+  // a spacer ahead of <main> keeps that gap consistent regardless of how
+  // many lines the heading wraps to.
+  const [titleBoxExtraGap, setTitleBoxExtraGap] = useState(0)
 
   const w = useWindowWidth()
   const isMobile = w <= 640
@@ -3603,6 +3612,14 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  useLayoutEffect(() => {
+    const heroEl = heroSectionRef.current
+    const boxEl = titleBoxRef.current
+    if (!heroEl || !boxEl) { setTitleBoxExtraGap(0); return }
+    const overflow = Math.max(0, boxEl.getBoundingClientRect().bottom - heroEl.getBoundingClientRect().bottom)
+    setTitleBoxExtraGap(overflow)
+  }, [plainView, policyDetailHeading, isMobile, isTablet])
 
   // Single continuous page, no tab bar: the default (plain-URL) experience,
   // and always for Option B. Only ?clean=1's Option A keeps the old tabbed
@@ -3653,7 +3670,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
         const rightDrop = isManifesto ? (isMobile ? 44.1 : 61.1) : (isMobile ? 19 : 39.2)
         const leftDrop = isMobile ? 57 : 103.6
         return (
-          <div style={{ ...S.heroSection, height: heroHeight }}>
+          <div ref={heroSectionRef} style={{ ...S.heroSection, height: heroHeight }}>
             {/* Fixed frame: the diagonal clip shape never changes size. */}
             <div
               style={{
@@ -3697,30 +3714,34 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
                 />
               )}
             </div>
-            <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 276, top: isHousing ? heroHeight - leftDrop : (isMobile ? 127 : 178), ...(isMobile && { padding: '4px 7px 16px' }) }}>
-              <h1 style={{ ...S.pageTitle, fontSize: isMobile ? ((plainView === 'manifesto4' || plainView === 'manifesto5') ? 26 : 22) : 36, whiteSpace: 'pre-line' }}>{plainView === 'policyDetail' ? policyDetailHeading : (!showVariations && version === 'B' && isManifesto) ? 'Vision and policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"}</h1>
+            <div ref={titleBoxRef} style={{
+              ...S.pageTitleBox,
+              left: isMobile ? 20 : isTablet ? 40 : 276,
+              right: isMobile ? 9 : isTablet ? 16 : 56,
+              top: isHousing ? heroHeight - leftDrop : (isMobile ? 127 : 178),
+              zIndex: 2,
+              ...(isMobile && { padding: '4px 7px 16px' }),
+            }}>
+              {/* maxWidth matches the 680px cap used on the body text below,
+                  so long headings wrap within the same column instead of
+                  running wider than the content underneath them. */}
+              <h1 style={{ ...S.pageTitle, maxWidth: 680, fontSize: isMobile ? ((plainView === 'manifesto4' || plainView === 'manifesto5') ? 26 : 22) : 36, whiteSpace: 'pre-line' }}>{plainView === 'policyDetail' ? policyDetailHeading : (!showVariations && version === 'B' && isManifesto) ? 'Vision and policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"}</h1>
+              {isHousing && !isManifesto && (
+                <a
+                  href="#"
+                  onClick={(e) => { e.preventDefault(); window.history.back() }}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 20,
+                    textDecoration: 'none', cursor: 'pointer',
+                  }}
+                >
+                  <svg width={9} height={16} viewBox="0 0 14 24" fill="none" style={{ flexShrink: 0 }}>
+                    <path d="M11 2L2 12L11 22" stroke="#000" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <span style={{ fontSize: 16, fontWeight: 700, color: '#000', fontFamily: "'Open Sans', system-ui, sans-serif", whiteSpace: 'nowrap' }}>Back to policies</span>
+                </a>
+              )}
             </div>
-          </div>
-        )
-      })()}
-      {(() => {
-        const isManifesto = plainView === 'manifesto' || plainView === 'manifesto2' || plainView === 'manifesto3' || plainView === 'manifesto4' || plainView === 'manifesto5'
-        const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3' || plainView === 'policyDetail' || isManifesto)
-        return isHousing && !isManifesto && (
-          <div style={{ paddingLeft: isMobile ? 20 : isTablet ? 40 : 276, paddingRight: isMobile ? 20 : isTablet ? 40 : 276, marginTop: isMobile ? 5 : -24, position: 'relative', zIndex: 10 }}>
-            <a
-              href="#"
-              onClick={(e) => { e.preventDefault(); window.history.back() }}
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                textDecoration: 'none', cursor: 'pointer',
-              }}
-            >
-              <svg width={9} height={16} viewBox="0 0 14 24" fill="none" style={{ flexShrink: 0 }}>
-                <path d="M11 2L2 12L11 22" stroke="#000" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <span style={{ fontSize: 16, fontWeight: 700, color: '#000', fontFamily: "'Open Sans', system-ui, sans-serif", whiteSpace: 'nowrap' }}>Back to policies</span>
-            </a>
           </div>
         )
       })()}
@@ -3736,6 +3757,12 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
           </button>
         </div>
       )}
+
+      {/* Compensates for the heading box overflowing past the hero
+          section's fixed height on long (wrapping) headings — otherwise
+          the content below crowds up against "Back to policies" instead
+          of shifting down to make room for the extra line. */}
+      {titleBoxExtraGap > 0 && <div style={{ height: titleBoxExtraGap }} />}
 
       <main style={S.content}>
         {(!showVariations && version === 'B' && plainView === 'housing') ? (
