@@ -2186,7 +2186,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
           <HousingSideNav areas={p.areas} locked={sideNavLocked} lockedTop={sideNavLockTop} opacity={sideNavOpacity} />
         )}
 
-        <div style={{ paddingLeft: left, paddingRight: right, marginTop: -2 }}>
+        <div style={{ paddingLeft: left, paddingRight: right, marginTop: 48 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start', flexWrap: 'wrap', gap: isMobile ? 20 : 40, marginBottom: isMobile ? 32 : 40 }}>
             {isMobile ? (
               <button
@@ -3597,7 +3597,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
         const isManifesto = plainView === 'manifesto' || plainView === 'manifesto2' || plainView === 'manifesto3' || plainView === 'manifesto4'
         const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3' || isManifesto)
         return isHousing && !isManifesto && (
-          <div style={{ paddingLeft: isMobile ? 20 : isTablet ? 40 : 276, paddingRight: isMobile ? 20 : isTablet ? 40 : 276, marginTop: isMobile ? -20 : -49 }}>
+          <div style={{ paddingLeft: isMobile ? 20 : isTablet ? 40 : 276, paddingRight: isMobile ? 20 : isTablet ? 40 : 276, marginTop: isMobile ? -5 : -34 }}>
             <button
               onClick={() => { setPlainView(housingBackTo); window.scrollTo(0, 0) }}
               style={{
