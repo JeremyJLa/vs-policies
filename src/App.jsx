@@ -2348,13 +2348,7 @@ function ControlsBar({ showVariations, tab, plainView, version, cardView, policy
           ))}
           {!showVariations && version === 'B' && (
             <>
-              <button onClick={() => setPlainView('vision')} style={linkStyle(plainView === 'vision')}>Vision</button>
-              <button onClick={() => setPlainView('policies')} style={linkStyle(plainView === 'policies')}>Policies</button>
               <button onClick={() => { setHousingBackTo('policies'); setPlainView('housing3') }} style={linkStyle(plainView === 'housing3')}>Housing policy</button>
-              <button onClick={() => setPlainView('housing2')} style={linkStyle(plainView === 'housing2')}>Housing policy 2</button>
-              <button onClick={() => setPlainView('manifesto')} style={linkStyle(plainView === 'manifesto')}>Manifesto/vision</button>
-              <button onClick={() => setPlainView('manifesto2')} style={linkStyle(plainView === 'manifesto2')}>Manifesto/vision-2</button>
-              <button onClick={() => setPlainView('manifesto3')} style={linkStyle(plainView === 'manifesto3')}>Manifesto/vision-3</button>
               <button onClick={() => setPlainView('manifesto4')} style={linkStyle(plainView === 'manifesto4')}>Manifesto/vision-4</button>
             </>
           )}
