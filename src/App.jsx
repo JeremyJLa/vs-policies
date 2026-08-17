@@ -1385,7 +1385,7 @@ function PolicyRowAccordion({ rows, isMobile, isTablet }) {
             <div style={{ maxHeight: isOpen ? 600 : 0, overflow: 'hidden', transition: 'max-height 0.4s ease' }}>
               <div style={{ padding: `0 ${rowRightPad}px ${isMobile ? 20 : 24}px ${rowLeftPad + (isMobile ? 46 : 52)}px` }}>
                 <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 16 }}>{ACCORDION_ROW_BODY}</p>
-                <a href="#" style={{ display: 'block', textAlign: 'right', fontSize: isMobile ? 14 : 15, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px' }}>
+                <a href="#" onClick={(e) => e.preventDefault()} style={{ display: 'block', textAlign: 'right', fontSize: isMobile ? 14 : 15, fontWeight: 700, color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px' }}>
                   View policy
                 </a>
               </div>
@@ -1452,7 +1452,7 @@ function PolicyRowAccordion2({ rows, isMobile, isTablet }) {
             <div style={{ maxHeight: isOpen ? 600 : 0, overflow: 'hidden', transition: 'max-height 0.4s ease' }}>
               <div style={{ padding: `0 ${rowRightPad}px ${isMobile ? 20 : 24}px ${rowLeftPad + (isMobile ? 36 : 48)}px` }}>
                 <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 16 }}>{ACCORDION_ROW_BODY}</p>
-                <a href="#" style={{ display: 'inline-block', fontSize: 14, fontWeight: 700, fontFamily: "'Open Sans', system-ui, sans-serif", color: '#000', textDecoration: 'underline', letterSpacing: '0.02em' }}>
+                <a href="#" onClick={(e) => e.preventDefault()} style={{ display: 'inline-block', fontSize: 14, fontWeight: 700, fontFamily: "'Open Sans', system-ui, sans-serif", color: '#000', textDecoration: 'underline', letterSpacing: '0.02em' }}>
                   See full policy ›
                 </a>
               </div>
@@ -1514,7 +1514,7 @@ function AccordionPolicies() {
               <p style={{ ...S.para, maxWidth: 580, marginBottom: 16 }}>{policy.body}</p>
               <p style={{ ...S.para, maxWidth: 580, marginBottom: 16 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
               <p style={{ ...S.para, maxWidth: 580 }}>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt.</p>
-              <a href="#" style={{ display: 'inline-block', marginTop: 16, marginBottom: 24, fontSize: 14, fontWeight: 700, fontFamily: "'Open Sans', system-ui, sans-serif", color: '#000', textDecoration: 'underline', letterSpacing: '0.02em' }}>
+              <a href="#" onClick={(e) => e.preventDefault()} style={{ display: 'inline-block', marginTop: 16, marginBottom: 24, fontSize: 14, fontWeight: 700, fontFamily: "'Open Sans', system-ui, sans-serif", color: '#000', textDecoration: 'underline', letterSpacing: '0.02em' }}>
                 See full policy ›
               </a>
             </div>
@@ -1706,7 +1706,7 @@ function ManifestoSidebar({ isMobile }) {
         <HoverLink href="/manifesto-booklet.pdf" target="_blank" rel="noreferrer" style={linkStyle}>
           View or download manifesto booklet (PDF 18 MB)
         </HoverLink>
-        <HoverLink href="#" style={linkStyle}>
+        <HoverLink href="#" onClick={(e) => e.preventDefault()} style={linkStyle}>
           Purchase printed booklet ($10)
         </HoverLink>
       </div>
@@ -2393,7 +2393,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
 // from the real black header/hero so the header stays clean, per the
 // reference layout in IMAGES/controls.png (a strip above the header and a
 // matching strip below the page content).
-function ControlsBar({ showVariations, tab, plainView, version, cardView, policyLayout, setCardView, setPolicyLayout, setPlainView, setHousingBackTo, onVersionChange, isMobile, isTablet }) {
+function ControlsBar({ showVariations, tab, plainView, version, cardView, policyLayout, setCardView, setPolicyLayout, setPlainView, openBackablePage, onVersionChange, isMobile, isTablet }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const { left, right } = hPad(isMobile, isTablet)
   const showCardOptions = ((showVariations && tab === 'policies') || (!showVariations && plainView === 'policies')) && version === 'B'
@@ -2422,7 +2422,7 @@ function ControlsBar({ showVariations, tab, plainView, version, cardView, policy
           ))}
           {!showVariations && version === 'B' && (
             <>
-              <button onClick={() => { setHousingBackTo('policies'); setPlainView('housing3') }} style={linkStyle(plainView === 'housing3')}>Housing policy</button>
+              <button onClick={() => openBackablePage('housing3', 'policies')} style={linkStyle(plainView === 'housing3')}>Housing policy</button>
               <button onClick={() => setPlainView('manifesto4')} style={linkStyle(plainView === 'manifesto4')}>Manifesto/vision-4</button>
               <button onClick={() => setPlainView('manifesto5')} style={linkStyle(plainView === 'manifesto5')}>Manifesto/vision-5</button>
             </>
@@ -3333,7 +3333,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
               background: 'none', border: 'none', padding: 0, cursor: 'pointer',
               fontSize: isMobile ? 14 : 15, fontWeight: activeTab === 'vision' ? 700 : 600,
               color: activeTab === 'vision' ? '#000' : '#666',
-              textDecoration: activeTab === 'vision' ? 'underline' : 'none', textUnderlineOffset: '4px',
+              textDecoration: activeTab === 'vision' ? 'underline' : 'none', textUnderlineOffset: '4px', textDecorationThickness: '2px',
               fontFamily: "'Open Sans', system-ui, sans-serif",
             }}
           >Our vision</button>
@@ -3344,7 +3344,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
               background: 'none', border: 'none', padding: 0, cursor: 'pointer',
               fontSize: isMobile ? 14 : 15, fontWeight: activeTab === 'policies' ? 700 : 600,
               color: activeTab === 'policies' ? '#000' : '#666',
-              textDecoration: activeTab === 'policies' ? 'underline' : 'none', textUnderlineOffset: '4px',
+              textDecoration: activeTab === 'policies' ? 'underline' : 'none', textUnderlineOffset: '4px', textDecorationThickness: '2px',
               fontFamily: "'Open Sans', system-ui, sans-serif",
             }}
           >Our full policy platform</button>
@@ -3523,14 +3523,33 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
   // policy platform" should land back on that same tab, not reset to "Our
   // vision".
   const [manifestoTab, setManifestoTab] = useState(() => initialTab === 'policies' ? 'policies' : 'vision')
-  // Which plainView the Housing policy page's Back button should return
-  // to — the accordion Policies page by default, or wherever the visitor
-  // actually came from (e.g. Manifesto/vision-2's policy cards).
-  const [housingBackTo, setHousingBackTo] = useState('policies')
   // Which heading the generic policy detail page (plainView === 'policyDetail')
   // should show — every non-Housing card on Manifesto/vision-4 opens this
   // instead of a bespoke page like Housing has.
   const [policyDetailHeading, setPolicyDetailHeading] = useState(null)
+  // Opening a sub-page (Housing, or a generic policy detail page) from a
+  // card records the page it should return to on the CURRENT history entry
+  // (replaceState) before pushing a new entry for the sub-page itself. That
+  // way, whichever way the visitor leaves the sub-page — the in-app "Back
+  // to policies" link (which just calls history.back()) or the browser's
+  // own native Back button — they land on the same popped-to entry, whose
+  // state is what the one popstate handler below uses to restore plainView.
+  const openBackablePage = (view, backTo) => {
+    window.history.replaceState({ vsPlainView: backTo }, '', window.location.href)
+    window.history.pushState({ vsPlainView: view }, '', window.location.href)
+    setPlainView(view)
+    window.scrollTo(0, 0)
+  }
+  useEffect(() => {
+    const onPopState = (e) => {
+      if (e.state?.vsPlainView) {
+        setPlainView(e.state.vsPlainView)
+        window.scrollTo(0, 0)
+      }
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [])
   const tabBarRef = useRef(null)
   const policiesRef = useRef(null)
   const heroImgRef = useRef(null)
@@ -3592,7 +3611,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
         showVariations={showVariations} tab={tab} plainView={plainView} version={version}
         cardView={cardView} policyLayout={policyLayout}
         setCardView={setCardView} setPolicyLayout={setPolicyLayout} setPlainView={setPlainView}
-        setHousingBackTo={setHousingBackTo}
+        openBackablePage={openBackablePage}
         onVersionChange={onVersionChange} isMobile={isMobile} isTablet={isTablet}
       />
 
@@ -3683,18 +3702,19 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
         const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3' || plainView === 'policyDetail' || isManifesto)
         return isHousing && !isManifesto && (
           <div style={{ paddingLeft: isMobile ? 20 : isTablet ? 40 : 276, paddingRight: isMobile ? 20 : isTablet ? 40 : 276, marginTop: isMobile ? 5 : -24 }}>
-            <button
-              onClick={() => { setPlainView(housingBackTo); window.scrollTo(0, 0) }}
+            <a
+              href="#"
+              onClick={(e) => { e.preventDefault(); window.history.back() }}
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
-                background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                textDecoration: 'none', cursor: 'pointer',
               }}
             >
               <svg width={9} height={16} viewBox="0 0 14 24" fill="none" style={{ flexShrink: 0 }}>
                 <path d="M11 2L2 12L11 22" stroke="#000" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               <span style={{ fontSize: 16, fontWeight: 700, color: '#000', fontFamily: "'Open Sans', system-ui, sans-serif", whiteSpace: 'nowrap' }}>Back to policies</span>
-            </button>
+            </a>
           </div>
         )
       })()}
@@ -3720,26 +3740,26 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
           <ManifestoVisionPage
             isMobile={isMobile} isTablet={isTablet}
             activeTab={manifestoTab} setActiveTab={setManifestoTab}
-            onOpenHousing={() => { setHousingBackTo('manifesto'); setPlainView('housing3'); window.scrollTo(0, 0) }}
+            onOpenHousing={() => openBackablePage('housing3', 'manifesto')}
           />
         ) : (!showVariations && version === 'B' && plainView === 'manifesto2') ? (
           <ManifestoVisionPage
             isMobile={isMobile} isTablet={isTablet} useCardStyle
             activeTab={manifestoTab} setActiveTab={setManifestoTab}
-            onOpenHousing={() => { setHousingBackTo('manifesto2'); setPlainView('housing3'); window.scrollTo(0, 0) }}
+            onOpenHousing={() => openBackablePage('housing3', 'manifesto2')}
           />
         ) : (!showVariations && version === 'B' && plainView === 'manifesto3') ? (
           <ManifestoVisionPage
             isMobile={isMobile} isTablet={isTablet} useCardStyle cardLayout="3col"
             activeTab={manifestoTab} setActiveTab={setManifestoTab}
-            onOpenHousing={() => { setHousingBackTo('manifesto3'); setPlainView('housing3'); window.scrollTo(0, 0) }}
+            onOpenHousing={() => openBackablePage('housing3', 'manifesto3')}
           />
         ) : (!showVariations && version === 'B' && plainView === 'manifesto4') ? (
           <ManifestoVisionPage
             isMobile={isMobile} isTablet={isTablet} useCardStyle cardLayout="3col-v2" lowercaseKeyPolicyHeadings
             activeTab={manifestoTab} setActiveTab={setManifestoTab}
-            onOpenHousing={() => { setHousingBackTo('manifesto4'); setPlainView('housing3'); window.scrollTo(0, 0) }}
-            onOpenPolicy={(heading) => { setHousingBackTo('manifesto4'); setPolicyDetailHeading(heading); setPlainView('policyDetail'); window.scrollTo(0, 0) }}
+            onOpenHousing={() => openBackablePage('housing3', 'manifesto4')}
+            onOpenPolicy={(heading) => { setPolicyDetailHeading(heading); openBackablePage('policyDetail', 'manifesto4') }}
           />
         ) : (!showVariations && version === 'B' && plainView === 'policyDetail') ? (
           <GenericPolicyDetailPage heading={policyDetailHeading} isMobile={isMobile} isTablet={isTablet} />
@@ -3747,7 +3767,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
           <ManifestoVisionPage
             isMobile={isMobile} isTablet={isTablet} lowercaseKeyPolicyHeadings
             activeTab={manifestoTab} setActiveTab={setManifestoTab}
-            onOpenHousing={() => { setHousingBackTo('manifesto5'); setPlainView('housing3'); window.scrollTo(0, 0) }}
+            onOpenHousing={() => openBackablePage('housing3', 'manifesto5')}
           />
         ) : (!showVariations && version === 'B' && plainView === 'policies') ? (
           <div style={{ paddingTop: 15, paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
@@ -3776,7 +3796,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
                   // The Housing card links through to the Housing policy page.
                   if (policy.Icon === HousingIcon) {
                     return (
-                      <div key={i} onClick={() => { setHousingBackTo('policies'); setPlainView('housing3'); window.scrollTo(0, 0) }} style={{ cursor: 'pointer' }}>
+                      <div key={i} onClick={() => openBackablePage('housing3', 'policies')} style={{ cursor: 'pointer' }}>
                         {card}
                       </div>
                     )
@@ -3942,7 +3962,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
         showVariations={showVariations} tab={tab} plainView={plainView} version={version}
         cardView={cardView} policyLayout={policyLayout}
         setCardView={setCardView} setPolicyLayout={setPolicyLayout} setPlainView={setPlainView}
-        setHousingBackTo={setHousingBackTo}
+        openBackablePage={openBackablePage}
         onVersionChange={onVersionChange} isMobile={isMobile} isTablet={isTablet}
       />
     </div>
