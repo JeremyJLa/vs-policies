@@ -2393,7 +2393,7 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
 // from the real black header/hero so the header stays clean, per the
 // reference layout in IMAGES/controls.png (a strip above the header and a
 // matching strip below the page content).
-function ControlsBar({ showVariations, tab, plainView, version, cardView, policyLayout, setCardView, setPolicyLayout, setPlainView, openBackablePage, onVersionChange, isMobile, isTablet }) {
+function ControlsBar({ showVariations, tab, plainView, version, cardView, policyLayout, setCardView, setPolicyLayout, setPlainView, onVersionChange, isMobile, isTablet }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const { left, right } = hPad(isMobile, isTablet)
   const showCardOptions = ((showVariations && tab === 'policies') || (!showVariations && plainView === 'policies')) && version === 'B'
@@ -2422,9 +2422,8 @@ function ControlsBar({ showVariations, tab, plainView, version, cardView, policy
           ))}
           {!showVariations && version === 'B' && (
             <>
-              <button onClick={() => openBackablePage('housing3', 'policies')} style={linkStyle(plainView === 'housing3')}>Housing policy</button>
-              <button onClick={() => setPlainView('manifesto4')} style={linkStyle(plainView === 'manifesto4')}>Manifesto/vision-4</button>
-              <button onClick={() => setPlainView('manifesto5')} style={linkStyle(plainView === 'manifesto5')}>Manifesto/vision-5</button>
+              <button onClick={() => setPlainView('manifesto4')} style={linkStyle(plainView === 'manifesto4')}>Card view</button>
+              <button onClick={() => setPlainView('manifesto5')} style={linkStyle(plainView === 'manifesto5')}>Accordion view</button>
             </>
           )}
         </div>
@@ -3634,7 +3633,6 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
         showVariations={showVariations} tab={tab} plainView={plainView} version={version}
         cardView={cardView} policyLayout={policyLayout}
         setCardView={setCardView} setPolicyLayout={setPolicyLayout} setPlainView={setPlainView}
-        openBackablePage={openBackablePage}
         onVersionChange={onVersionChange} isMobile={isMobile} isTablet={isTablet}
       />
 
@@ -3995,7 +3993,6 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
         showVariations={showVariations} tab={tab} plainView={plainView} version={version}
         cardView={cardView} policyLayout={policyLayout}
         setCardView={setCardView} setPolicyLayout={setPolicyLayout} setPlainView={setPlainView}
-        openBackablePage={openBackablePage}
         onVersionChange={onVersionChange} isMobile={isMobile} isTablet={isTablet}
       />
     </div>
