@@ -151,7 +151,7 @@ export default function HomePage({ onNavigateToPolicies, onNavigateToVision }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const w = useWindowWidth()
   const isMobile = w <= 640
-  const src = isMobile ? '/Victorian-Socialists-home-MOBILE.png' : '/Victorian-Socialists-home.png'
+  const src = isMobile ? '/Victorian-Socialists-home-MOBILE.jpg' : '/Victorian-Socialists-home.jpg'
 
   return (
     <div style={{ position: 'relative', lineHeight: 0 }}>
