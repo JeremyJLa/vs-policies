@@ -2350,6 +2350,7 @@ function ControlsBar({ showVariations, tab, plainView, version, cardView, policy
             <>
               <button onClick={() => { setHousingBackTo('policies'); setPlainView('housing3') }} style={linkStyle(plainView === 'housing3')}>Housing policy</button>
               <button onClick={() => setPlainView('manifesto4')} style={linkStyle(plainView === 'manifesto4')}>Manifesto/vision-4</button>
+              <button onClick={() => setPlainView('manifesto5')} style={linkStyle(plainView === 'manifesto5')}>Manifesto/vision-5</button>
             </>
           )}
         </div>
@@ -2794,7 +2795,7 @@ const MANIFESTO_ACCORDION_ROWS = MANIFESTO_ACCORDION_HEADINGS.map((heading) => (
   iconSrc: MANIFESTO_HEADING_ICONS[heading],
 }))
 
-function ManifestoFullPolicyAccordion({ isMobile }) {
+function ManifestoFullPolicyAccordion({ isMobile, onOpenHousing }) {
   const [openIndex, setOpenIndex] = useState(null)
   const [hoveredIndex, setHoveredIndex] = useState(null)
   // No left inset of its own — the parent already applies the page's hPad
@@ -2840,9 +2841,19 @@ function ManifestoFullPolicyAccordion({ isMobile }) {
             <div style={{ maxHeight: isOpen ? 800 : 0, overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
               <div style={{ padding: `0 24px ${isMobile ? 20 : 24}px ${isMobile ? 36 : 48}px` }}>
                 <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 16 }}>{row.text}</p>
-                <a href="#" style={{ display: 'inline-block', fontSize: 14, fontWeight: 700, fontFamily: "'Open Sans', system-ui, sans-serif", color: '#000', textDecoration: 'underline', letterSpacing: '0.02em' }}>
-                  See full policy ›
-                </a>
+                {row.heading === 'Housing for all' ? (
+                  <button
+                    type="button"
+                    onClick={() => onOpenHousing?.()}
+                    style={{ font: 'inherit', display: 'inline-block', fontSize: 14, fontWeight: 700, fontFamily: "'Open Sans', system-ui, sans-serif", color: '#000', textDecoration: 'underline', letterSpacing: '0.02em', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+                  >
+                    See full policy ›
+                  </button>
+                ) : (
+                  <span style={{ display: 'inline-block', fontSize: 14, fontWeight: 700, fontFamily: "'Open Sans', system-ui, sans-serif", color: '#000', textDecoration: 'underline', letterSpacing: '0.02em' }}>
+                    See full policy ›
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -3184,7 +3195,7 @@ function ManifestoFullPolicyCards3ColV2({ isMobile, onOpenVideo, onOpenHousing }
 // the mobile reference mockups (Manifesto-A.png collapsed, Manifesto-B.png
 // expanded). Reuses the real VISION_CONTENT intro and POLICIES data rather
 // than the mockup's placeholder blurbs.
-function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLayout = '2col', activeTab, setActiveTab, onOpenHousing }) {
+function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLayout = '2col', lowercaseKeyPolicyHeadings = false, activeTab, setActiveTab, onOpenHousing }) {
   const { left, right } = hPad(isMobile, isTablet)
   const [openIndex, setOpenIndex] = useState(null)
   const [videoPolicy, setVideoPolicy] = useState(null)
@@ -3277,7 +3288,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
             ) : useCardStyle ? (
               <ManifestoFullPolicyCards isMobile={isMobile} isTablet={isTablet} onOpenVideo={(row) => setVideoPolicy({ heading: row.heading, videoImg: row.videoImg })} onOpenHousing={onOpenHousing} />
             ) : (
-              <ManifestoFullPolicyAccordion isMobile={isMobile} isTablet={isTablet} />
+              <ManifestoFullPolicyAccordion isMobile={isMobile} isTablet={isTablet} onOpenHousing={onOpenHousing} />
             )}
           </div>
         </div>
@@ -3390,7 +3401,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
                   onToggle={() => openCard(i)}
                   cardRef={(el) => { cardRefs.current[i] = el }}
                   onOpenVideo={() => setVideoPolicy({ ...policy, videoImg: MANIFESTO_VIDEO_IMAGES[i % MANIFESTO_VIDEO_IMAGES.length] })}
-                  lowercaseHeading={cardLayout === '3col-v2'}
+                  lowercaseHeading={lowercaseKeyPolicyHeadings}
                 />
               ))}
               <div style={{ textAlign: 'center', marginTop: isMobile ? 24 : 32 }}>
@@ -3520,7 +3531,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
       <nav style={{ ...S.nav, padding: isMobile ? '0 16px' : '0 24px', position: 'sticky', top: isMobile ? 30 : 0, zIndex: 45 }} />
 
       {(() => {
-        const isManifesto = plainView === 'manifesto' || plainView === 'manifesto2' || plainView === 'manifesto3' || plainView === 'manifesto4'
+        const isManifesto = plainView === 'manifesto' || plainView === 'manifesto2' || plainView === 'manifesto3' || plainView === 'manifesto4' || plainView === 'manifesto5'
         const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3' || isManifesto)
         const fullHeight = isMobile ? 190 : 280
         // The photo headers (housing3, manifesto/manifesto2/manifesto3) get
@@ -3582,13 +3593,13 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
               )}
             </div>
             <div style={{ ...S.pageTitleBox, left: isMobile ? 20 : isTablet ? 40 : 276, top: isHousing ? heroHeight - leftDrop : (isMobile ? 127 : 178), ...(isMobile && { padding: '4px 7px 16px' }) }}>
-              <h1 style={{ ...S.pageTitle, fontSize: isMobile ? (plainView === 'manifesto4' ? 26 : 22) : 36, whiteSpace: 'pre-line' }}>{(!showVariations && version === 'B' && isManifesto) ? 'Vision and policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"}</h1>
+              <h1 style={{ ...S.pageTitle, fontSize: isMobile ? ((plainView === 'manifesto4' || plainView === 'manifesto5') ? 26 : 22) : 36, whiteSpace: 'pre-line' }}>{(!showVariations && version === 'B' && isManifesto) ? 'Vision and policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"}</h1>
             </div>
           </div>
         )
       })()}
       {(() => {
-        const isManifesto = plainView === 'manifesto' || plainView === 'manifesto2' || plainView === 'manifesto3' || plainView === 'manifesto4'
+        const isManifesto = plainView === 'manifesto' || plainView === 'manifesto2' || plainView === 'manifesto3' || plainView === 'manifesto4' || plainView === 'manifesto5'
         const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3' || isManifesto)
         return isHousing && !isManifesto && (
           <div style={{ paddingLeft: isMobile ? 20 : isTablet ? 40 : 276, paddingRight: isMobile ? 20 : isTablet ? 40 : 276, marginTop: isMobile ? -5 : -34 }}>
@@ -3645,9 +3656,15 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'vi
           />
         ) : (!showVariations && version === 'B' && plainView === 'manifesto4') ? (
           <ManifestoVisionPage
-            isMobile={isMobile} isTablet={isTablet} useCardStyle cardLayout="3col-v2"
+            isMobile={isMobile} isTablet={isTablet} useCardStyle cardLayout="3col-v2" lowercaseKeyPolicyHeadings
             activeTab={manifestoTab} setActiveTab={setManifestoTab}
             onOpenHousing={() => { setHousingBackTo('manifesto4'); setPlainView('housing3'); window.scrollTo(0, 0) }}
+          />
+        ) : (!showVariations && version === 'B' && plainView === 'manifesto5') ? (
+          <ManifestoVisionPage
+            isMobile={isMobile} isTablet={isTablet} lowercaseKeyPolicyHeadings
+            activeTab={manifestoTab} setActiveTab={setManifestoTab}
+            onOpenHousing={() => { setHousingBackTo('manifesto5'); setPlainView('housing3'); window.scrollTo(0, 0) }}
           />
         ) : (!showVariations && version === 'B' && plainView === 'policies') ? (
           <div style={{ paddingTop: 15, paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
