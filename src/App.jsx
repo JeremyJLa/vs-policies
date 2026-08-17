@@ -3089,8 +3089,8 @@ function ManifestoFullPolicyCards3Col({ isMobile, onOpenVideo, onOpenHousing }) 
 // accent behind the icon, all-caps heading, "View policy ›" instead of
 // "See full policy ›".
 const MANIFESTO_CARD_V2_BG = [
-  { fill: '#FDF9FF', wedge: '#D8D8EE' },
-  { fill: '#F8F8FF', wedge: '#EAE1F0' },
+  { fill: '#FDF9FF', wedge: '#E8E8F5' },
+  { fill: '#F8F8FF', wedge: '#F2EDF6' },
 ]
 
 function ManifestoFullPolicyCards3ColV2({ isMobile, onOpenVideo, onOpenHousing }) {
