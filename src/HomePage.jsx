@@ -82,8 +82,8 @@ function MobileMenu({ onClose, onNavigateToPolicies, onNavigateToVision }) {
             <div style={{ paddingBottom: 16, paddingLeft: 28 }}>
               {[
                 { label: 'Candidates', onClick: null },
-                { label: 'Our policies', onClick: () => { onNavigateToPolicies(); onClose() } },
                 { label: 'Our vision', onClick: () => { onNavigateToVision(); onClose() } },
+                { label: 'Our policies', onClick: () => { onNavigateToPolicies(); onClose() } },
               ].map(item => (
                 <a
                   key={item.label}
@@ -224,8 +224,8 @@ export default function HomePage({ onNavigateToPolicies, onNavigateToVision }) {
             }}>
               {[
                 { label: 'Candidates', onClick: null },
-                { label: 'Our policies', onClick: onNavigateToPolicies },
                 { label: 'Our vision', onClick: onNavigateToVision },
+                { label: 'Our policies', onClick: onNavigateToPolicies },
               ].map(item => (
                 <a key={item.label} href="#"
                   onClick={e => { e.preventDefault(); item.onClick && item.onClick() }}
