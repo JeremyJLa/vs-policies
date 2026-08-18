@@ -2867,6 +2867,8 @@ const MANIFESTO_ACCORDION_HEADINGS = [
 
 const MANIFESTO_ACCORDION_BODY_OVERRIDES = {
   'How will we pay for it?': 'Fund these policies with new taxes on billionaires, big corporations and the super-rich.',
+  'Workers’ power': 'Work should be socially useful, personally rewarding, safe, secure and well paid. Workers have the right to organise, strike and collectively bargain.',
+  'Fix the health crisis': 'Every person is entitled to universal and timely access to comprehensive, high-quality healthcare. Healthcare should not be run for profit.',
 }
 
 const MANIFESTO_ACCORDION_ROWS = MANIFESTO_ACCORDION_HEADINGS.map((heading) => ({
@@ -3695,7 +3697,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
         // more height than the solid-colour Housing pages so more of the
         // image is visible, not just a thin cropped sliver.
         const heroHeight = plainView === 'housing3' ? (isMobile ? 150 : fullHeight * 0.8)
-          : plainView === 'policyDetail' ? 180
+          : plainView === 'policyDetail' ? 200
           : isManifesto ? fullHeight * 0.7 + 40
           : isHousing ? fullHeight / 2 : fullHeight
         // Fixed pixel drops (not percentages) so the diagonal's angle stays
