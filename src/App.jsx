@@ -2869,8 +2869,8 @@ const MANIFESTO_ACCORDION_HEADINGS = [
 // supplied here — add an entry to give any other heading its own photo
 // header the same way Workers' power and Fix the health crisis have one.
 const POLICY_DETAIL_HERO_IMAGES = {
-  'Workers’ power': '/workers-power.png',
-  'Fix the health crisis': '/health-crisis.jpg',
+  'Workers’ power': { src: '/workers-power.png', position: 'center bottom' },
+  'Fix the health crisis': { src: '/health-crisis.jpg', position: 'center bottom' },
 }
 
 // Pins a specific "Watch 2 min video" thumbnail to a heading, overriding
@@ -3722,15 +3722,13 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
         // Housing pages' angle.
         const rightDrop = isManifesto ? (isMobile ? 44.1 : 61.1) : (isMobile ? 19 : 39.2)
         const leftDrop = isMobile ? 57 : 103.6
-        // The photo headers (housing3, manifesto/manifesto2/manifesto3) get
-        // more height than the solid-colour Housing pages so more of the
-        // image is visible, not just a thin cropped sliver.
-        const heroHeight = plainView === 'housing3' ? (isMobile ? 150 : fullHeight * 0.8)
-          // The diagonal cut eats an average of (leftDrop+rightDrop)/2 off
-          // the box's nominal height, so the box needs to be that much
-          // taller than the target for the visible photo band to actually
-          // read as ~200px deep, not just the box model.
-          : plainView === 'policyDetail' ? 200 + (leftDrop + rightDrop) / 2
+        // Individual policy pages (Housing, and every generic policy detail
+        // page) share one target: a photo band that reads as ~200px deep.
+        // The diagonal cut eats an average of (leftDrop+rightDrop)/2 off the
+        // box's nominal height, so the box itself needs to be that much
+        // taller than 200 for the VISIBLE band to actually read as 200px,
+        // not just the box model.
+        const heroHeight = (plainView === 'housing3' || plainView === 'policyDetail') ? 200 + (leftDrop + rightDrop) / 2
           : isManifesto ? fullHeight * 0.7 + 40
           : isHousing ? fullHeight / 2 : fullHeight
         return (
@@ -3762,7 +3760,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
                 <div
                   style={{
                     position: 'absolute', inset: 0,
-                    background: `url(${POLICY_DETAIL_HERO_IMAGES[policyDetailHeading]}) center top / cover no-repeat`,
+                    background: `url(${POLICY_DETAIL_HERO_IMAGES[policyDetailHeading].src}) ${POLICY_DETAIL_HERO_IMAGES[policyDetailHeading].position} / cover no-repeat`,
                   }}
                 />
               ) : isManifesto ? (
