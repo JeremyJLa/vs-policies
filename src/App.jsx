@@ -560,6 +560,9 @@ const S = {
     color: '#000',
     fontFamily: "'Work Sans', system-ui, sans-serif",
     textTransform: 'uppercase',
+    // ~4px tighter than the font's natural line-height at 36px, so
+    // headings that wrap to two lines sit closer together.
+    lineHeight: 1.056,
   },
   tabBar: {
     padding: '0 300px',
@@ -3723,7 +3726,9 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
                   text itself (not stretched to the full column) — maxWidth
                   matches the 680px cap on the body text below, so it only
                   wraps (and only then grows to that width) once a heading
-                  is too long to fit on one line. */}
+                  is too long to fit on one line. Stays a block element (not
+                  inline-block) so it still forces "Back to policies" below
+                  it onto its own line. */}
               <h1 style={{ ...S.pageTitle, width: 'fit-content', maxWidth: 680, fontSize: isMobile ? ((plainView === 'manifesto4' || plainView === 'manifesto5') ? 26 : 22) : 36, whiteSpace: 'pre-line' }}>{plainView === 'policyDetail' ? policyDetailHeading : (!showVariations && version === 'B' && isManifesto) ? 'Vision and policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"}</h1>
               {isHousing && !isManifesto && (
                 <a
