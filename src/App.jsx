@@ -3715,15 +3715,16 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
             <div ref={titleBoxRef} style={{
               ...S.pageTitleBox,
               left: isMobile ? 20 : isTablet ? 40 : 276,
-              right: isMobile ? 9 : isTablet ? 16 : 56,
               top: isHousing ? heroHeight - leftDrop : (isMobile ? 127 : 178),
               zIndex: 2,
               ...(isMobile && { padding: '4px 7px 16px' }),
             }}>
-              {/* maxWidth matches the 680px cap used on the body text below,
-                  so long headings wrap within the same column instead of
-                  running wider than the content underneath them. */}
-              <h1 style={{ ...S.pageTitle, maxWidth: 680, fontSize: isMobile ? ((plainView === 'manifesto4' || plainView === 'manifesto5') ? 26 : 22) : 36, whiteSpace: 'pre-line' }}>{plainView === 'policyDetail' ? policyDetailHeading : (!showVariations && version === 'B' && isManifesto) ? 'Vision and policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"}</h1>
+              {/* width: fit-content keeps the white box hugging the heading
+                  text itself (not stretched to the full column) — maxWidth
+                  matches the 680px cap on the body text below, so it only
+                  wraps (and only then grows to that width) once a heading
+                  is too long to fit on one line. */}
+              <h1 style={{ ...S.pageTitle, width: 'fit-content', maxWidth: 680, fontSize: isMobile ? ((plainView === 'manifesto4' || plainView === 'manifesto5') ? 26 : 22) : 36, whiteSpace: 'pre-line' }}>{plainView === 'policyDetail' ? policyDetailHeading : (!showVariations && version === 'B' && isManifesto) ? 'Vision and policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"}</h1>
               {isHousing && !isManifesto && (
                 <a
                   href="#"
