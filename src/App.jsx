@@ -2865,6 +2865,15 @@ const MANIFESTO_ACCORDION_HEADINGS = [
   'Arts and culture for the enjoyment of all',
 ]
 
+// Generic policy detail pages fall back to a flat placeholder colour for
+// their header (see the hero-image branch below) until a real photo is
+// supplied here — add an entry to give any other heading its own photo
+// header the same way Workers' power and Fix the health crisis have one.
+const POLICY_DETAIL_HERO_IMAGES = {
+  'Workers’ power': '/workers-power.png',
+  'Fix the health crisis': '/health.jpg',
+}
+
 const MANIFESTO_ACCORDION_BODY_OVERRIDES = {
   'How will we pay for it?': 'We need wealth redistribution to make sure everyone has a good life, not just the rich. Public services and infrastructure should be paid for by taxes on the wealthy.',
   'Workers’ power': 'Work should be socially useful, personally rewarding, safe, secure and well paid. Workers have the right to organise, strike and collectively bargain.',
@@ -3738,11 +3747,11 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
                       photo gives a sepia-like tint using red instead of brown. */}
                   <div style={{ position: 'absolute', inset: 0, background: '#FF4B33', mixBlendMode: 'color', opacity: 0.12, pointerEvents: 'none' }} />
                 </div>
-              ) : (plainView === 'policyDetail' && policyDetailHeading === 'Workers’ power') ? (
+              ) : (plainView === 'policyDetail' && POLICY_DETAIL_HERO_IMAGES[policyDetailHeading]) ? (
                 <div
                   style={{
                     position: 'absolute', inset: 0,
-                    background: 'url(/workers-power.png) center top / cover no-repeat',
+                    background: `url(${POLICY_DETAIL_HERO_IMAGES[policyDetailHeading]}) center top / cover no-repeat`,
                   }}
                 />
               ) : isManifesto ? (
