@@ -2115,7 +2115,9 @@ function GenericPolicyDetailPage({ heading, isMobile, isTablet }) {
   const [videoOpen, setVideoOpen] = useState(false)
   const [videoHovered, setVideoHovered] = useState(false)
   const row = MANIFESTO_ACCORDION_ROWS.find(r => r.heading === heading)
-  const videoImg = MANIFESTO_VIDEO_IMAGES[Math.max(0, MANIFESTO_ACCORDION_HEADINGS.indexOf(heading)) % MANIFESTO_VIDEO_IMAGES.length]
+  const videoImg = heading === 'Workers’ power'
+    ? '/jasmine-video.jpg'
+    : MANIFESTO_VIDEO_IMAGES[Math.max(0, MANIFESTO_ACCORDION_HEADINGS.indexOf(heading)) % MANIFESTO_VIDEO_IMAGES.length]
   return (
     <div style={{ paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
       <div style={{ paddingLeft: left, paddingRight: right, marginTop: 48 }}>
