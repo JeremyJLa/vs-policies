@@ -3564,6 +3564,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
   const housingHeroImgRef = useRef(null)
   const heroSectionRef = useRef(null)
   const titleBoxRef = useRef(null)
+  const titleHeadingRef = useRef(null)
   // The heading + "Back to policies" box is absolutely positioned over the
   // hero image, so a long (wrapping) heading can make it taller than the
   // hero section's own fixed height without pushing the content below it
@@ -3571,6 +3572,14 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
   // a spacer ahead of <main> keeps that gap consistent regardless of how
   // many lines the heading wraps to.
   const [titleBoxExtraGap, setTitleBoxExtraGap] = useState(0)
+  // Letting the box's own width be "auto" and relying on the browser's
+  // shrink-to-fit algorithm to hug a WRAPPED heading is exactly the kind
+  // of intrinsic-sizing edge case browsers disagree on (some fall back to
+  // the full available width instead of the widest rendered line). Instead,
+  // measure the heading's actual widest line via the Range API — after the
+  // browser has already wrapped it at maxWidth — and size the box to that
+  // directly, so it's deterministic regardless of engine.
+  const [titleHeadingWidth, setTitleHeadingWidth] = useState(null)
 
   const w = useWindowWidth()
   const isMobile = w <= 640
@@ -3616,12 +3625,25 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
   }, [])
 
   useLayoutEffect(() => {
+    const headingEl = titleHeadingRef.current
+    if (!headingEl) { setTitleHeadingWidth(null); return }
+    const range = document.createRange()
+    range.selectNodeContents(headingEl)
+    const rects = Array.from(range.getClientRects())
+    const widest = rects.length ? Math.max(...rects.map(r => r.width)) : headingEl.getBoundingClientRect().width
+    setTitleHeadingWidth(Math.ceil(widest))
+  }, [plainView, policyDetailHeading, isMobile, isTablet])
+
+  // Runs again once titleHeadingWidth above has committed and the box has
+  // re-rendered at its corrected width, so this reads the box's real
+  // (post-correction) bottom position rather than a stale one.
+  useLayoutEffect(() => {
     const heroEl = heroSectionRef.current
     const boxEl = titleBoxRef.current
     if (!heroEl || !boxEl) { setTitleBoxExtraGap(0); return }
     const overflow = Math.max(0, boxEl.getBoundingClientRect().bottom - heroEl.getBoundingClientRect().bottom)
     setTitleBoxExtraGap(overflow)
-  }, [plainView, policyDetailHeading, isMobile, isTablet])
+  }, [plainView, policyDetailHeading, isMobile, isTablet, titleHeadingWidth])
 
   // Single continuous page, no tab bar: the default (plain-URL) experience,
   // and always for Option B. Only ?clean=1's Option A keeps the old tabbed
@@ -3656,6 +3678,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
       {(() => {
         const isManifesto = plainView === 'manifesto' || plainView === 'manifesto2' || plainView === 'manifesto3' || plainView === 'manifesto4' || plainView === 'manifesto5'
         const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3' || plainView === 'policyDetail' || isManifesto)
+        const headingText = plainView === 'policyDetail' ? policyDetailHeading : (!showVariations && version === 'B' && isManifesto) ? 'Vision and policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"
         const fullHeight = isMobile ? 190 : 280
         // The photo headers (housing3, manifesto/manifesto2/manifesto3) get
         // more height than the solid-colour Housing pages so more of the
@@ -3720,16 +3743,35 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
               left: isMobile ? 20 : isTablet ? 40 : 272,
               top: isHousing ? heroHeight - leftDrop : (isMobile ? 127 : 178),
               zIndex: 2,
+              // Relying on the browser's own shrink-to-fit algorithm to hug
+              // a WRAPPED heading is exactly the kind of intrinsic-sizing
+              // case engines disagree on — so the width is measured in JS
+              // (see the useLayoutEffect above) from the heading's actual
+              // widest rendered line, and applied here directly instead.
+              // box-sizing is border-box site-wide, so the box's own width
+              // needs its padding added back on top of the measured value.
+              ...(titleHeadingWidth != null && { width: titleHeadingWidth + (isMobile ? 14 : 56) }),
               ...(isMobile && { padding: '4px 7px 16px' }),
             }}>
-              {/* width: fit-content keeps the white box hugging the heading
-                  text itself (not stretched to the full column) — maxWidth
-                  matches the 680px cap on the body text below, so it only
-                  wraps (and only then grows to that width) once a heading
-                  is too long to fit on one line. Stays a block element (not
-                  inline-block) so it still forces "Back to policies" below
-                  it onto its own line. */}
-              <h1 style={{ ...S.pageTitle, width: 'fit-content', maxWidth: 680, fontSize: isMobile ? ((plainView === 'manifesto4' || plainView === 'manifesto5') ? 26 : 22) : 36, whiteSpace: 'pre-line' }}>{plainView === 'policyDetail' ? policyDetailHeading : (!showVariations && version === 'B' && isManifesto) ? 'Vision and policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"}</h1>
+              <h1 style={{ ...S.pageTitle, maxWidth: 680, fontSize: isMobile ? ((plainView === 'manifesto4' || plainView === 'manifesto5') ? 26 : 22) : 36, whiteSpace: 'pre-line' }}>{headingText}</h1>
+              {/* Invisible clone at a DEFINITE 680px width — guarantees
+                  identical, unambiguous wrapping in every browser, unlike
+                  fit-content sizing on an absolutely positioned element
+                  (which some engines resolve against the full available
+                  width instead of the content). Its widest rendered line
+                  (via the Range API, in the useLayoutEffect above) becomes
+                  the real heading/box's definite width below. */}
+              <h1
+                ref={titleHeadingRef}
+                aria-hidden="true"
+                style={{
+                  ...S.pageTitle,
+                  position: 'fixed', top: -9999, left: -9999, visibility: 'hidden', pointerEvents: 'none',
+                  width: 680, maxWidth: 680,
+                  fontSize: isMobile ? ((plainView === 'manifesto4' || plainView === 'manifesto5') ? 26 : 22) : 36,
+                  whiteSpace: 'pre-line',
+                }}
+              >{headingText}</h1>
               {isHousing && !isManifesto && (
                 <a
                   href="#"
