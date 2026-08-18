@@ -2866,9 +2866,15 @@ const MANIFESTO_ACCORDION_HEADINGS = [
 ]
 
 const MANIFESTO_ACCORDION_BODY_OVERRIDES = {
-  'How will we pay for it?': 'Fund these policies with new taxes on billionaires, big corporations and the super-rich.',
+  'How will we pay for it?': 'We need wealth redistribution to make sure everyone has a good life, not just the rich. Public services and infrastructure should be paid for by taxes on the wealthy.',
   'Workers’ power': 'Work should be socially useful, personally rewarding, safe, secure and well paid. Workers have the right to organise, strike and collectively bargain.',
   'Fix the health crisis': 'Every person is entitled to universal and timely access to comprehensive, high-quality healthcare. Healthcare should not be run for profit.',
+  'Early childhood, primary and secondary education': 'Every child deserves a high quality of education regardless of their parents’ wealth. State education, including early years education and care, must be free.',
+  'Make power affordable and sustainable': 'Energy is an essential service. It must be publicly owned, democratically controlled and run in the interests of the whole community.',
+  'Banking for people, not profit': 'Banking should be a public service administered for the benefit of working people and the common good, not an exercise in private profit-making.',
+  'Put politicians on a workers wage': 'Political representatives should not form a separate class of society. Their economic interests should align with those of the majority.',
+  'Liveable cities': 'The places we live must allow people to lead comfortable, connected and fulfilling lives. Planning decisions must be guided by social equity and ecological sustainability, not profit.',
+  'Our universities are not for profit': 'Higher education is a human right and a social good, not a commodity. Universities provide a public good and should not be run on a for-profit basis.',
 }
 
 const MANIFESTO_ACCORDION_ROWS = MANIFESTO_ACCORDION_HEADINGS.map((heading) => ({
