@@ -3684,6 +3684,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
         // more height than the solid-colour Housing pages so more of the
         // image is visible, not just a thin cropped sliver.
         const heroHeight = plainView === 'housing3' ? (isMobile ? 150 : fullHeight * 0.8)
+          : plainView === 'policyDetail' ? 180
           : isManifesto ? fullHeight * 0.7 + 40
           : isHousing ? fullHeight / 2 : fullHeight
         // Fixed pixel drops (not percentages) so the diagonal's angle stays
@@ -3718,6 +3719,13 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
                       photo gives a sepia-like tint using red instead of brown. */}
                   <div style={{ position: 'absolute', inset: 0, background: '#FF4B33', mixBlendMode: 'color', opacity: 0.12, pointerEvents: 'none' }} />
                 </div>
+              ) : (plainView === 'policyDetail' && policyDetailHeading === 'Workers’ power') ? (
+                <div
+                  style={{
+                    position: 'absolute', inset: 0,
+                    background: 'url(/workers-power.png) center top / cover no-repeat',
+                  }}
+                />
               ) : isManifesto ? (
                 <div
                   ref={heroImgRef}
