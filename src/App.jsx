@@ -2871,7 +2871,7 @@ const MANIFESTO_ACCORDION_HEADINGS = [
 // header the same way Workers' power and Fix the health crisis have one.
 const POLICY_DETAIL_HERO_IMAGES = {
   'Workers’ power': '/workers-power.png',
-  'Fix the health crisis': '/health.jpg',
+  'Fix the health crisis': '/health-crisis.jpg',
 }
 
 const MANIFESTO_ACCORDION_BODY_OVERRIDES = {
