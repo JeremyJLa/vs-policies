@@ -3708,13 +3708,6 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
         const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3' || plainView === 'policyDetail' || isManifesto)
         const headingText = plainView === 'policyDetail' ? (policyDetailHeading === 'Our universities are not for profit' ? 'Our universities are not\nfor profit' : policyDetailHeading) : (!showVariations && version === 'B' && isManifesto) ? 'Vision and policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"
         const fullHeight = isMobile ? 190 : 280
-        // The photo headers (housing3, manifesto/manifesto2/manifesto3) get
-        // more height than the solid-colour Housing pages so more of the
-        // image is visible, not just a thin cropped sliver.
-        const heroHeight = plainView === 'housing3' ? (isMobile ? 150 : fullHeight * 0.8)
-          : plainView === 'policyDetail' ? 200
-          : isManifesto ? fullHeight * 0.7 + 40
-          : isHousing ? fullHeight / 2 : fullHeight
         // Fixed pixel drops (not percentages) so the diagonal's angle stays
         // identical even when the container's height is halved for Housing.
         // Manifesto's diagonal is tuned to an exact -1.9° (against a 1280px/
@@ -3722,6 +3715,17 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
         // Housing pages' angle.
         const rightDrop = isManifesto ? (isMobile ? 44.1 : 61.1) : (isMobile ? 19 : 39.2)
         const leftDrop = isMobile ? 57 : 103.6
+        // The photo headers (housing3, manifesto/manifesto2/manifesto3) get
+        // more height than the solid-colour Housing pages so more of the
+        // image is visible, not just a thin cropped sliver.
+        const heroHeight = plainView === 'housing3' ? (isMobile ? 150 : fullHeight * 0.8)
+          // The diagonal cut eats an average of (leftDrop+rightDrop)/2 off
+          // the box's nominal height, so the box needs to be that much
+          // taller than the target for the visible photo band to actually
+          // read as ~200px deep, not just the box model.
+          : plainView === 'policyDetail' ? 200 + (leftDrop + rightDrop) / 2
+          : isManifesto ? fullHeight * 0.7 + 40
+          : isHousing ? fullHeight / 2 : fullHeight
         return (
           <div ref={heroSectionRef} style={{ ...S.heroSection, height: heroHeight }}>
             {/* Fixed frame: the diagonal clip shape never changes size. */}
