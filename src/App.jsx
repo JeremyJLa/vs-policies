@@ -2116,9 +2116,8 @@ function GenericPolicyDetailPage({ heading, isMobile, isTablet }) {
   const [videoOpen, setVideoOpen] = useState(false)
   const [videoHovered, setVideoHovered] = useState(false)
   const row = MANIFESTO_ACCORDION_ROWS.find(r => r.heading === heading)
-  const videoImg = heading === 'Workers’ power'
-    ? '/jasmine-video.jpg'
-    : MANIFESTO_VIDEO_IMAGES[Math.max(0, MANIFESTO_ACCORDION_HEADINGS.indexOf(heading)) % MANIFESTO_VIDEO_IMAGES.length]
+  const videoImg = MANIFESTO_VIDEO_OVERRIDES[heading]
+    ?? MANIFESTO_VIDEO_IMAGES[Math.max(0, MANIFESTO_ACCORDION_HEADINGS.indexOf(heading)) % MANIFESTO_VIDEO_IMAGES.length]
   return (
     <div style={{ paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
       <div style={{ paddingLeft: left, paddingRight: right, marginTop: 48 }}>
@@ -2874,6 +2873,14 @@ const POLICY_DETAIL_HERO_IMAGES = {
   'Fix the health crisis': '/health-crisis.jpg',
 }
 
+// Pins a specific "Watch 2 min video" thumbnail to a heading, overriding
+// the generic jordan/jasmine/omar cycle — used for both the card's own
+// video button and the policy detail page's, so the two always agree.
+const MANIFESTO_VIDEO_OVERRIDES = {
+  'Workers’ power': '/jasmine-video.jpg',
+  'First Nations': '/oscar-video.jpg',
+}
+
 const MANIFESTO_ACCORDION_BODY_OVERRIDES = {
   'How will we pay for it?': 'We need wealth redistribution to make sure everyone has a good life, not just the rich. Public services and infrastructure should be paid for by taxes on the wealthy.',
   'Workers’ power': 'Work should be socially useful, personally rewarding, safe, secure and well paid. Workers have the right to organise, strike and collectively bargain.',
@@ -3007,7 +3014,7 @@ const MANIFESTO_CARD_ROWS = MANIFESTO_ACCORDION_HEADINGS.map((heading, i) => ({
   heading,
   summary: MANIFESTO_ACCORDION_BODY_OVERRIDES[heading] ?? MANIFESTO_CARD_SUMMARY,
   iconSrc: MANIFESTO_CARD_ICON_OVERRIDES[heading] ?? MANIFESTO_HEADING_ICONS[heading],
-  videoImg: MANIFESTO_VIDEO_IMAGES[i % MANIFESTO_VIDEO_IMAGES.length],
+  videoImg: MANIFESTO_VIDEO_OVERRIDES[heading] ?? MANIFESTO_VIDEO_IMAGES[i % MANIFESTO_VIDEO_IMAGES.length],
 }))
 
 function ManifestoFullPolicyCards({ isMobile, onOpenVideo, onOpenHousing }) {
