@@ -3338,7 +3338,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
               background: 'none', border: 'none', padding: 0, cursor: 'pointer',
               fontSize: isMobile ? 14 : 15, fontWeight: activeTab === 'vision' ? 700 : 600,
               color: activeTab === 'vision' ? '#000' : '#666',
-              textDecorationLine: activeTab === 'vision' ? 'underline' : 'none', textUnderlineOffset: '4px', textDecorationThickness: '3px',
+              textDecorationLine: activeTab === 'vision' ? 'underline' : 'none', textUnderlineOffset: '6px', textDecorationThickness: '3px',
               fontFamily: "'Open Sans', system-ui, sans-serif",
             }}
           >Our vision</button>
@@ -3349,7 +3349,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
               background: 'none', border: 'none', padding: 0, cursor: 'pointer',
               fontSize: isMobile ? 14 : 15, fontWeight: activeTab === 'policies' ? 700 : 600,
               color: activeTab === 'policies' ? '#000' : '#666',
-              textDecorationLine: activeTab === 'policies' ? 'underline' : 'none', textUnderlineOffset: '4px', textDecorationThickness: '3px',
+              textDecorationLine: activeTab === 'policies' ? 'underline' : 'none', textUnderlineOffset: '6px', textDecorationThickness: '3px',
               fontFamily: "'Open Sans', system-ui, sans-serif",
             }}
           >Our full policy platform</button>
