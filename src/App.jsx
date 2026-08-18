@@ -550,7 +550,7 @@ const S = {
     left: 290,
     top: 178,
     background: '#fff',
-    padding: '4px 24px 16px',
+    padding: '4px 28px 16px',
   },
   pageTitle: {
     margin: 0,
@@ -3714,7 +3714,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
             </div>
             <div ref={titleBoxRef} style={{
               ...S.pageTitleBox,
-              left: isMobile ? 20 : isTablet ? 40 : 276,
+              left: isMobile ? 20 : isTablet ? 40 : 272,
               top: isHousing ? heroHeight - leftDrop : (isMobile ? 127 : 178),
               zIndex: 2,
               ...(isMobile && { padding: '4px 7px 16px' }),
