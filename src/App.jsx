@@ -3678,7 +3678,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
       {(() => {
         const isManifesto = plainView === 'manifesto' || plainView === 'manifesto2' || plainView === 'manifesto3' || plainView === 'manifesto4' || plainView === 'manifesto5'
         const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3' || plainView === 'policyDetail' || isManifesto)
-        const headingText = plainView === 'policyDetail' ? policyDetailHeading : (!showVariations && version === 'B' && isManifesto) ? 'Vision and policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"
+        const headingText = plainView === 'policyDetail' ? (policyDetailHeading === 'Our universities are not for profit' ? 'Our universities are not\nfor profit' : policyDetailHeading) : (!showVariations && version === 'B' && isManifesto) ? 'Vision and policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"
         const fullHeight = isMobile ? 190 : 280
         // The photo headers (housing3, manifesto/manifesto2/manifesto3) get
         // more height than the solid-colour Housing pages so more of the
