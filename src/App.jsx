@@ -550,7 +550,8 @@ const S = {
     left: 290,
     top: 178,
     background: '#fff',
-    padding: '4px 28px 16px',
+    // 15% up from 4/28/16px.
+    padding: '4.6px 32.2px 18.4px',
   },
   pageTitle: {
     margin: 0,
@@ -3627,13 +3628,21 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
   }, [])
 
   useLayoutEffect(() => {
-    const headingEl = titleHeadingRef.current
-    if (!headingEl) { setTitleHeadingWidth(null); return }
-    const range = document.createRange()
-    range.selectNodeContents(headingEl)
-    const rects = Array.from(range.getClientRects())
-    const widest = rects.length ? Math.max(...rects.map(r => r.width)) : headingEl.getBoundingClientRect().width
-    setTitleHeadingWidth(Math.ceil(widest))
+    const measure = () => {
+      const headingEl = titleHeadingRef.current
+      if (!headingEl) { setTitleHeadingWidth(null); return }
+      const range = document.createRange()
+      range.selectNodeContents(headingEl)
+      const rects = Array.from(range.getClientRects())
+      const widest = rects.length ? Math.max(...rects.map(r => r.width)) : headingEl.getBoundingClientRect().width
+      setTitleHeadingWidth(Math.ceil(widest))
+    }
+    measure()
+    // The Work Sans display font may still be loading at this exact
+    // synchronous point, in which case the measurement above ran against
+    // a narrower fallback font — re-measure once it's actually ready so a
+    // late font swap can't leave the box sized too narrow for its own text.
+    if (document.fonts?.ready) document.fonts.ready.then(measure)
   }, [plainView, policyDetailHeading, isMobile, isTablet])
 
   // Runs again once titleHeadingWidth above has committed and the box has
@@ -3750,7 +3759,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
             </div>
             <div ref={titleBoxRef} style={{
               ...S.pageTitleBox,
-              left: isMobile ? 20 : isTablet ? 40 : 272,
+              left: isMobile ? 20 : isTablet ? 40 : 268,
               top: isHousing ? heroHeight - leftDrop : (isMobile ? 127 : 178),
               zIndex: 2,
               // Relying on the browser's own shrink-to-fit algorithm to hug
@@ -3760,10 +3769,11 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
               // widest rendered line, and applied here directly instead.
               // box-sizing is border-box site-wide, so the box's own width
               // needs its padding added back on top of the measured value.
-              ...(titleHeadingWidth != null && { width: titleHeadingWidth + (isMobile ? 14 : 56) }),
-              ...(isMobile && { padding: '4px 7px 16px' }),
+              ...(titleHeadingWidth != null && { width: titleHeadingWidth + (isMobile ? 16.1 : 64.4) }),
+              // 15% up from 4/7/16px.
+              ...(isMobile && { padding: '4.6px 8.05px 18.4px' }),
             }}>
-              <h1 style={{ ...S.pageTitle, maxWidth: 680, fontSize: isMobile ? ((plainView === 'manifesto4' || plainView === 'manifesto5') ? 26 : 22) : 36, whiteSpace: 'pre-line' }}>{headingText}</h1>
+              <h1 style={{ ...S.pageTitle, maxWidth: 782, fontSize: isMobile ? ((plainView === 'manifesto4' || plainView === 'manifesto5') ? 29.9 : 25.3) : 41.4, whiteSpace: 'pre-line' }}>{headingText}</h1>
               {/* Invisible clone at a DEFINITE 680px width — guarantees
                   identical, unambiguous wrapping in every browser, unlike
                   fit-content sizing on an absolutely positioned element
@@ -3777,8 +3787,8 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
                 style={{
                   ...S.pageTitle,
                   position: 'fixed', top: -9999, left: -9999, visibility: 'hidden', pointerEvents: 'none',
-                  width: 680, maxWidth: 680,
-                  fontSize: isMobile ? ((plainView === 'manifesto4' || plainView === 'manifesto5') ? 26 : 22) : 36,
+                  width: 782, maxWidth: 782,
+                  fontSize: isMobile ? ((plainView === 'manifesto4' || plainView === 'manifesto5') ? 29.9 : 25.3) : 41.4,
                   whiteSpace: 'pre-line',
                 }}
               >{headingText}</h1>
