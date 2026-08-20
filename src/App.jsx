@@ -2893,14 +2893,39 @@ const MANIFESTO_ACCORDION_BODY_OVERRIDES = {
   'Our universities are not for profit': 'Higher education is a human right and a social good, not a commodity. Universities provide a public good and should not be run on a for-profit basis.',
 }
 
+// Icon set for Manifesto/vision-2's cards specifically (IMAGES/policy icons
+// set 2/) — a more precisely-matched set than the accordion's icons, but it
+// doesn't cover every heading, so topics without a dedicated icon here fall
+// back to the accordion's mapping (MANIFESTO_HEADING_ICONS).
+const MANIFESTO_CARD_ICON_OVERRIDES = {
+  'Housing for all': '/icons2/housing2.png',
+  'Make power affordable and sustainable': '/icons2/power-2.svg',
+  'Fix the health crisis': '/icons2/health2.svg',
+  'How will we pay for it?': '/icons2/how-we-pay-for-it.png',
+  'Liveable cities': '/icons2/liveable-city-2.png',
+  'End homophobia and transphobia': '/icons2/lgbtiq-plus-2.png',
+  'End the harms of gambling': '/icons2/gambling-4.svg',
+  'Banking for people, not profit': '/icons2/bank2.svg',
+  'Treating addiction as a health issue': '/icons2/addiction.png',
+  'Early childhood, primary and secondary education': '/icons2/early-learning-childcare-2.svg',
+  'Good food and nutrition for all': '/icons2/food.png',
+  'Our universities are not for profit': '/icons2/university.png',
+  'Put politicians on a workers wage': '/icons2/workers-wage-2.png',
+  'Dignity and security for older people': '/icons2/aged-care-2.png',
+  'A fair go for rural and regional Victoria': '/icons2/rural-3.png',
+  'Workers’ power': '/icons2/workers-rights-2.svg',
+}
+
 const MANIFESTO_ACCORDION_ROWS = MANIFESTO_ACCORDION_HEADINGS.map((heading) => ({
   heading, text: MANIFESTO_ACCORDION_BODY_OVERRIDES[heading] ?? ACCORDION_ROW_BODY,
-  iconSrc: MANIFESTO_HEADING_ICONS[heading],
+  iconSrc: MANIFESTO_CARD_ICON_OVERRIDES[heading] ?? MANIFESTO_HEADING_ICONS[heading],
 }))
 
 function ManifestoFullPolicyAccordion({ isMobile, onOpenHousing }) {
   const [openIndex, setOpenIndex] = useState(null)
   const [hoveredIndex, setHoveredIndex] = useState(null)
+  const [videoHoverIndex, setVideoHoverIndex] = useState(null)
+  const [videoRow, setVideoRow] = useState(null)
   // No left inset of its own — the parent already applies the page's hPad
   // padding, so rows sit flush with the text content above them.
   return (
@@ -2915,7 +2940,7 @@ function ManifestoFullPolicyAccordion({ isMobile, onOpenHousing }) {
         // expanded body text below it — aligned to the same left edge,
         // regardless of how wide or narrow that row's icon happens to be.
         const iconSlotWidth = 44
-        const iconHeadingGap = 12
+        const iconHeadingGap = 17
         const headingIndent = iconSlotWidth + iconHeadingGap
         return (
           <div key={i} style={{ borderBottom: '1px solid #C4C4C4', ...(i === 0 ? { borderTop: '1px solid #C4C4C4' } : {}) }}>
@@ -2954,24 +2979,46 @@ function ManifestoFullPolicyAccordion({ isMobile, onOpenHousing }) {
             <div style={{ maxHeight: isOpen ? 800 : 0, overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
               <div style={{ padding: `0 24px ${isMobile ? 20 : 24}px ${headingIndent}px` }}>
                 <p style={{ ...S.para, fontSize: 16, marginBottom: 16 }}>{row.text}</p>
-                {row.heading === 'Housing for all' ? (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
                   <button
                     type="button"
-                    onClick={() => onOpenHousing?.()}
-                    style={{ font: 'inherit', display: 'inline-block', fontSize: 14, fontWeight: 700, fontFamily: "'Open Sans', system-ui, sans-serif", color: '#000', textDecoration: 'underline', letterSpacing: '0.02em', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+                    onClick={() => setVideoRow({ heading: row.heading, videoImg: MANIFESTO_VIDEO_OVERRIDES[row.heading] ?? MANIFESTO_VIDEO_IMAGES[i % MANIFESTO_VIDEO_IMAGES.length] })}
+                    onMouseEnter={() => setVideoHoverIndex(i)}
+                    onMouseLeave={() => setVideoHoverIndex(null)}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 8, flexShrink: 0,
+                      border: `1px solid ${videoHoverIndex === i ? '#FF4B33' : '#808080'}`, borderRadius: 34, padding: isMobile ? '8px 14px' : '9px 16px',
+                      background: 'none', cursor: 'pointer', transition: 'border-color 0.2s ease',
+                    }}
                   >
-                    See full policy ›
+                    <span style={{
+                      width: 0, height: 0, flexShrink: 0,
+                      borderTop: '6px solid transparent', borderBottom: '6px solid transparent',
+                      borderLeft: `10px solid ${videoHoverIndex === i ? '#FF4B33' : '#000'}`,
+                      transition: 'border-left-color 0.2s ease',
+                    }} />
+                    <span style={{ fontSize: isMobile ? 12 : 13, fontWeight: 700, color: videoHoverIndex === i ? '#FF4B33' : '#000', fontFamily: "'Open Sans', system-ui, sans-serif", whiteSpace: 'nowrap', transition: 'color 0.2s ease' }}>2 min video</span>
                   </button>
-                ) : (
-                  <span style={{ display: 'inline-block', fontSize: 14, fontWeight: 700, fontFamily: "'Open Sans', system-ui, sans-serif", color: '#000', textDecoration: 'underline', letterSpacing: '0.02em' }}>
-                    See full policy ›
-                  </span>
-                )}
+                  {row.heading === 'Housing for all' ? (
+                    <button
+                      type="button"
+                      onClick={() => onOpenHousing?.()}
+                      style={{ font: 'inherit', display: 'inline-block', flexShrink: 0, fontSize: 14, fontWeight: 700, fontFamily: "'Open Sans', system-ui, sans-serif", color: '#000', textDecoration: 'underline', letterSpacing: '0.02em', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+                    >
+                      See full policy ›
+                    </button>
+                  ) : (
+                    <span style={{ display: 'inline-block', flexShrink: 0, fontSize: 14, fontWeight: 700, fontFamily: "'Open Sans', system-ui, sans-serif", color: '#000', textDecoration: 'underline', letterSpacing: '0.02em' }}>
+                      See full policy ›
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
         )
       })}
+      {videoRow && <ManifestoVideoModal policy={videoRow} onClose={() => setVideoRow(null)} isMobile={isMobile} />}
     </div>
   )
 }
@@ -2986,29 +3033,6 @@ function ManifestoFullPolicyAccordion({ isMobile, onOpenHousing }) {
 // already have it (MANIFESTO_ACCORDION_BODY_OVERRIDES plus the housing
 // summary given directly for this design).
 const MANIFESTO_CARD_SUMMARY = 'Everyone deserves a safe, affordable home. We believe housing should serve people, not investors, developers or property speculation.'
-
-// Icon set for Manifesto/vision-2's cards specifically (IMAGES/policy icons
-// set 2/) — a more precisely-matched set than the accordion's icons, but it
-// doesn't cover every heading, so topics without a dedicated icon here fall
-// back to the accordion's mapping (MANIFESTO_HEADING_ICONS).
-const MANIFESTO_CARD_ICON_OVERRIDES = {
-  'Housing for all': '/icons2/housing2.png',
-  'Make power affordable and sustainable': '/icons2/power-2.svg',
-  'Fix the health crisis': '/icons2/health2.svg',
-  'How will we pay for it?': '/icons2/how-we-pay-for-it.png',
-  'Liveable cities': '/icons2/liveable-city-2.png',
-  'End homophobia and transphobia': '/icons2/lgbtiq-plus-2.png',
-  'End the harms of gambling': '/icons2/gambling-4.svg',
-  'Banking for people, not profit': '/icons2/bank2.svg',
-  'Treating addiction as a health issue': '/icons2/addiction.png',
-  'Early childhood, primary and secondary education': '/icons2/early-learning-childcare-2.svg',
-  'Good food and nutrition for all': '/icons2/food.png',
-  'Our universities are not for profit': '/icons2/university.png',
-  'Put politicians on a workers wage': '/icons2/workers-wage-2.png',
-  'Dignity and security for older people': '/icons2/aged-care-2.png',
-  'A fair go for rural and regional Victoria': '/icons2/rural-3.png',
-  'Workers’ power': '/icons2/workers-rights-2.svg',
-}
 
 const MANIFESTO_CARD_ROWS = MANIFESTO_ACCORDION_HEADINGS.map((heading, i) => ({
   heading,
