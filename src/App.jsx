@@ -2122,53 +2122,31 @@ function GenericPolicyDetailPage({ heading, isMobile, isTablet }) {
     <div style={{ paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
       <div style={{ paddingLeft: left, paddingRight: right, marginTop: 48 }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start', flexWrap: 'wrap', gap: isMobile ? 20 : 40, marginBottom: isMobile ? 32 : 40 }}>
-          {isMobile ? (
-            <button
-              type="button"
-              onClick={() => setVideoOpen(true)}
-              onMouseEnter={() => setVideoHovered(true)}
-              onMouseLeave={() => setVideoHovered(false)}
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: 10, flexShrink: 0,
-                border: `1px solid ${videoHovered ? '#FF4B33' : '#808080'}`, borderRadius: 34, padding: '9px 16px',
-                background: 'none', cursor: 'pointer', transition: 'border-color 0.2s ease',
-              }}
-            >
+          <button
+            type="button"
+            onClick={() => setVideoOpen(true)}
+            onMouseEnter={() => setVideoHovered(true)}
+            onMouseLeave={() => setVideoHovered(false)}
+            style={{
+              position: 'relative', width: '100%', maxWidth: 483, aspectRatio: '16 / 9', borderRadius: 6, overflow: 'hidden',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              border: 'none', padding: 0, cursor: 'pointer',
+            }}
+          >
+            <img src={videoImg} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+            <div style={{ position: 'absolute', inset: 0, background: videoHovered ? 'rgba(0,0,0,0.35)' : 'rgba(0,0,0,0.45)', transition: 'background 0.2s ease' }} />
+            <span style={{
+              position: 'relative', width: isMobile ? 48 : 60, height: isMobile ? 48 : 60, borderRadius: '50%',
+              background: 'rgba(0,0,0,0.4)', border: '2px solid #fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
               <span style={{
-                width: 0, height: 0, flexShrink: 0,
-                borderTop: '7px solid transparent', borderBottom: '7px solid transparent',
-                borderLeft: `12px solid ${videoHovered ? '#FF4B33' : '#000'}`,
-                transition: 'border-left-color 0.2s ease',
+                width: 0, height: 0, marginLeft: isMobile ? 3 : 4,
+                borderTop: `${isMobile ? 10 : 13}px solid transparent`, borderBottom: `${isMobile ? 10 : 13}px solid transparent`,
+                borderLeft: `${isMobile ? 16 : 21}px solid #fff`,
               }} />
-              <span style={{ fontSize: 13, fontWeight: 700, color: videoHovered ? '#FF4B33' : '#000', textDecoration: 'underline', textUnderlineOffset: '2px', fontFamily: "'Open Sans', system-ui, sans-serif", transition: 'color 0.2s ease' }}>Watch 2 min video</span>
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setVideoOpen(true)}
-              onMouseEnter={() => setVideoHovered(true)}
-              onMouseLeave={() => setVideoHovered(false)}
-              style={{
-                position: 'relative', width: '100%', maxWidth: 483, aspectRatio: '16 / 9', borderRadius: 6, overflow: 'hidden',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                border: 'none', padding: 0, cursor: 'pointer',
-              }}
-            >
-              <img src={videoImg} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-              <div style={{ position: 'absolute', inset: 0, background: videoHovered ? 'rgba(0,0,0,0.35)' : 'rgba(0,0,0,0.45)', transition: 'background 0.2s ease' }} />
-              <span style={{
-                position: 'relative', width: 60, height: 60, borderRadius: '50%',
-                background: 'rgba(0,0,0,0.4)', border: '2px solid #fff',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <span style={{
-                  width: 0, height: 0, marginLeft: 4,
-                  borderTop: '13px solid transparent', borderBottom: '13px solid transparent',
-                  borderLeft: '21px solid #fff',
-                }} />
-              </span>
-            </button>
-          )}
+            </span>
+          </button>
         </div>
         <div style={{ maxWidth: 680 }}>
           <p style={{ ...S.para, fontSize: 16 }}>{row?.text}</p>
