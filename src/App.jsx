@@ -2921,7 +2921,7 @@ const MANIFESTO_ACCORDION_ROWS = MANIFESTO_ACCORDION_HEADINGS.map((heading) => (
   iconSrc: MANIFESTO_CARD_ICON_OVERRIDES[heading] ?? MANIFESTO_HEADING_ICONS[heading],
 }))
 
-function ManifestoFullPolicyAccordion({ isMobile, onOpenHousing }) {
+function ManifestoFullPolicyAccordion({ isMobile, onOpenHousing, onOpenPolicy }) {
   const [openIndex, setOpenIndex] = useState(null)
   const [hoveredIndex, setHoveredIndex] = useState(null)
   const [videoHoverIndex, setVideoHoverIndex] = useState(null)
@@ -3008,9 +3008,13 @@ function ManifestoFullPolicyAccordion({ isMobile, onOpenHousing }) {
                       See full policy ›
                     </button>
                   ) : (
-                    <span style={{ display: 'inline-block', flexShrink: 0, fontSize: 14, fontWeight: 700, fontFamily: "'Open Sans', system-ui, sans-serif", color: '#000', textDecoration: 'underline', letterSpacing: '0.02em' }}>
+                    <button
+                      type="button"
+                      onClick={() => onOpenPolicy?.(row.heading)}
+                      style={{ font: 'inherit', display: 'inline-block', flexShrink: 0, fontSize: 14, fontWeight: 700, fontFamily: "'Open Sans', system-ui, sans-serif", color: '#000', textDecoration: 'underline', letterSpacing: '0.02em', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+                    >
                       See full policy ›
-                    </span>
+                    </button>
                   )}
                 </div>
               </div>
@@ -3423,7 +3427,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
             ) : useCardStyle ? (
               <ManifestoFullPolicyCards isMobile={isMobile} isTablet={isTablet} onOpenVideo={(row) => setVideoPolicy({ heading: row.heading, videoImg: row.videoImg })} onOpenHousing={onOpenHousing} />
             ) : (
-              <ManifestoFullPolicyAccordion isMobile={isMobile} isTablet={isTablet} onOpenHousing={onOpenHousing} />
+              <ManifestoFullPolicyAccordion isMobile={isMobile} isTablet={isTablet} onOpenHousing={onOpenHousing} onOpenPolicy={onOpenPolicy} />
             )}
           </div>
         </div>
@@ -3917,6 +3921,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
             isMobile={isMobile} isTablet={isTablet} lowercaseKeyPolicyHeadings
             activeTab={manifestoTab} setActiveTab={setManifestoTab}
             onOpenHousing={() => openBackablePage('housing3', 'manifesto5')}
+            onOpenPolicy={(heading) => { setPolicyDetailHeading(heading); openBackablePage('policyDetail', 'manifesto5') }}
           />
         ) : (!showVariations && version === 'B' && plainView === 'policies') ? (
           <div style={{ paddingTop: 15, paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
