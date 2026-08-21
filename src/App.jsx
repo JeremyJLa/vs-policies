@@ -737,7 +737,7 @@ const S = {
   },
   footer: {
     background: '#000',
-    height: 120,
+    height: 250,
     flexShrink: 0,
   },
   layoutBtn: (active) => ({
@@ -1609,6 +1609,50 @@ function ZoomImage({ src, alt, wrapperStyle }) {
   )
 }
 
+// Opposite of ZoomImage: starts zoomed in and eases back to scale(1) as the
+// image scrolls past/up out of view, instead of zooming in on the way into
+// view. Used for full-bleed images with their own clip-path/filter, so —
+// unlike ZoomImage — it doesn't own the wrapper's shape, just the <img>'s
+// scroll-linked transform.
+function ZoomOutOnScroll({ src, alt, imgStyle }) {
+  const imgRef = useRef(null)
+  useEffect(() => {
+    let raf = null
+    const onScroll = () => {
+      if (raf) return
+      raf = requestAnimationFrame(() => {
+        raf = null
+        const img = imgRef.current
+        if (!img) return
+        const rect = img.getBoundingClientRect()
+        const vh = window.innerHeight || 1
+        // progress: 0 while the image's top is still at/below the bottom of
+        // the viewport (not yet scrolled past), 1 once its bottom has
+        // scrolled up past the top of the viewport (fully passed).
+        const progress = Math.min(1, Math.max(0, (vh - rect.top) / (vh + rect.height)))
+        img.style.transform = `scale(${1.18 - progress * 0.18})`
+      })
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [])
+  return (
+    <img
+      ref={imgRef}
+      src={src}
+      alt={alt}
+      style={{
+        transform: 'scale(1.18)', willChange: 'transform',
+        ...imgStyle,
+      }}
+    />
+  )
+}
+
 function BreakoutBox({ heading, imagePlaceholder, imageSrc, imageAlt, paragraphs, paragraphColor, headingColor, headingStyle, bg, angledBottom, imageGap, extraMarginTop, zoomOnScroll, children, isMobile, isTablet, flushBottom, padY }) {
   const { left, right } = hPad(isMobile, isTablet)
   const vPad = padY ?? (isMobile ? 24 : isTablet ? 32 : 36)
@@ -2405,8 +2449,8 @@ function ControlsBar({ showVariations, tab, plainView, version, cardView, policy
           ))}
           {!showVariations && version === 'B' && (
             <>
-              <button onClick={() => setPlainView('manifesto4')} style={linkStyle(plainView === 'manifesto4')}>Card view</button>
-              <button onClick={() => setPlainView('manifesto6')} style={linkStyle(plainView === 'manifesto6')}>Card view 2</button>
+              <button onClick={() => setPlainView('manifesto4')} style={linkStyle(plainView === 'manifesto4')}>Vision card 1</button>
+              <button onClick={() => setPlainView('manifesto6')} style={linkStyle(plainView === 'manifesto6')}>Vision card 2</button>
               <button onClick={() => setPlainView('manifesto5')} style={linkStyle(plainView === 'manifesto5')}>Accordion view</button>
             </>
           )}
@@ -2558,26 +2602,29 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
       }}
     >
       {altHeadingStyle ? (
-        /* Alt treatment: a small decorative wedge sits above the heading
-           instead of the heading sitting inside a full-width banner — the
-           heading itself is now plain black text in normal flow below it. */
-        <div style={{ padding: `${isMobile ? 20 : 24}px ${isMobile ? 18 : 24}px 0` }}>
+        /* Alt treatment: a small decorative wedge sits flush against the
+           card's top-left corner instead of the heading sitting inside a
+           full-width banner — the heading itself is now plain black text
+           in normal flow below it. */
+        <div style={{ position: 'relative' }}>
           <div style={{
-            width: isMobile ? 32 : 40, height: isMobile ? 10 : 12,
+            position: 'absolute', top: 0, left: 0,
+            width: isMobile ? 59 : 72, height: isMobile ? 17 : 21,
             background: cardHovered ? '#FF4B33' : '#000',
-            clipPath: 'polygon(0% 100%, 0% 0%, 85% 0%, 100% 100%)',
-            marginBottom: isMobile ? 8 : 10,
+            clipPath: 'polygon(0% 0%, 87% 0%, 100% 74%, 0% 100%)',
             transition: 'background-color 0.2s ease',
           }} />
-          <h3 style={{
-            margin: 0, fontSize: (isMobile ? 18 : 22) + (lowercaseHeading ? 1 : 0), fontWeight: 800, color: '#000',
-            lineHeight: isMobile ? '21px' : '24px',
-            textTransform: lowercaseHeading ? 'none' : 'uppercase', fontFamily: "'Work Sans', system-ui, sans-serif",
-          }}>
-            {isMobile
-              ? MANIFESTO_MOBILE_HEADING_BREAKS[policy.heading] ?? policy.heading
-              : policy.heading}
-          </h3>
+          <div style={{ padding: `${isMobile ? 24 : 29}px ${isMobile ? 18 : 24}px 0` }}>
+            <h3 style={{
+              margin: 0, fontSize: (isMobile ? 18 : 22) + (lowercaseHeading ? 1 : 0), fontWeight: 800, color: '#000',
+              lineHeight: isMobile ? '21px' : '24px',
+              textTransform: lowercaseHeading ? 'none' : 'uppercase', fontFamily: "'Work Sans', system-ui, sans-serif",
+            }}>
+              {isMobile
+                ? MANIFESTO_MOBILE_HEADING_BREAKS[policy.heading] ?? policy.heading
+                : policy.heading}
+            </h3>
+          </div>
         </div>
       ) : (
         /* Tilted banner — flush to the card's exact top-left corner (the clip
@@ -2896,6 +2943,20 @@ const MANIFESTO_ACCORDION_BODY_OVERRIDES = {
   'Put politicians on a workers wage': 'Political representatives should not form a separate class of society. Their economic interests should align with those of the majority.',
   'Liveable cities': 'The places we live must allow people to lead comfortable, connected and fulfilling lives. Planning decisions must be guided by social equity and ecological sustainability, not profit.',
   'Our universities are not for profit': 'Higher education is a human right and a social good, not a commodity. Universities provide a public good and should not be run on a for-profit basis.',
+  'Housing for all': 'Access to secure, quality housing is a fundamental human right, not a source of profit. The public sector must build and manage genuinely affordable public housing on a mass scale.',
+  'Opposing militarism': 'Australia faces no threat to its sovereignty, so we oppose Australian involvement in imperialist alliances like AUKUS. We support non-alignment and stand in solidarity with the Palestinian struggle for liberation.',
+  'First Nations': 'This country was founded on invasion, land theft and genocide against First Nations people, whose sovereignty over this land was never ceded. We support First Nations self-determination and a Treaty process that delivers real change, not just symbolic recognition.',
+  'Opposing racism – we’re stronger together': 'Racism isn’t just personal prejudice—it’s built into capitalism, dividing working people and hiding the real causes of inequality. Only by uniting across race can we win the fair pay, housing, healthcare and services we all need.',
+  'End homophobia and transphobia': 'LGBTIQ+ oppression is rooted in how capitalism organises family and gender roles, and needs structural solutions, not just attitude change. No school, hospital or employer should be allowed to discriminate, and trans people deserve fully funded, free gender-affirming care.',
+  'Disability justice': 'Illness or impairment should never mean exclusion, poverty or loss of agency. Disability services must be publicly run, properly funded and give disabled people the same rights to independence and dignity as everyone else.',
+  'Dignity and security for older people': 'Older people are not a burden—they’re owed a debt of gratitude for their contribution to society. Aged care should be publicly run and prioritise dignity and wellbeing over private profit.',
+  'Defend democracy and the right to protest': 'Real democracy means more than a vote every few years—it means freedom of speech, protest and organisation, extended to every part of social life. Capitalism, which concentrates economic power in private hands, is what constantly threatens it.',
+  'Treating addiction as a health issue': 'Criminalising drug use causes more harm than it prevents, handing the trade to unregulated networks that exploit users and workers. Drug policy should be evidence-based, guided by harm minimisation, and treat addiction as a health and welfare issue.',
+  'End the harms of gambling': 'Poker machines and other predatory gambling products are designed to be addictive and cannot be made safe through regulation alone. We’d phase out pokies and break the gambling industry’s political influence, which is the biggest obstacle to reform.',
+  'Climate action and environmental protection': 'Climate change is a direct product of a capitalist economy that turns nature into a resource for private profit. We need net-negative emissions, publicly owned renewable infrastructure and to make the wealthy and polluters pay for the transition.',
+  'Good food and nutrition for all': 'No-one should go hungry in Victoria. Food production should prioritise nutrition and environmental sustainability, and the people who grow, prepare and serve our food deserve decent pay and conditions.',
+  'A fair go for rural and regional Victoria': 'Regional Victorians shouldn’t get a worse deal than those in Melbourne. Migrant workers on the PALM scheme are highly exploited and deserve the same rights as every other worker in Victoria.',
+  'Arts and culture for the enjoyment of all': 'Art and culture should be available to everyone, not just those who can pay for it. Public funding should back progressive and community-driven work, not censorship or corporate and government agendas.',
 }
 
 // Icon set for Manifesto/vision-2's cards specifically (IMAGES/policy icons
@@ -3447,9 +3508,9 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
           }}>
             <div style={{ maxWidth: 680 }}>
               <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>A better, fairer Victoria</h2>
-              <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>
+              <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: isMobile ? 0 : 16 }}>
                 {visionIntro.text}
-                {!visionExpanded && (
+                {isMobile && !visionExpanded && (
                   <>
                     {' '}
                     <button
@@ -3463,10 +3524,30 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
                   </>
                 )}
               </p>
+              {/* Desktop always shows the second paragraph too, with Read
+                  more appearing after it instead of after the first. */}
+              {!isMobile && (
+                <p style={{ ...S.para, fontSize: 15, marginBottom: 0 }}>
+                  {visionExtra[0].text}
+                  {!visionExpanded && (
+                    <>
+                      {' '}
+                      <button
+                        type="button"
+                        onClick={() => setVisionExpanded(true)}
+                        style={{
+                          font: 'inherit', fontWeight: 600, width: 130, textAlign: 'left', color: '#000', textDecoration: 'underline', textUnderlineOffset: '2px',
+                          background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                        }}
+                      >Read more</button>
+                    </>
+                  )}
+                </p>
+              )}
               {visionExpanded && (
                 <div style={{ marginTop: 16 }}>
-                  {visionExtra.map((p, i) => {
-                    const isLast = i === visionExtra.length - 1
+                  {(isMobile ? visionExtra : visionExtra.slice(1)).map((p, i, arr) => {
+                    const isLast = i === arr.length - 1
                     return (
                       <p key={i} style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: isLast ? 0 : 16 }}>
                         {p.text}
@@ -3523,10 +3604,13 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
               left<->right, so it slopes down from bottom-right to
               bottom-left instead of bottom-left to bottom-right. */}
           <div style={{
-            width: '100%', height: isMobile ? 250 : 370, overflow: 'hidden', marginBottom: isMobile ? 28 : 36,
+            width: '100%', height: isMobile ? 300 : 460, overflow: 'hidden', marginBottom: 30,
             clipPath: `polygon(0 0, 100% 0, 100% calc(100% - ${isMobile ? 57 : 103.6}px), 0 calc(100% - ${isMobile ? 44.1 : 61.1}px))`,
           }}>
-            <img src="/candidates.png" alt="Victorian Socialists candidates" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', filter: 'grayscale(1) contrast(1.1)' }} />
+            <ZoomOutOnScroll
+              src="/candidates.png" alt="Victorian Socialists candidates"
+              imgStyle={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', filter: 'grayscale(1) contrast(1.1)' }}
+            />
           </div>
 
           <div style={{ paddingLeft: left, paddingRight: right }}>
@@ -3563,9 +3647,180 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
             </div>
           </div>
 
-          {/* Mobile-only closing graphic, replacing the hand-built section
-              below with the finished design export directly. */}
-          {isMobile && <img src="/lower-content.webp" alt="" style={{ width: '100%', height: 'auto', display: 'block' }} />}
+          {/* Mobile uses the finished design export directly; desktop gets
+              the hand-built section below (in progress — section 1 of the
+              closing content, matching the "Building a movement" design). */}
+          {isMobile ? (
+            <img src="/lower-content.webp" alt="" style={{ width: '100%', height: 'auto', display: 'block' }} />
+          ) : (
+            <div style={{ paddingLeft: left, paddingRight: right, marginTop: 64, marginBottom: -80 }}>
+              <div style={{ position: 'relative' }}>
+                <div style={{
+                  position: 'absolute', top: 0, left: -60,
+                  width: 46, height: 110,
+                  background: '#FF4B33',
+                  clipPath: 'polygon(0% 0%, 100% 0%, 98% 86%, 31% 100%)',
+                }} />
+                <div style={{ maxWidth: 680 }}>
+                  <h2 style={{
+                    margin: '0 0 16px', fontSize: 26, lineHeight: '32px', fontWeight: 800, color: '#000',
+                    fontFamily: "'Work Sans', system-ui, sans-serif", whiteSpace: 'pre-line',
+                  }}>
+                    {'Building a movement for real change\n(in this election and beyond)'}
+                  </h2>
+                  <p style={{ fontSize: 16, lineHeight: '22px', color: '#111', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 20 }}>
+                    Parliament is just one of many institutions that help the capitalists dominate our economy and society. To break with the capitalist system, we need to take back control not only through parliamentary democracy, but by organising real democracy in workplaces, local communities and on the streets. That’s why Victorian Socialists don’t focus just on elections, but work year in, year out to rebuild cultures of resistance in trade unions, progressive campaigns and local communities.
+                  </p>
+                  <p style={{ fontSize: 16, lineHeight: '22px', color: '#111', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 0 }}>
+                    A socialist MP would use their public profile and resources to support striking workers and others fighting for progressive change, and help build more powerful movements outside parliament. Truly revolutionary change cannot be handed down from on high. It must be built from below. Every strike, protest and act of resistance helps people learn to lead, organise, fight collectively and win.
+                  </p>
+                </div>
+              </div>
+
+              {/* Section 2 — full-bleed, same clip-path mechanism as the
+                  candidates photo above "Our key policies" but with
+                  leftDrop/rightDrop swapped so the bottom edge slants the
+                  opposite way (down from bottom-left to bottom-right). */}
+              <div style={{
+                width: `calc(100% + ${left + right}px)`, height: 530, marginTop: 64, marginLeft: -left,
+                position: 'relative', overflow: 'hidden', display: 'flex',
+                clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 61.1px), 0 calc(100% - 103.6px))',
+              }}>
+                <div style={{
+                  width: '60%', flexShrink: 0, background: '#000', boxSizing: 'border-box',
+                  display: 'flex', alignItems: 'flex-start', padding: `110px 48px 0 ${left}px`,
+                }}>
+                  <div style={{ maxWidth: 560 }}>
+                    <h2 style={{
+                      margin: '0 0 16px', fontSize: 26, lineHeight: '32px', fontWeight: 800, color: '#fff',
+                      fontFamily: "'Work Sans', system-ui, sans-serif",
+                    }}>
+                      A people-powered campaign
+                    </h2>
+                    <p style={{ fontSize: 16, lineHeight: '22px', color: '#fff', fontFamily: "'Open Sans', system-ui, sans-serif", margin: 0 }}>
+                      Victorian Socialists depends on people power, not millions in paid advertising. We rely on the time and energy of our members and supporters to deliver letters, knock on doors, talk with voters, staff community stalls and get our message out. Every conversation helps us reach people who want change, win support for socialist ideas and grow our movement. By showing what organised people can achieve, we can challenge the political status quo and prove that when you fight, you can win.
+                    </p>
+                  </div>
+                </div>
+                <div style={{ width: '40%', flexShrink: 0 }}>
+                  <img src="/footscray-doorknock.jpeg" alt="Victorian Socialists members at a Footscray doorknock" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                </div>
+                <div style={{
+                  position: 'absolute', top: 0, left: 0,
+                  width: 350, height: 77,
+                  background: '#FF4B33',
+                  clipPath: 'polygon(0% 0%, 95% 0%, 100% 64%, 0% 100%)',
+                }} />
+              </div>
+
+              {/* Section 3 — duplicate of section 1's layout with new copy,
+                  no red wedge above the heading. */}
+              <div style={{ marginTop: -40 }}>
+                <div style={{ maxWidth: 680 }}>
+                  <h2 style={{
+                    margin: '0 0 16px', fontSize: 26, lineHeight: '32px', fontWeight: 800, color: '#000',
+                    fontFamily: "'Work Sans', system-ui, sans-serif", whiteSpace: 'pre-line',
+                  }}>
+                    {'How does this election fit into the struggle\nfor a socialist society?'}
+                  </h2>
+                  <p style={{ fontSize: 16, lineHeight: '22px', color: '#111', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 20 }}>
+                    Parliament is just one of many institutions that help the capitalists dominate our economy and society. To break with the capitalist system, we need to take back control not only through parliamentary democracy, but by organising real democracy in workplaces, local communities and on the streets. That’s why Victorian Socialists don’t focus just on elections, but work year in, year out to rebuild cultures of resistance in trade unions, progressive campaigns and local communities.
+                  </p>
+                  <p style={{ fontSize: 16, lineHeight: '22px', color: '#111', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 0 }}>
+                    A socialist MP would use their public profile and resources to support striking workers and others fighting for progressive change, and help build more powerful movements outside parliament. Truly revolutionary change cannot be handed down from on high. It must be built from below. Every strike, protest and act of resistance helps people learn to lead, organise, fight collectively and win.
+                  </p>
+                </div>
+              </div>
+
+              {/* Section 4 — duplicate of section 2, horizontally flipped:
+                  image now on the left, solid red (not black) on the right,
+                  and the bottom-edge drops mirrored so the slant reverses. */}
+              <div style={{
+                width: `calc(100% + ${left + right}px)`, height: 560, marginTop: 64, marginLeft: -left,
+                position: 'relative', overflow: 'hidden', display: 'flex',
+                clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 103.6px), 0 calc(100% - 61.1px))',
+              }}>
+                <div style={{ width: '40%', flexShrink: 0 }}>
+                  <img src="/section4-image.jpg" alt="Victorian Socialists members at a community event" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                </div>
+                <div style={{
+                  width: '60%', flexShrink: 0, background: '#E8391F', boxSizing: 'border-box',
+                  position: 'relative',
+                  display: 'flex', alignItems: 'flex-start', padding: `40px ${right + 42}px 0 58px`,
+                }}>
+                  <div style={{
+                    position: 'absolute', top: 0, left: 0,
+                    width: 40, height: 118,
+                    background: '#000',
+                    clipPath: 'polygon(0% 0%, 100% 0%, 100% 85%, 0% 100%)',
+                  }} />
+                  <div style={{ maxWidth: 560 }}>
+                    <h2 style={{
+                      margin: '0 0 16px', fontSize: 26, lineHeight: '32px', fontWeight: 800, color: '#fff',
+                      fontFamily: "'Work Sans', system-ui, sans-serif",
+                    }}>
+                      Join us and get involved!
+                    </h2>
+                    <p style={{ fontSize: 16, lineHeight: '22px', color: '#fff', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 16 }}>
+                      If you agree with the vision outlined in this manifesto, join Victorian Socialists and get involved. Regular membership is <strong style={{ fontWeight: 700 }}>$84 annually</strong>, just <strong style={{ fontWeight: 700 }}>$1.60 a week. </strong>Members can participate in party discussions and elections, help shape our policies, campaigns and future directions, and get involved through local branches across Melbourne and regional Victoria.
+                    </p>
+                    <p style={{ fontSize: 16, lineHeight: '22px', color: '#fff', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 24 }}>
+                      Between now and November, we’ll be letterboxing, door knocking, phone banking, delivering yard signs and talking to voters at polling stations. No matter your background, experience or level of confidence, everyone is welcome. Unlike the major parties, we depend on our members and supporters to get the message out. The bigger the base of active members we can build, the stronger we’ll become!
+                    </p>
+                    <a
+                      href="https://www.victoriansocialists.org.au/join"
+                      target="_blank" rel="noreferrer"
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                        height: 44, boxSizing: 'border-box', background: '#fff', color: '#000', borderRadius: 4,
+                        padding: '0 28px', fontSize: 16, fontWeight: 700, textDecoration: 'none',
+                        fontFamily: "'Open Sans', system-ui, sans-serif",
+                      }}
+                    >Get involved today</a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 5 — full-bleed dark grey panel. Its top edge is cut
+                  with the same diagonal (same 61.1/103.6px drops) as section
+                  4's bottom edge, and it's pulled up to sit flush against it
+                  (marginTop: -103.6px) so the two touch with no gap and no
+                  overlap. Red wedge flush at top-left, slanted closing line
+                  with "vote socialist." picked out in a red highlight box. */}
+              <div style={{
+                width: `calc(100% + ${left + right}px)`, marginTop: -103.6, marginLeft: -left,
+                position: 'relative', overflow: 'hidden', background: '#221F1F',
+                clipPath: 'polygon(0 42.5px, 100% 0, 100% 100%, 0 100%)',
+                padding: `160px ${right + 80}px 70px ${left + 75}px`, boxSizing: 'border-box',
+              }}>
+                {/* Positioned at the container's own top:0 (not offset) so
+                    the parent's clip-path — which cuts along the exact same
+                    diagonal as section 4's bottom edge — trims this wedge's
+                    top-left corner too, keeping the two slopes identical
+                    instead of approximating them separately. */}
+                <div style={{
+                  position: 'absolute', top: 0, left: 0,
+                  width: 400, height: 150,
+                  background: '#fff',
+                  clipPath: 'polygon(0% 0%, 100% 0%, 86% 87%, 0% 100%)',
+                }} />
+                <div style={{ transform: 'rotate(-6deg)', transformOrigin: 'left center' }}>
+                  <div style={{
+                    fontSize: 40, lineHeight: 1.3, fontWeight: 800, color: '#fff',
+                    fontFamily: "'Work Sans', system-ui, sans-serif", whiteSpace: 'nowrap',
+                  }}>
+                    Capitalism is killing our future.
+                  </div>
+                  <div style={{
+                    fontSize: 40, lineHeight: 1.3, fontWeight: 800, color: '#fff',
+                    fontFamily: "'Work Sans', system-ui, sans-serif", whiteSpace: 'nowrap',
+                  }}>
+                    For real change, <span style={{ background: '#FF4B33', padding: '2px 10px' }}>vote socialist.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </>
       )}
       {videoPolicy && <ManifestoVideoModal policy={videoPolicy} onClose={() => setVideoPolicy(null)} isMobile={isMobile} />}
