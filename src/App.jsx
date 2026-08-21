@@ -2406,6 +2406,7 @@ function ControlsBar({ showVariations, tab, plainView, version, cardView, policy
           {!showVariations && version === 'B' && (
             <>
               <button onClick={() => setPlainView('manifesto4')} style={linkStyle(plainView === 'manifesto4')}>Card view</button>
+              <button onClick={() => setPlainView('manifesto6')} style={linkStyle(plainView === 'manifesto6')}>Card view 2</button>
               <button onClick={() => setPlainView('manifesto5')} style={linkStyle(plainView === 'manifesto5')}>Accordion view</button>
             </>
           )}
@@ -2536,7 +2537,7 @@ const MANIFESTO_MOBILE_BANNER_WIDTH_OVERRIDES = {
 // 5627:5704 expanded): an outlined card (fills #F7F6FF when expanded or hovered) with
 // a tilted red banner flush to its top-left corner, a "Watch 2 min video"
 // pill and "READ MORE" toggle, and — expanded — the full sections breakdown.
-function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVideo, cardRef, skipCollapseAnim, lowercaseHeading = false }) {
+function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVideo, cardRef, skipCollapseAnim, lowercaseHeading = false, altHeadingStyle = false }) {
   const isShortHeading = policy.heading === 'Homes for all'
   const [hovered, setHovered] = useState(false)
   const [videoHovered, setVideoHovered] = useState(false)
@@ -2556,35 +2557,61 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
         scrollMarginTop: isMobile ? 30 + 60 : 60,
       }}
     >
-      {/* Tilted banner — flush to the card's exact top-left corner (the clip
-          path includes the (0,0) point itself), clipped by the card's own
-          overflow:hidden, same technique used for the housing/policies
-          banners elsewhere. Sized to fit the 24px heading so even the
-          longest one ("Fighting oppression and building solidarity")
-          wraps to at most two lines. */}
-      <div style={{
-        position: 'absolute', top: 0, left: 0,
-        width: isMobile
-          ? (MANIFESTO_MOBILE_BANNER_WIDTH_OVERRIDES[policy.heading] ?? (isShortHeading ? 230 : 340))
-          : (isShortHeading ? 230 : 380),
-        height: isShortHeading ? (isMobile ? 64 : 70) : (isMobile ? 88 : 96),
-        background: cardHovered ? '#FF4B33' : '#000',
-        clipPath: 'polygon(0% 100%, 0% 0%, 93.9% 0%, 100% 82.2%)',
-        display: 'flex', alignItems: 'center', paddingLeft: isMobile ? 16 : 20, paddingRight: isMobile ? 24 : 30, paddingBottom: 6,
-        transition: 'background-color 0.2s ease',
-      }}>
-        <span style={{
-          fontSize: (isMobile ? 18 : 22) + (lowercaseHeading ? 1 : 0), fontWeight: 800, color: '#fff', lineHeight: isMobile ? '21px' : '24px',
-          textTransform: lowercaseHeading ? 'none' : 'uppercase', fontFamily: "'Work Sans', system-ui, sans-serif",
-          whiteSpace: isMobile && isShortHeading ? 'nowrap' : isMobile ? 'pre-line' : 'normal',
+      {altHeadingStyle ? (
+        /* Alt treatment: a small decorative wedge sits above the heading
+           instead of the heading sitting inside a full-width banner — the
+           heading itself is now plain black text in normal flow below it. */
+        <div style={{ padding: `${isMobile ? 20 : 24}px ${isMobile ? 18 : 24}px 0` }}>
+          <div style={{
+            width: isMobile ? 32 : 40, height: isMobile ? 10 : 12,
+            background: cardHovered ? '#FF4B33' : '#000',
+            clipPath: 'polygon(0% 100%, 0% 0%, 85% 0%, 100% 100%)',
+            marginBottom: isMobile ? 8 : 10,
+            transition: 'background-color 0.2s ease',
+          }} />
+          <h3 style={{
+            margin: 0, fontSize: (isMobile ? 18 : 22) + (lowercaseHeading ? 1 : 0), fontWeight: 800, color: '#000',
+            lineHeight: isMobile ? '21px' : '24px',
+            textTransform: lowercaseHeading ? 'none' : 'uppercase', fontFamily: "'Work Sans', system-ui, sans-serif",
+          }}>
+            {isMobile
+              ? MANIFESTO_MOBILE_HEADING_BREAKS[policy.heading] ?? policy.heading
+              : policy.heading}
+          </h3>
+        </div>
+      ) : (
+        /* Tilted banner — flush to the card's exact top-left corner (the clip
+            path includes the (0,0) point itself), clipped by the card's own
+            overflow:hidden, same technique used for the housing/policies
+            banners elsewhere. Sized to fit the 24px heading so even the
+            longest one ("Fighting oppression and building solidarity")
+            wraps to at most two lines. */
+        <div style={{
+          position: 'absolute', top: 0, left: 0,
+          width: isMobile
+            ? (MANIFESTO_MOBILE_BANNER_WIDTH_OVERRIDES[policy.heading] ?? (isShortHeading ? 230 : 340))
+            : (isShortHeading ? 230 : 380),
+          height: isShortHeading ? (isMobile ? 64 : 70) : (isMobile ? 88 : 96),
+          background: cardHovered ? '#FF4B33' : '#000',
+          clipPath: 'polygon(0% 100%, 0% 0%, 93.9% 0%, 100% 82.2%)',
+          display: 'flex', alignItems: 'center', paddingLeft: isMobile ? 16 : 20, paddingRight: isMobile ? 24 : 30, paddingBottom: 6,
+          transition: 'background-color 0.2s ease',
         }}>
-          {isMobile
-            ? MANIFESTO_MOBILE_HEADING_BREAKS[policy.heading] ?? policy.heading
-            : policy.heading}
-        </span>
-      </div>
+          <span style={{
+            fontSize: (isMobile ? 18 : 22) + (lowercaseHeading ? 1 : 0), fontWeight: 800, color: '#fff', lineHeight: isMobile ? '21px' : '24px',
+            textTransform: lowercaseHeading ? 'none' : 'uppercase', fontFamily: "'Work Sans', system-ui, sans-serif",
+            whiteSpace: isMobile && isShortHeading ? 'nowrap' : isMobile ? 'pre-line' : 'normal',
+          }}>
+            {isMobile
+              ? MANIFESTO_MOBILE_HEADING_BREAKS[policy.heading] ?? policy.heading
+              : policy.heading}
+          </span>
+        </div>
+      )}
 
-      <div style={{ padding: `${isShortHeading ? (isMobile ? 76 : 86) : (isMobile ? 100 : 110)}px ${isMobile ? 18 : 24}px ${isMobile ? 20 : 26}px` }}>
+      <div style={{ padding: altHeadingStyle
+        ? `${isMobile ? 16 : 18}px ${isMobile ? 18 : 24}px ${isMobile ? 20 : 26}px`
+        : `${isShortHeading ? (isMobile ? 76 : 86) : (isMobile ? 100 : 110)}px ${isMobile ? 18 : 24}px ${isMobile ? 20 : 26}px` }}>
         <p style={{ ...S.para, fontSize: 15, marginBottom: 20 }}>{policy.body}</p>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <button
@@ -3312,7 +3339,7 @@ function ManifestoFullPolicyCards3ColV2({ isMobile, onOpenVideo, onOpenHousing, 
 // the mobile reference mockups (Manifesto-A.png collapsed, Manifesto-B.png
 // expanded). Reuses the real VISION_CONTENT intro and POLICIES data rather
 // than the mockup's placeholder blurbs.
-function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLayout = '2col', lowercaseKeyPolicyHeadings = false, activeTab, setActiveTab, onOpenHousing, onOpenPolicy }) {
+function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLayout = '2col', lowercaseKeyPolicyHeadings = false, altVisionCardHeadings = false, activeTab, setActiveTab, onOpenHousing, onOpenPolicy }) {
   const { left, right } = hPad(isMobile, isTablet)
   const [openIndex, setOpenIndex] = useState(null)
   const [videoPolicy, setVideoPolicy] = useState(null)
@@ -3519,6 +3546,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
                   cardRef={(el) => { cardRefs.current[i] = el }}
                   onOpenVideo={() => setVideoPolicy({ ...policy, videoImg: MANIFESTO_VIDEO_IMAGES[i % MANIFESTO_VIDEO_IMAGES.length] })}
                   lowercaseHeading={lowercaseKeyPolicyHeadings}
+                  altHeadingStyle={altVisionCardHeadings}
                 />
               ))}
               <div style={{ textAlign: 'center', marginTop: isMobile ? 24 : 32 }}>
@@ -3717,7 +3745,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
       <nav style={{ ...S.nav, padding: isMobile ? '0 16px' : '0 24px', position: 'sticky', top: isMobile ? 30 : 0, zIndex: 45 }} />
 
       {(() => {
-        const isManifesto = plainView === 'manifesto' || plainView === 'manifesto2' || plainView === 'manifesto3' || plainView === 'manifesto4' || plainView === 'manifesto5'
+        const isManifesto = plainView === 'manifesto' || plainView === 'manifesto2' || plainView === 'manifesto3' || plainView === 'manifesto4' || plainView === 'manifesto5' || plainView === 'manifesto6'
         const isHousing = !showVariations && version === 'B' && (plainView === 'housing' || plainView === 'housing2' || plainView === 'housing3' || plainView === 'policyDetail' || isManifesto)
         const headingText = plainView === 'policyDetail' ? (policyDetailHeading === 'Our universities are not for profit' ? 'Our universities are not\nfor profit' : policyDetailHeading) : (!showVariations && version === 'B' && isManifesto) ? 'Vision and policies' : isHousing ? HOUSING_POLICY.title : (!showVariations && version === 'B' && plainView === 'policies') ? 'Our policies' : (!showVariations && version === 'B' && plainView === 'vision') ? 'Our vision for\na better, fairer Victoria' : "What we'll fight for"
         const fullHeight = isMobile ? 190 : 280
@@ -3805,7 +3833,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
               // 15% up from 4/7/16px.
               ...(isMobile && { padding: '4.6px 8.05px 18.4px' }),
             }}>
-              <h1 style={{ ...S.pageTitle, maxWidth: 782, fontSize: isMobile ? ((plainView === 'manifesto4' || plainView === 'manifesto5') ? 29.9 : 25.3) : 41.4, whiteSpace: 'pre-line' }}>{headingText}</h1>
+              <h1 style={{ ...S.pageTitle, maxWidth: 782, fontSize: isMobile ? ((plainView === 'manifesto4' || plainView === 'manifesto5' || plainView === 'manifesto6') ? 29.9 : 25.3) : 41.4, whiteSpace: 'pre-line' }}>{headingText}</h1>
               {/* Invisible clone at a DEFINITE 680px width — guarantees
                   identical, unambiguous wrapping in every browser, unlike
                   fit-content sizing on an absolutely positioned element
@@ -3820,7 +3848,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
                   ...S.pageTitle,
                   position: 'fixed', top: -9999, left: -9999, visibility: 'hidden', pointerEvents: 'none',
                   width: 782, maxWidth: 782,
-                  fontSize: isMobile ? ((plainView === 'manifesto4' || plainView === 'manifesto5') ? 29.9 : 25.3) : 41.4,
+                  fontSize: isMobile ? ((plainView === 'manifesto4' || plainView === 'manifesto5' || plainView === 'manifesto6') ? 29.9 : 25.3) : 41.4,
                   whiteSpace: 'pre-line',
                 }}
               >{headingText}</h1>
@@ -3891,6 +3919,13 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
             activeTab={manifestoTab} setActiveTab={setManifestoTab}
             onOpenHousing={() => openBackablePage('housing3', 'manifesto4')}
             onOpenPolicy={(heading) => { setPolicyDetailHeading(heading); openBackablePage('policyDetail', 'manifesto4') }}
+          />
+        ) : (!showVariations && version === 'B' && plainView === 'manifesto6') ? (
+          <ManifestoVisionPage
+            isMobile={isMobile} isTablet={isTablet} useCardStyle cardLayout="3col-v2" lowercaseKeyPolicyHeadings altVisionCardHeadings
+            activeTab={manifestoTab} setActiveTab={setManifestoTab}
+            onOpenHousing={() => openBackablePage('housing3', 'manifesto6')}
+            onOpenPolicy={(heading) => { setPolicyDetailHeading(heading); openBackablePage('policyDetail', 'manifesto6') }}
           />
         ) : (!showVariations && version === 'B' && plainView === 'policyDetail') ? (
           <GenericPolicyDetailPage heading={policyDetailHeading} isMobile={isMobile} isTablet={isTablet} />
