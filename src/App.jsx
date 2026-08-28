@@ -3611,7 +3611,7 @@ function ManifestoFullPolicyCards3ColV2({ isMobile, onOpenVideo, onOpenHousing, 
 // the mobile reference mockups (Manifesto-A.png collapsed, Manifesto-B.png
 // expanded). Reuses the real VISION_CONTENT intro and POLICIES data rather
 // than the mockup's placeholder blurbs.
-function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLayout = '2col', lowercaseKeyPolicyHeadings = false, altVisionCardHeadings = false, extraImages = false, activeTab, setActiveTab, onOpenHousing, onOpenPolicy }) {
+function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLayout = '2col', lowercaseKeyPolicyHeadings = false, altVisionCardHeadings = false, extraImages = false, manifestoPanelAtBottom = false, activeTab, setActiveTab, onOpenHousing, onOpenPolicy }) {
   const { left, right } = hPad(isMobile, isTablet)
   const [openIndex, setOpenIndex] = useState(null)
   const [videoPolicy, setVideoPolicy] = useState(null)
@@ -3660,6 +3660,36 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
       })
     }
   }
+
+  // Manifesto booklet promo panel — real markup on both breakpoints
+  // (booklet cover, heading, button), not a stretched screenshot. Rendered
+  // as a variable so manifestoPanelAtBottom can move it to the end of the
+  // page (above the footer) instead of its default spot near the top.
+  const manifestoPanel = (
+    <div style={{ paddingLeft: left, paddingRight: right, marginBottom: isMobile ? 28 : 36 }}>
+      <div style={{ maxWidth: 680, background: '#fff', borderRadius: 8, padding: isMobile ? 16 : 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 16 : 28 }}>
+          <img
+            src={isMobile ? '/manifesto-booklet-mobile.png' : '/manifesto-booklet-desktop.png'}
+            alt="A Socialist Manifesto booklet"
+            style={{ width: isMobile ? 108 : 340, height: 'auto', flexShrink: 0 }}
+          />
+          <div style={{ minWidth: 0 }}>
+            <h3 style={{
+              margin: isMobile ? '0 0 10px' : '0 0 16px', fontSize: isMobile ? 14 : 18, fontWeight: 600, color: '#000',
+              fontFamily: "'Work Sans', system-ui, sans-serif", whiteSpace: 'nowrap',
+            }}>Full election manifesto available</h3>
+            <a href="/manifesto-booklet.pdf" target="_blank" rel="noreferrer" style={{
+              display: 'inline-flex', alignItems: 'center', gap: isMobile ? 8 : 10, whiteSpace: 'nowrap',
+              border: '1px solid #000', borderRadius: 4, padding: isMobile ? '7px 14px' : '10px 20px',
+              fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#000', textDecoration: 'none',
+              fontFamily: "'Open Sans', system-ui, sans-serif",
+            }}>Order your copy <span style={{ fontSize: isMobile ? 15 : 17 }}>→</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 
   return (
     <div style={{ paddingBottom: isMobile ? 60 : 80 }}>
@@ -3714,7 +3744,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
               rest of the page via hPad padding applied to the panel itself. */}
           <div id="manifesto-vision" style={{
             width: '100%', boxSizing: 'border-box', background: '#F8F5FA',
-            marginBottom: isMobile ? 28 : 36,
+            marginBottom: manifestoPanelAtBottom ? 0 : (isMobile ? 28 : 36),
             padding: `${isMobile ? 20 : 32}px ${right}px ${isMobile ? 24 : 36}px ${left}px`,
           }}>
             <div style={{ maxWidth: 680 }}>
@@ -3783,31 +3813,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
             </div>
           </div>
 
-          {/* Manifesto booklet promo panel — real markup on both breakpoints
-              (booklet cover, heading, button), not a stretched screenshot. */}
-          <div style={{ paddingLeft: left, paddingRight: right, marginBottom: isMobile ? 28 : 36 }}>
-            <div style={{ maxWidth: 680, background: '#fff', borderRadius: 8, padding: isMobile ? 16 : 20 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 16 : 28 }}>
-                <img
-                  src={isMobile ? '/manifesto-booklet-mobile.png' : '/manifesto-booklet-desktop.png'}
-                  alt="A Socialist Manifesto booklet"
-                  style={{ width: isMobile ? 108 : 340, height: 'auto', flexShrink: 0 }}
-                />
-                <div style={{ minWidth: 0 }}>
-                  <h3 style={{
-                    margin: isMobile ? '0 0 10px' : '0 0 16px', fontSize: isMobile ? 14 : 18, fontWeight: 600, color: '#000',
-                    fontFamily: "'Work Sans', system-ui, sans-serif", whiteSpace: 'nowrap',
-                  }}>Full election manifesto available</h3>
-                  <a href="/manifesto-booklet.pdf" target="_blank" rel="noreferrer" style={{
-                    display: 'inline-flex', alignItems: 'center', gap: isMobile ? 8 : 10, whiteSpace: 'nowrap',
-                    border: '1px solid #000', borderRadius: 4, padding: isMobile ? '7px 14px' : '10px 20px',
-                    fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#000', textDecoration: 'none',
-                    fontFamily: "'Open Sans', system-ui, sans-serif",
-                  }}>Order your copy <span style={{ fontSize: isMobile ? 15 : 17 }}>→</span></a>
-                </div>
-              </div>
-            </div>
-          </div>
+          {!manifestoPanelAtBottom && manifestoPanel}
 
           {/* Universal Living Guarantee — full-bleed red panel, black wedge
               flush at top-left (same clip-path family as the other wedges
@@ -4115,7 +4121,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
                 clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 103.6px), 0 calc(100% - 61.1px))',
               }}>
                 <div style={{ width: '40%', flexShrink: 0 }}>
-                  <img src="/section4-image.jpg" alt="Victorian Socialists members at a community event" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                  <img src="/doorknock-footscray.png" alt="Victorian Socialists members doorknocking in Footscray" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 </div>
                 <div style={{
                   width: '60%', flexShrink: 0, background: '#E8391F', boxSizing: 'border-box',
@@ -4198,6 +4204,16 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+          {/* marginTop balances the fixed space below the panel (this
+              page's own paddingBottom + the panel's built-in marginBottom)
+              so it reads as centered in the gap above the footer — there's
+              no actual flexible leftover space here to auto-center within,
+              since this page is always exactly as tall as its content. */}
+          {manifestoPanelAtBottom && (
+            <div style={{ marginTop: isMobile ? 88 : 116 }}>
+              {manifestoPanel}
             </div>
           )}
         </>
@@ -4549,7 +4565,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
           />
         ) : (!showVariations && version === 'B' && plainView === 'manifesto4') ? (
           <ManifestoVisionPage
-            isMobile={isMobile} isTablet={isTablet} useCardStyle cardLayout="3col-v2" lowercaseKeyPolicyHeadings
+            isMobile={isMobile} isTablet={isTablet} useCardStyle cardLayout="3col-v2" lowercaseKeyPolicyHeadings manifestoPanelAtBottom
             activeTab={manifestoTab} setActiveTab={setManifestoTab}
             onOpenHousing={() => openBackablePage('housing3', 'manifesto4')}
             onOpenPolicy={(heading) => { setPolicyDetailHeading(heading); openBackablePage('policyDetail', 'manifesto4') }}
