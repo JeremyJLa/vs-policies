@@ -235,6 +235,32 @@ const POLICIES = [
       },
     ],
   },
+  {
+    title: 'HOW WOULD\nWE PAY\nFOR IT?',
+    heading: 'How would we pay for it?',
+    body: 'Creating an economy and society that work for everyone will cost a lot. Fortunately, there’s no shortage of wealth in our society — it’s just being hoarded by the wealthy few.',
+    Icon: FundingIcon,
+    sections: [
+      {
+        heading: 'Taxing billionaires, big corporations and the super-rich',
+        text: [
+          'Creating an economy and society that work for everyone will cost a lot. Fortunately, as we’re reminded every year in the latest Australian Financial Review Rich List, there’s no shortage of wealth in our society. Were it not being hoarded by the wealthy few, wasted on handouts to big businesses and drained through the massive salaries of politicians and high-level bureaucrats, all that wealth could be used to benefit everyone.',
+          'We’ll implement a range of new measures targeting billionaires, big corporations and the super-rich to raise the funds we need to realise our vision:',
+        ],
+        bullets: [
+          'Applying a luxury properties tax on the top 1 percent of most valuable residences in Victoria, charged at 5 percent of their last sale price per year',
+          'Applying a 10 percent wealth tax on billionaires and 10 percent tax on assets owned by foreign billionaires in Australia',
+          'Doubling the payroll tax for large companies and trusts',
+          'Increasing and properly enforcing taxes for land banking',
+          'Imposing a levy on private jets landing at Essendon airport—$5,000 landing fee for planes valued at more than $500,000.',
+        ],
+      },
+      {
+        heading: 'Policies that pay for themselves',
+        text: 'In addition, many of the policies in our platform would, if implemented, add new revenue streams to make those policies largely self-funding. This includes, most notably, the expansion of public housing, the re-nationalisation of energy production and distribution and the establishment of a state bank.',
+      },
+    ],
+  },
 ]
 
 const ACCORDION_POLICIES = POLICIES
@@ -296,7 +322,7 @@ const ACCORDION_ROWS = Array.from({ length: 22 }, (_, i) => ACCORDION_ROW_BASE[i
 // Exact content from docs/Housing policy.pages
 const HOUSING_POLICY = {
   "title": "Housing for all",
-  "summary": "Victorian Socialists' plan to fix the housing crisis: rent control and stronger renters' rights, a crackdown on property speculation and hoarding, and a massive expansion of public housing.",
+  "summary": "Housing is a fundamental human right, not a source of profit. We’ll fight to cut rents and strengthen renters’ rights, massively expand high-quality public housing, end homelessness, support people struggling with mortgages, and crack down on property speculation and housing hoarding.",
   "readTime": "8 min read",
   "preamble": [
     "The housing crisis is getting worse and almost everyone is affected. More than 65,500 Victorians are on the social housing waiting list, with over 37,000 of those classified as priority applicants in urgent need. The last Census counted 30,660 Victorians without a home and homelessness services assisted 105,000 people in 2024-25. Aboriginal Victorians' rate of homelessness is rising nearly four times faster than the rest of the population.",
@@ -850,6 +876,23 @@ function CivilRightsIcon({ color = '#000', height = 58 }) {
         backgroundColor: color,
         WebkitMaskImage: 'url(/civil-rights-icon.svg)',
         maskImage: 'url(/civil-rights-icon.svg)',
+        WebkitMaskSize: 'contain', maskSize: 'contain',
+        WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
+        WebkitMaskPosition: 'center', maskPosition: 'center',
+      }}
+    />
+  )
+}
+
+function FundingIcon({ color = '#000', height = 58 }) {
+  const width = Math.round(height * 58 / 58)
+  return (
+    <span
+      style={{
+        display: 'inline-block', flexShrink: 0, width, height,
+        backgroundColor: color,
+        WebkitMaskImage: 'url(/icons2/how-we-pay-for-it.png)',
+        maskImage: 'url(/icons2/how-we-pay-for-it.png)',
         WebkitMaskSize: 'contain', maskSize: 'contain',
         WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
         WebkitMaskPosition: 'center', maskPosition: 'center',
@@ -2160,11 +2203,17 @@ function GenericPolicyDetailPage({ heading, isMobile, isTablet }) {
   const [videoOpen, setVideoOpen] = useState(false)
   const [videoHovered, setVideoHovered] = useState(false)
   const row = MANIFESTO_ACCORDION_ROWS.find(r => r.heading === heading)
+  const intro = MANIFESTO_ACCORDION_INTRO_OVERRIDES[heading]
   const videoImg = MANIFESTO_VIDEO_OVERRIDES[heading]
     ?? MANIFESTO_VIDEO_IMAGES[Math.max(0, MANIFESTO_ACCORDION_HEADINGS.indexOf(heading)) % MANIFESTO_VIDEO_IMAGES.length]
   return (
     <div style={{ paddingBottom: isMobile ? 60 : isTablet ? 60 : 80 }}>
       <div style={{ paddingLeft: left, paddingRight: right, marginTop: 48 }}>
+        {row?.text && (
+          <div style={{ maxWidth: 680, marginBottom: isMobile ? 24 : 32 }}>
+            <p style={{ ...S.para, fontSize: 18, lineHeight: '24px', fontWeight: 600, marginBottom: 0 }}>{row.text}</p>
+          </div>
+        )}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start', flexWrap: 'wrap', gap: isMobile ? 20 : 40, marginBottom: isMobile ? 32 : 40 }}>
           <button
             type="button"
@@ -2193,7 +2242,20 @@ function GenericPolicyDetailPage({ heading, isMobile, isTablet }) {
           </button>
         </div>
         <div style={{ maxWidth: 680 }}>
-          <p style={{ ...S.para, fontSize: 16 }}>{row?.text}</p>
+          {intro && <p style={{ ...S.para, fontSize: 16 }}>{intro}</p>}
+          {(MANIFESTO_ACCORDION_DETAIL_SECTIONS[heading] || []).map((section, i) => (
+            <div key={i} style={{ marginTop: i === 0 ? 8 : 32 }}>
+              <h3 style={{
+                margin: '0 0 12px', fontSize: 18, fontWeight: 800, color: '#000',
+                fontFamily: "'Work Sans', system-ui, sans-serif",
+              }}>{section.heading}</h3>
+              <ul style={S.bulletList}>
+                {section.bullets.map((b, bi) => (
+                  <li key={bi} style={{ ...S.bulletItem, fontSize: 16 }}>{b}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </div>
       {videoOpen && <ManifestoVideoModal policy={{ heading, videoImg }} onClose={() => setVideoOpen(false)} isMobile={isMobile} />}
@@ -2288,8 +2350,15 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
           <HousingSideNav areas={p.areas} locked={sideNavLocked} lockedTop={sideNavLockTop} opacity={sideNavOpacity} />
         )}
 
-        <div style={{ paddingLeft: left, paddingRight: right, marginTop: 48 }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start', flexWrap: 'wrap', gap: isMobile ? 20 : 40, marginBottom: isMobile ? 32 : 40 }}>
+        <div style={{
+          background: '#F8F5FA', borderRadius: '8px 8px 0 0',
+          paddingTop: isMobile ? 24 : 32, paddingBottom: isMobile ? 24 : 32,
+          paddingLeft: left, paddingRight: right, marginTop: 48,
+        }}>
+          <div style={{ maxWidth: 680, marginBottom: isMobile ? 24 : 32 }}>
+            <p style={{ ...S.para, fontSize: 18, lineHeight: '24px', fontWeight: 600, marginBottom: 0 }}>{p.summary}</p>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start', flexWrap: 'wrap', gap: isMobile ? 20 : 40 }}>
             {isMobile ? (
               <button
                 type="button"
@@ -2358,10 +2427,11 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
           </div>
         )}
 
-        {/* Soft diagonal wash behind Preamble only, matching the Figma
-            frame's background panel — full-bleed, angled bottom edge. */}
+        {/* Continues the summary/video panel above with no seam (same
+            background, square top corners since the panel above already
+            rounded them) — angled bottom edge only. */}
         <div style={{
-          background: '#F8F5FA', borderRadius: '8px 8px 0 0',
+          background: '#F8F5FA',
           clipPath: `polygon(0 0, 100% 0, 100% calc(100% - ${isMobile ? 40 : 60}px), 0 100%)`,
           paddingTop: isMobile ? 24 : 32,
           paddingBottom: (isMobile ? 24 : 32) + (isMobile ? 40 : 60),
@@ -2556,6 +2626,33 @@ function ManifestoFlagMark() {
   )
 }
 
+// White version of the same flag-mark bullet, for use on dark/red panels
+// where the source image's dark fill wouldn't show up.
+function ManifestoFlagMarkWhite() {
+  return (
+    <span style={{
+      display: 'inline-block', flexShrink: 0, width: 15, height: 13, marginTop: 6,
+      backgroundColor: '#fff',
+      WebkitMaskImage: 'url(/bullet-triangle.png)', maskImage: 'url(/bullet-triangle.png)',
+      WebkitMaskSize: 'contain', maskSize: 'contain',
+      WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
+      WebkitMaskPosition: 'center', maskPosition: 'center',
+    }} />
+  )
+}
+
+// The six key planks of the Universal Living Guarantee, in the row-major
+// order they're laid out in the two-column grid (left col, right col, left,
+// right, left, right).
+const ULG_PLANKS = [
+  'Free, publicly owned and operated child care, five days a week',
+  '150,000 new public housing units over ten years',
+  'A 25 percent rent cut for all residential tenancies, followed by a rent freeze for five years',
+  'Free public transport with increased services and availability across Melbourne and regional Victoria',
+  '$100 price-cap trolleys at supermarkets and local cost-price food hubs in every community',
+  'Expanded and publicly run aged care with increased places and in-home services',
+]
+
 // Mobile-only line-break control: forces an exact 2-line split at a
 // specific point (rather than leaving it to natural word-wrap, which at
 // this width breaks these two headings onto 3 lines) via a literal
@@ -2698,15 +2795,27 @@ function ManifestoPolicyAccordion({ policy, isOpen, onToggle, isMobile, onOpenVi
 
         <div style={{ maxHeight: isOpen ? 4000 : 0, overflow: 'hidden', transition: skipCollapseAnim ? 'none' : 'max-height 0.6s ease' }}>
           <div style={{ paddingTop: 24 }}>
-            {policy.sections.map((s, i) => (
-              <div key={i} style={{ display: 'flex', gap: 10, marginBottom: i === policy.sections.length - 1 ? 0 : 22 }}>
-                <ManifestoFlagMark />
-                <div>
-                  <h4 style={{ fontSize: isMobile ? 16 : 18, fontWeight: 600, fontFamily: "'Work Sans', system-ui, sans-serif", margin: '0 0 8px', color: '#000' }}>{s.heading}</h4>
-                  <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, margin: 0 }}>{s.text}</p>
+            {policy.sections.map((s, i) => {
+              const paras = Array.isArray(s.text) ? s.text : [s.text]
+              return (
+                <div key={i} style={{ display: 'flex', gap: 10, marginBottom: i === policy.sections.length - 1 ? 0 : 22 }}>
+                  <ManifestoFlagMark />
+                  <div>
+                    <h4 style={{ fontSize: isMobile ? 16 : 18, fontWeight: 600, fontFamily: "'Work Sans', system-ui, sans-serif", margin: '0 0 8px', color: '#000' }}>{s.heading}</h4>
+                    {paras.map((para, pi) => (
+                      <p key={pi} style={{ ...S.para, fontSize: isMobile ? 14 : 15, margin: pi === paras.length - 1 && !s.bullets ? 0 : '0 0 10px' }}>{para}</p>
+                    ))}
+                    {s.bullets && (
+                      <ul style={{ ...S.bulletList, margin: 0 }}>
+                        {s.bullets.map((b, bi) => (
+                          <li key={bi} style={{ ...S.bulletItem, fontSize: isMobile ? 14 : 15 }}>{b}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </div>
@@ -2957,6 +3066,43 @@ const MANIFESTO_ACCORDION_BODY_OVERRIDES = {
   'Good food and nutrition for all': 'No-one should go hungry in Victoria. Food production should prioritise nutrition and environmental sustainability, and the people who grow, prepare and serve our food deserve decent pay and conditions.',
   'A fair go for rural and regional Victoria': 'Regional Victorians shouldn’t get a worse deal than those in Melbourne. Migrant workers on the PALM scheme are highly exploited and deserve the same rights as every other worker in Victoria.',
   'Arts and culture for the enjoyment of all': 'Art and culture should be available to everyone, not just those who can pay for it. Public funding should back progressive and community-driven work, not censorship or corporate and government agendas.',
+}
+
+// Longer opening paragraph shown above the video on a policy detail page —
+// only added where a fuller intro is wanted alongside the short summary
+// (MANIFESTO_ACCORDION_BODY_OVERRIDES) that renders below the video.
+const MANIFESTO_ACCORDION_INTRO_OVERRIDES = {
+  'Workers’ power': 'Workers are more productive than ever, so why are we often working harder, for longer, in less secure jobs? The retirement age keeps being pushed higher but hundreds of thousands of people in work can’t get enough hours. We need to stop deregulation and casualisation, and instead use every means to improve wages and conditions for workers. Even more important, workers need to act collectively to organise and strike against exploitation and injustice in the workplace.',
+}
+
+// Fuller "What we think" / "We'll fight to" detail, rendered below the short
+// summary — only added where the extra depth is wanted beyond the one-line
+// overview (MANIFESTO_ACCORDION_BODY_OVERRIDES).
+const MANIFESTO_ACCORDION_DETAIL_SECTIONS = {
+  'Workers’ power': [
+    {
+      heading: 'What we think',
+      bullets: [
+        'Profit doesn’t come from nowhere — it’s made from the work people do and the resources they use, which means employers and workers are always going to be at odds over how that value gets shared out.',
+        'Work should be socially useful, personally rewarding, safe, secure and well paid, with equal pay for equal value and workplaces free of discrimination.',
+        'In the long run, workers should own and democratically control their own workplaces.',
+        'Every worker has the right to join a union, organise, strike and bargain collectively.',
+      ],
+    },
+    {
+      heading: 'We’ll fight to',
+      bullets: [
+        'Remove legal restrictions on the right to strike and protect workers from being pursued through the courts for taking industrial action.',
+        'Cap public sector executive pay at five times Victoria’s median full-time wage.',
+        'Reverse the outsourcing, privatisation and labour hire of government services.',
+        'Win a $35-an-hour minimum wage with full penalty rates, and strengthen enforcement against wage theft.',
+        'Fund legal support for migrant workers and restore sick pay for casual and gig workers.',
+        'Mandate annual health and safety rep elections in every workplace and protect the right to picket during a dispute.',
+        'Bring WorkCover back into public ownership.',
+        'End contracts with major consulting firms and bring that work back in-house, reverse public sector job cuts, and protect public servants’ right to speak out politically.',
+      ],
+    },
+  ],
 }
 
 // Icon set for Manifesto/vision-2's cards specifically (IMAGES/policy icons
@@ -3507,7 +3653,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
             padding: `${isMobile ? 20 : 32}px ${right}px ${isMobile ? 24 : 36}px ${left}px`,
           }}>
             <div style={{ maxWidth: 680 }}>
-              <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>A better, fairer Victoria</h2>
+              <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 40, lineHeight: isMobile ? undefined : '36px' }}>A better, fairer Victoria</h2>
               <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: isMobile ? 0 : 16 }}>
                 {visionIntro.text}
                 {isMobile && !visionExpanded && (
@@ -3598,6 +3744,50 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
             </div>
           </div>
 
+          {/* Universal Living Guarantee — full-bleed red panel, black wedge
+              flush at top-left (same clip-path family as the other wedges
+              on this page), two-column bullet grid of the key planks. */}
+          <div style={{
+            width: '100%', position: 'relative', overflow: 'hidden',
+            background: '#E9533A', boxSizing: 'border-box',
+          }}>
+            <div style={{
+              position: 'absolute', top: 0, left: 0,
+              width: isMobile ? 130 : 220, height: isMobile ? 100 : 280,
+              background: '#000',
+              clipPath: 'polygon(0% 0%, 87% 0%, 100% 74%, 0% 100%)',
+            }} />
+            <div style={{
+              position: 'relative',
+              padding: `${isMobile ? 40 : 64}px ${right + (isMobile ? 24 : 80)}px ${isMobile ? 40 : 64}px ${left}px`,
+            }}>
+              <div style={{ maxWidth: 680 }}>
+                <h2 style={{
+                  margin: `0 0 ${isMobile ? 16 : 20}px`, fontSize: isMobile ? 26 : 40, lineHeight: isMobile ? '32px' : '36px', fontWeight: 800, color: '#fff',
+                  fontFamily: "'Work Sans', system-ui, sans-serif",
+                }}>
+                  Universal Living Guarantee
+                </h2>
+                <p style={{ fontSize: 16, lineHeight: '22px', color: '#fff', fontWeight: 600, fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 20 }}>
+                  Nobody should have to choose between eating or paying the bills. In Victoria, thousands of parents skip meals so they can feed their kids and keep the lights on. Victorian Socialists will fight for a Universal Living Guarantee—a set of economic and social supports at all stages of life to ensure everyone in the state can live comfortably.
+                </p>
+              </div>
+              <div style={{ maxWidth: 680 }}>
+                <p style={{ fontSize: 16, lineHeight: '22px', color: '#fff', fontWeight: 700, fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 24 }}>
+                  The following are some of the key planks of the guarantee.
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', columnGap: 60, rowGap: 20 }}>
+                  {ULG_PLANKS.map((text, i) => (
+                    <div key={i} style={{ display: 'flex', gap: 10 }}>
+                      <ManifestoFlagMarkWhite />
+                      <p style={{ fontSize: 16, lineHeight: '22px', color: '#fff', fontWeight: 600, fontFamily: "'Open Sans', system-ui, sans-serif", margin: 0 }}>{text}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Grayscale candidates photo, full-bleed. Bottom edge is angled
               the opposite way to the top header shape — same drop
               magnitudes as that shape's leftDrop/rightDrop, but swapped
@@ -3616,7 +3806,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
           <div style={{ paddingLeft: left, paddingRight: right }}>
             {/* Our key policies */}
             <div id="manifesto-policies" style={{ maxWidth: 680, marginBottom: isMobile ? 20 : 28 }}>
-              <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 20 : 26 }}>Our key policies</h2>
+              <h2 style={{ ...S.platformHeading, marginTop: 0, fontSize: isMobile ? 26 : 40, lineHeight: isMobile ? '32px' : '36px' }}>Our key policies</h2>
               <p style={{ ...S.para, fontSize: isMobile ? 14 : 15, marginBottom: 0 }}>Below are some of the key policies we're taking to this election. They form part of a broader and more detailed platform developed in recent months with input from Victorian Socialists members.</p>
             </div>
 
@@ -3651,7 +3841,26 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
               the hand-built section below (in progress — section 1 of the
               closing content, matching the "Building a movement" design). */}
           {isMobile ? (
-            <img src="/lower-content.webp" alt="" style={{ width: '100%', height: 'auto', display: 'block' }} />
+            <div style={{ position: 'relative' }}>
+              <img src="/lower-content.webp" alt="" style={{ width: '100%', height: 'auto', display: 'block' }} />
+              {/* Overlays the export's outlined "Get involved today" button
+                  with a solid-white one to match desktop, without needing to
+                  re-export or splice the image. Positioned as a percentage
+                  of the image's own box (measured against the export's
+                  804×6608 pixel size) so it tracks the button underneath at
+                  any viewport width. */}
+              <a
+                href="https://www.victoriansocialists.org.au/join"
+                target="_blank" rel="noreferrer"
+                style={{
+                  position: 'absolute', left: '10.5%', top: '71.4%', width: '45%', height: '1.6%',
+                  minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: '#fff', color: '#000', borderRadius: 4,
+                  fontSize: 14, fontWeight: 700, textDecoration: 'none',
+                  fontFamily: "'Open Sans', system-ui, sans-serif",
+                }}
+              >Get involved today</a>
+            </div>
           ) : (
             <div style={{ paddingLeft: left, paddingRight: right, marginTop: 64, marginBottom: -80 }}>
               <div style={{ position: 'relative' }}>
@@ -3663,10 +3872,10 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
                 }} />
                 <div style={{ maxWidth: 680 }}>
                   <h2 style={{
-                    margin: '0 0 16px', fontSize: 26, lineHeight: '32px', fontWeight: 800, color: '#000',
-                    fontFamily: "'Work Sans', system-ui, sans-serif", whiteSpace: 'pre-line',
+                    margin: '0 0 16px', fontSize: 40, lineHeight: '36px', fontWeight: 800, color: '#000',
+                    fontFamily: "'Work Sans', system-ui, sans-serif",
                   }}>
-                    {'Building a movement for real change\n(in this election and beyond)'}
+                    Building a movement for real change (in this election and beyond)
                   </h2>
                   <p style={{ fontSize: 16, lineHeight: '22px', color: '#111', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 20 }}>
                     Parliament is just one of many institutions that help the capitalists dominate our economy and society. To break with the capitalist system, we need to take back control not only through parliamentary democracy, but by organising real democracy in workplaces, local communities and on the streets. That’s why Victorian Socialists don’t focus just on elections, but work year in, year out to rebuild cultures of resistance in trade unions, progressive campaigns and local communities.
@@ -3682,17 +3891,17 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
                   leftDrop/rightDrop swapped so the bottom edge slants the
                   opposite way (down from bottom-left to bottom-right). */}
               <div style={{
-                width: `calc(100% + ${left + right}px)`, height: 530, marginTop: 64, marginLeft: -left,
+                width: `calc(100% + ${left + right}px)`, height: 660, marginTop: 64, marginLeft: -left,
                 position: 'relative', overflow: 'hidden', display: 'flex',
                 clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 61.1px), 0 calc(100% - 103.6px))',
               }}>
                 <div style={{
-                  width: '60%', flexShrink: 0, background: '#000', boxSizing: 'border-box',
+                  width: '48%', flexShrink: 0, background: '#000', boxSizing: 'border-box',
                   display: 'flex', alignItems: 'flex-start', padding: `110px 48px 0 ${left}px`,
                 }}>
-                  <div style={{ maxWidth: 560 }}>
+                  <div style={{ maxWidth: 450 }}>
                     <h2 style={{
-                      margin: '0 0 16px', fontSize: 26, lineHeight: '32px', fontWeight: 800, color: '#fff',
+                      margin: '0 0 16px', fontSize: 40, lineHeight: '36px', fontWeight: 800, color: '#fff',
                       fontFamily: "'Work Sans', system-ui, sans-serif",
                     }}>
                       A people-powered campaign
@@ -3702,7 +3911,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
                     </p>
                   </div>
                 </div>
-                <div style={{ width: '40%', flexShrink: 0 }}>
+                <div style={{ width: '52%', flexShrink: 0 }}>
                   <img src="/footscray-doorknock.jpeg" alt="Victorian Socialists members at a Footscray doorknock" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 </div>
                 <div style={{
@@ -3718,10 +3927,10 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
               <div style={{ marginTop: -40 }}>
                 <div style={{ maxWidth: 680 }}>
                   <h2 style={{
-                    margin: '0 0 16px', fontSize: 26, lineHeight: '32px', fontWeight: 800, color: '#000',
-                    fontFamily: "'Work Sans', system-ui, sans-serif", whiteSpace: 'pre-line',
+                    margin: '0 0 16px', fontSize: 40, lineHeight: '36px', fontWeight: 800, color: '#000',
+                    fontFamily: "'Work Sans', system-ui, sans-serif",
                   }}>
-                    {'How does this election fit into the struggle\nfor a socialist society?'}
+                    How does this election fit into the struggle for a socialist society?
                   </h2>
                   <p style={{ fontSize: 16, lineHeight: '22px', color: '#111', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 20 }}>
                     Parliament is just one of many institutions that help the capitalists dominate our economy and society. To break with the capitalist system, we need to take back control not only through parliamentary democracy, but by organising real democracy in workplaces, local communities and on the streets. That’s why Victorian Socialists don’t focus just on elections, but work year in, year out to rebuild cultures of resistance in trade unions, progressive campaigns and local communities.
@@ -3756,7 +3965,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
                   }} />
                   <div style={{ maxWidth: 560 }}>
                     <h2 style={{
-                      margin: '0 0 16px', fontSize: 26, lineHeight: '32px', fontWeight: 800, color: '#fff',
+                      margin: '0 0 16px', fontSize: 40, lineHeight: '36px', fontWeight: 800, color: '#fff',
                       fontFamily: "'Work Sans', system-ui, sans-serif",
                     }}>
                       Join us and get involved!
@@ -3804,7 +4013,15 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
                   background: '#fff',
                   clipPath: 'polygon(0% 0%, 100% 0%, 86% 87%, 0% 100%)',
                 }} />
-                <div style={{ transform: 'rotate(-6deg)', transformOrigin: 'left center' }}>
+                {/* skewY(), not rotate(): a shear keeps every x-coordinate
+                    fixed and only offsets y by x·tan(angle). That means the
+                    left edge (x=0, anchored via transformOrigin:'left')
+                    doesn't move at all, the right edge (larger x) lifts
+                    upward, and each line's horizontal baseline becomes a
+                    rising diagonal — a trapezoid, not a rotated rectangle.
+                    Vertical strokes in the letters (constant x) stay
+                    exactly vertical since skewY never touches x. */}
+                <div style={{ transform: 'skewY(-6deg)', transformOrigin: 'left' }}>
                   <div style={{
                     fontSize: 40, lineHeight: 1.3, fontWeight: 800, color: '#fff',
                     fontFamily: "'Work Sans', system-ui, sans-serif", whiteSpace: 'nowrap',
