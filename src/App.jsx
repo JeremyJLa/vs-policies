@@ -1696,6 +1696,74 @@ function ZoomOutOnScroll({ src, alt, imgStyle }) {
   )
 }
 
+// Renders src as a true halftone: the image is sampled onto an offscreen
+// canvas, then redrawn as a grid of black dots whose radius is driven by
+// each cell's average luminance (dark cell -> big dot, light cell -> small
+// or no dot) — matching "image effect.png"'s newsprint dot-screen look,
+// rather than a uniform noise/speckle texture layered on top.
+function HalftoneImage({ src, style, cellSize = 6, focusY = 0.5 }) {
+  const canvasRef = useRef(null)
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    let cancelled = false
+    const img = new Image()
+    img.onload = () => {
+      if (cancelled) return
+      const draw = () => {
+        const w = canvas.clientWidth
+        const h = canvas.clientHeight
+        if (!w || !h) return
+        const dpr = window.devicePixelRatio || 1
+        canvas.width = w * dpr
+        canvas.height = h * dpr
+        const ctx = canvas.getContext('2d')
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+
+        // Sample the source image (cover-fit into w x h) onto a same-size
+        // offscreen canvas so pixel reads below line up with dot positions.
+        const off = document.createElement('canvas')
+        off.width = w
+        off.height = h
+        const octx = off.getContext('2d')
+        const scale = Math.max(w / img.width, h / img.height)
+        const dw = img.width * scale, dh = img.height * scale
+        octx.drawImage(img, (w - dw) / 2, (h - dh) * focusY, dw, dh)
+        const { data } = octx.getImageData(0, 0, w, h)
+
+        ctx.fillStyle = '#fff'
+        ctx.fillRect(0, 0, w, h)
+        ctx.fillStyle = '#000'
+        const maxRadius = cellSize * 0.62
+        for (let y = 0; y < h; y += cellSize) {
+          for (let x = 0; x < w; x += cellSize) {
+            const px = Math.min(x + cellSize / 2, w - 1) | 0
+            const py = Math.min(y + cellSize / 2, h - 1) | 0
+            const i = (py * w + px) * 4
+            const lum = (data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114) / 255
+            const radius = (1 - lum) * maxRadius
+            if (radius > 0.35) {
+              ctx.beginPath()
+              ctx.arc(x + cellSize / 2, y + cellSize / 2, radius, 0, Math.PI * 2)
+              ctx.fill()
+            }
+          }
+        }
+      }
+      draw()
+      const ro = new ResizeObserver(draw)
+      ro.observe(canvas)
+      canvas._halftoneCleanup = () => ro.disconnect()
+    }
+    img.src = src
+    return () => {
+      cancelled = true
+      if (canvas._halftoneCleanup) canvas._halftoneCleanup()
+    }
+  }, [src, cellSize, focusY])
+  return <canvas ref={canvasRef} style={style} />
+}
+
 function BreakoutBox({ heading, imagePlaceholder, imageSrc, imageAlt, paragraphs, paragraphColor, headingColor, headingStyle, bg, angledBottom, imageGap, extraMarginTop, zoomOnScroll, children, isMobile, isTablet, flushBottom, padY }) {
   const { left, right } = hPad(isMobile, isTablet)
   const vPad = padY ?? (isMobile ? 24 : isTablet ? 32 : 36)
@@ -2351,9 +2419,9 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
         )}
 
         <div style={{
-          background: '#F8F5FA', borderRadius: '8px 8px 0 0',
+          background: '#F8F5FA', borderRadius: 8,
           paddingTop: isMobile ? 24 : 32, paddingBottom: isMobile ? 24 : 32,
-          paddingLeft: left, paddingRight: right, marginTop: 48,
+          paddingLeft: left, paddingRight: right, marginTop: 18,
         }}>
           <div style={{ maxWidth: 680, marginBottom: isMobile ? 24 : 32 }}>
             <p style={{ ...S.para, fontSize: 18, lineHeight: '24px', fontWeight: 600, marginBottom: 0 }}>{p.summary}</p>
@@ -2427,14 +2495,10 @@ function HousingPolicyPageV2({ isMobile, isTablet }) {
           </div>
         )}
 
-        {/* Continues the summary/video panel above with no seam (same
-            background, square top corners since the panel above already
-            rounded them) — angled bottom edge only. */}
+        {/* Plain white — the purple wash only covers the summary/video
+            panel above, stopping right at its bottom edge. */}
         <div style={{
-          background: '#F8F5FA',
-          clipPath: `polygon(0 0, 100% 0, 100% calc(100% - ${isMobile ? 40 : 60}px), 0 100%)`,
-          paddingTop: isMobile ? 24 : 32,
-          paddingBottom: (isMobile ? 24 : 32) + (isMobile ? 40 : 60),
+          paddingTop: isMobile ? 32 : 40,
           paddingLeft: left, paddingRight: right,
         }}>
           {/* Introductory housing-crisis text */}
@@ -2521,6 +2585,7 @@ function ControlsBar({ showVariations, tab, plainView, version, cardView, policy
             <>
               <button onClick={() => setPlainView('manifesto4')} style={linkStyle(plainView === 'manifesto4')}>Vision card 1</button>
               <button onClick={() => setPlainView('manifesto6')} style={linkStyle(plainView === 'manifesto6')}>Vision card 2</button>
+              <button onClick={() => setPlainView('manifesto7')} style={linkStyle(plainView === 'manifesto7')}>Extra images</button>
               <button onClick={() => setPlainView('manifesto5')} style={linkStyle(plainView === 'manifesto5')}>Accordion view</button>
             </>
           )}
@@ -3546,7 +3611,7 @@ function ManifestoFullPolicyCards3ColV2({ isMobile, onOpenVideo, onOpenHousing, 
 // the mobile reference mockups (Manifesto-A.png collapsed, Manifesto-B.png
 // expanded). Reuses the real VISION_CONTENT intro and POLICIES data rather
 // than the mockup's placeholder blurbs.
-function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLayout = '2col', lowercaseKeyPolicyHeadings = false, altVisionCardHeadings = false, activeTab, setActiveTab, onOpenHousing, onOpenPolicy }) {
+function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLayout = '2col', lowercaseKeyPolicyHeadings = false, altVisionCardHeadings = false, extraImages = false, activeTab, setActiveTab, onOpenHousing, onOpenPolicy }) {
   const { left, right } = hPad(isMobile, isTablet)
   const [openIndex, setOpenIndex] = useState(null)
   const [videoPolicy, setVideoPolicy] = useState(null)
@@ -3753,7 +3818,7 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
           }}>
             <div style={{
               position: 'absolute', top: 0, left: 0,
-              width: isMobile ? 130 : 220, height: isMobile ? 100 : 280,
+              width: isMobile ? 100 : 220, height: isMobile ? 78 : 280,
               background: '#000',
               clipPath: 'polygon(0% 0%, 87% 0%, 100% 74%, 0% 100%)',
             }} />
@@ -3863,28 +3928,77 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
             </div>
           ) : (
             <div style={{ paddingLeft: left, paddingRight: right, marginTop: 64, marginBottom: -80 }}>
-              <div style={{ position: 'relative' }}>
+              {extraImages ? (
+                /* Alternate treatment for section 1, matching the reference
+                   "section - Building a movement layout.png": a black
+                   parallelogram flush against the left edge of the viewport,
+                   with the text column shifted right to clear it. The
+                   polygon's vertices were measured pixel-precisely from that
+                   2102x948 export — topVertex (620,146), rightVertex
+                   (849,722), bottomVertex (0,824), leftTopVertex (0,188) — as
+                   percentages of the canvas (29.495%/15.401%, 40.390%/76.160%,
+                   0%/86.920%, 0%/19.831%). X is kept as a percentage (so it
+                   tracks this section's actual width exactly like the
+                   reference); Y is baked to px against the fixed 650px
+                   section height, since CSS resolves padding/clip-path
+                   percentages for vertical offsets against the box's WIDTH,
+                   not height. Text's left offset (990/2102 = 47.098%) is
+                   reproduced the same way. This full-bleed div breaks out of
+                   this wrapper's own paddingLeft (the standard trick used by
+                   sections 2/4 below), so its "100%" resolves against the
+                   padded content width, not the raw viewport. */
                 <div style={{
-                  position: 'absolute', top: 0, left: -60,
-                  width: 46, height: 110,
-                  background: '#FF4B33',
-                  clipPath: 'polygon(0% 0%, 100% 0%, 98% 86%, 31% 100%)',
-                }} />
-                <div style={{ maxWidth: 680 }}>
-                  <h2 style={{
-                    margin: '0 0 16px', fontSize: 40, lineHeight: '36px', fontWeight: 800, color: '#000',
-                    fontFamily: "'Work Sans', system-ui, sans-serif",
+                  width: `calc(100% + ${left + right}px)`, height: 650, marginLeft: -left,
+                  position: 'relative', overflow: 'hidden',
+                }}>
+                  <div style={{
+                    position: 'absolute', top: 0, left: 0,
+                    width: '100%', height: '100%',
+                    clipPath: 'polygon(29.495% 100.1px, 40.390% 495.0px, 0% 565.0px, 0% 128.9px)',
                   }}>
-                    Building a movement for real change (in this election and beyond)
-                  </h2>
-                  <p style={{ fontSize: 16, lineHeight: '22px', color: '#111', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 20 }}>
-                    Parliament is just one of many institutions that help the capitalists dominate our economy and society. To break with the capitalist system, we need to take back control not only through parliamentary democracy, but by organising real democracy in workplaces, local communities and on the streets. That’s why Victorian Socialists don’t focus just on elections, but work year in, year out to rebuild cultures of resistance in trade unions, progressive campaigns and local communities.
-                  </p>
-                  <p style={{ fontSize: 16, lineHeight: '22px', color: '#111', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 0 }}>
-                    A socialist MP would use their public profile and resources to support striking workers and others fighting for progressive change, and help build more powerful movements outside parliament. Truly revolutionary change cannot be handed down from on high. It must be built from below. Every strike, protest and act of resistance helps people learn to lead, organise, fight collectively and win.
-                  </p>
+                    <HalftoneImage src="/conference-aneke.jpg" cellSize={3} style={{ width: '100%', height: '100%', display: 'block' }} />
+                  </div>
+                  <div style={{ position: 'relative', paddingTop: 128.9, paddingLeft: '47.098%', paddingRight: right, boxSizing: 'border-box' }}>
+                    <div style={{ maxWidth: 680 }}>
+                      <h2 style={{
+                        margin: '0 0 16px', fontSize: 40, lineHeight: '36px', fontWeight: 800, color: '#000',
+                        fontFamily: "'Work Sans', system-ui, sans-serif",
+                      }}>
+                        Building a movement for real change (in this election and beyond)
+                      </h2>
+                      <p style={{ fontSize: 16, lineHeight: '22px', color: '#111', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 20 }}>
+                        Parliament is just one of many institutions that help the capitalists dominate our economy and society. To break with the capitalist system, we need to take back control not only through parliamentary democracy, but by organising real democracy in workplaces, local communities and on the streets. That’s why Victorian Socialists don’t focus just on elections, but work year in, year out to rebuild cultures of resistance in trade unions, progressive campaigns and local communities.
+                      </p>
+                      <p style={{ fontSize: 16, lineHeight: '22px', color: '#111', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 0 }}>
+                        A socialist MP would use their public profile and resources to support striking workers and others fighting for progressive change, and help build more powerful movements outside parliament. Truly revolutionary change cannot be handed down from on high. It must be built from below. Every strike, protest and act of resistance helps people learn to lead, organise, fight collectively and win.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div style={{ position: 'relative' }}>
+                  <div style={{
+                    position: 'absolute', top: 0, left: -60,
+                    width: 46, height: 110,
+                    background: '#FF4B33',
+                    clipPath: 'polygon(0% 0%, 100% 0%, 98% 86%, 31% 100%)',
+                  }} />
+                  <div style={{ maxWidth: 680 }}>
+                    <h2 style={{
+                      margin: '0 0 16px', fontSize: 40, lineHeight: '36px', fontWeight: 800, color: '#000',
+                      fontFamily: "'Work Sans', system-ui, sans-serif",
+                    }}>
+                      Building a movement for real change (in this election and beyond)
+                    </h2>
+                    <p style={{ fontSize: 16, lineHeight: '22px', color: '#111', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 20 }}>
+                      Parliament is just one of many institutions that help the capitalists dominate our economy and society. To break with the capitalist system, we need to take back control not only through parliamentary democracy, but by organising real democracy in workplaces, local communities and on the streets. That’s why Victorian Socialists don’t focus just on elections, but work year in, year out to rebuild cultures of resistance in trade unions, progressive campaigns and local communities.
+                    </p>
+                    <p style={{ fontSize: 16, lineHeight: '22px', color: '#111', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 0 }}>
+                      A socialist MP would use their public profile and resources to support striking workers and others fighting for progressive change, and help build more powerful movements outside parliament. Truly revolutionary change cannot be handed down from on high. It must be built from below. Every strike, protest and act of resistance helps people learn to lead, organise, fight collectively and win.
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {/* Section 2 — full-bleed, same clip-path mechanism as the
                   candidates photo above "Our key policies" but with
@@ -3924,22 +4038,73 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
 
               {/* Section 3 — duplicate of section 1's layout with new copy,
                   no red wedge above the heading. */}
-              <div style={{ marginTop: -40 }}>
-                <div style={{ maxWidth: 680 }}>
-                  <h2 style={{
-                    margin: '0 0 16px', fontSize: 40, lineHeight: '36px', fontWeight: 800, color: '#000',
-                    fontFamily: "'Work Sans', system-ui, sans-serif",
+              {extraImages ? (
+                /* Alternate treatment matching the reference "How does this
+                   election - layout.png" (1462x710 export): generous
+                   top/bottom breathing room around the text, plus a black
+                   parallelogram flush against the right edge of the
+                   viewport. The shape's right side runs off that canvas, so
+                   its polygon was measured relative to its own visible
+                   bounding box (x:1027-1462, y:82-636 in the export, i.e.
+                   435x554) rather than the full canvas: topVertex
+                   (17.01%,0%), topRightCorner (100%,2.89%), bottomRight
+                   Corner (100%,100%), leftmostVertex (0%,76.71%). That box
+                   is scaled by 600/710 ≈ 0.8451 (368x468, top offset 69px)
+                   to match this section's own vertical rhythm, and the
+                   top/bottom padding (106px and 165px in the reference,
+                   14.93%/23.24% of the 710px canvas height) is scaled the
+                   same way (90px / 139px of 600px). */
+                <div style={{
+                  width: `calc(100% + ${left + right}px)`, marginLeft: -left,
+                  position: 'relative', overflow: 'hidden',
+                  paddingTop: 30, paddingBottom: 79,
+                }}>
+                  <div style={{
+                    position: 'absolute', top: 43, right: 0,
+                    width: 535, height: 416,
+                    clipPath: 'polygon(17.01% 0%, 100% 2.89%, 100% 100%, 0% 76.71%)',
                   }}>
-                    How does this election fit into the struggle for a socialist society?
-                  </h2>
-                  <p style={{ fontSize: 16, lineHeight: '22px', color: '#111', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 20 }}>
-                    Parliament is just one of many institutions that help the capitalists dominate our economy and society. To break with the capitalist system, we need to take back control not only through parliamentary democracy, but by organising real democracy in workplaces, local communities and on the streets. That’s why Victorian Socialists don’t focus just on elections, but work year in, year out to rebuild cultures of resistance in trade unions, progressive campaigns and local communities.
-                  </p>
-                  <p style={{ fontSize: 16, lineHeight: '22px', color: '#111', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 0 }}>
-                    A socialist MP would use their public profile and resources to support striking workers and others fighting for progressive change, and help build more powerful movements outside parliament. Truly revolutionary change cannot be handed down from on high. It must be built from below. Every strike, protest and act of resistance helps people learn to lead, organise, fight collectively and win.
-                  </p>
+                    {/* True halftone (dot radius driven by per-cell
+                        luminance, sampled on a canvas) rather than a flat
+                        grayscale filter — matches "image effect.png"'s
+                        newsprint dot-screen look. */}
+                    <HalftoneImage src="/jordan-cat.png" cellSize={3} style={{ width: '100%', height: '100%', display: 'block' }} />
+                  </div>
+                  <div style={{ paddingLeft: left }}>
+                    <div style={{ maxWidth: 680 }}>
+                      <h2 style={{
+                        margin: '0 0 16px', fontSize: 40, lineHeight: '36px', fontWeight: 800, color: '#000',
+                        fontFamily: "'Work Sans', system-ui, sans-serif",
+                      }}>
+                        How does this election fit into the struggle for a socialist society?
+                      </h2>
+                      <p style={{ fontSize: 16, lineHeight: '22px', color: '#111', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 20 }}>
+                        Parliament is just one of many institutions that help the capitalists dominate our economy and society. To break with the capitalist system, we need to take back control not only through parliamentary democracy, but by organising real democracy in workplaces, local communities and on the streets. That’s why Victorian Socialists don’t focus just on elections, but work year in, year out to rebuild cultures of resistance in trade unions, progressive campaigns and local communities.
+                      </p>
+                      <p style={{ fontSize: 16, lineHeight: '22px', color: '#111', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 0 }}>
+                        A socialist MP would use their public profile and resources to support striking workers and others fighting for progressive change, and help build more powerful movements outside parliament. Truly revolutionary change cannot be handed down from on high. It must be built from below. Every strike, protest and act of resistance helps people learn to lead, organise, fight collectively and win.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div style={{ marginTop: -40 }}>
+                  <div style={{ maxWidth: 680 }}>
+                    <h2 style={{
+                      margin: '0 0 16px', fontSize: 40, lineHeight: '36px', fontWeight: 800, color: '#000',
+                      fontFamily: "'Work Sans', system-ui, sans-serif",
+                    }}>
+                      How does this election fit into the struggle for a socialist society?
+                    </h2>
+                    <p style={{ fontSize: 16, lineHeight: '22px', color: '#111', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 20 }}>
+                      Parliament is just one of many institutions that help the capitalists dominate our economy and society. To break with the capitalist system, we need to take back control not only through parliamentary democracy, but by organising real democracy in workplaces, local communities and on the streets. That’s why Victorian Socialists don’t focus just on elections, but work year in, year out to rebuild cultures of resistance in trade unions, progressive campaigns and local communities.
+                    </p>
+                    <p style={{ fontSize: 16, lineHeight: '22px', color: '#111', fontFamily: "'Open Sans', system-ui, sans-serif", marginBottom: 0 }}>
+                      A socialist MP would use their public profile and resources to support striking workers and others fighting for progressive change, and help build more powerful movements outside parliament. Truly revolutionary change cannot be handed down from on high. It must be built from below. Every strike, protest and act of resistance helps people learn to lead, organise, fight collectively and win.
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {/* Section 4 — duplicate of section 2, horizontally flipped:
                   image now on the left, solid red (not black) on the right,
@@ -3957,12 +4122,6 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
                   position: 'relative',
                   display: 'flex', alignItems: 'flex-start', padding: `40px ${right + 42}px 0 58px`,
                 }}>
-                  <div style={{
-                    position: 'absolute', top: 0, left: 0,
-                    width: 40, height: 118,
-                    background: '#000',
-                    clipPath: 'polygon(0% 0%, 100% 0%, 100% 85%, 0% 100%)',
-                  }} />
                   <div style={{ maxWidth: 560 }}>
                     <h2 style={{
                       margin: '0 0 16px', fontSize: 40, lineHeight: '36px', fontWeight: 800, color: '#fff',
@@ -4020,8 +4179,11 @@ function ManifestoVisionPage({ isMobile, isTablet, useCardStyle = false, cardLay
                     upward, and each line's horizontal baseline becomes a
                     rising diagonal — a trapezoid, not a rotated rectangle.
                     Vertical strokes in the letters (constant x) stay
-                    exactly vertical since skewY never touches x. */}
-                <div style={{ transform: 'skewY(-6deg)', transformOrigin: 'left' }}>
+                    exactly vertical since skewY never touches x. Angle
+                    matches the white wedge's own bottom edge: on its
+                    400x150 box that edge runs from (86%,87%) to (0%,100%),
+                    i.e. rises 19.5px over 344px = atan(19.5/344) ≈ 3.24deg. */}
+                <div style={{ transform: 'skewY(-3.24deg)', transformOrigin: 'left' }}>
                   <div style={{
                     fontSize: 40, lineHeight: 1.3, fontWeight: 800, color: '#fff',
                     fontFamily: "'Work Sans', system-ui, sans-serif", whiteSpace: 'nowrap',
@@ -4253,7 +4415,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
                     ref={housingHeroImgRef}
                     style={{
                       position: 'absolute', inset: 0,
-                      background: 'url(/housing.png) center / cover no-repeat',
+                      background: 'url(/housing-image2.webp) center / cover no-repeat',
                       filter: 'grayscale(1) brightness(0.9) contrast(1.1)',
                       transform: 'scale(1)', transition: 'transform 3.5s ease-out', willChange: 'transform',
                     }}
@@ -4398,6 +4560,13 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
             activeTab={manifestoTab} setActiveTab={setManifestoTab}
             onOpenHousing={() => openBackablePage('housing3', 'manifesto6')}
             onOpenPolicy={(heading) => { setPolicyDetailHeading(heading); openBackablePage('policyDetail', 'manifesto6') }}
+          />
+        ) : (!showVariations && version === 'B' && plainView === 'manifesto7') ? (
+          <ManifestoVisionPage
+            isMobile={isMobile} isTablet={isTablet} useCardStyle cardLayout="3col-v2" lowercaseKeyPolicyHeadings extraImages
+            activeTab={manifestoTab} setActiveTab={setManifestoTab}
+            onOpenHousing={() => openBackablePage('housing3', 'manifesto7')}
+            onOpenPolicy={(heading) => { setPolicyDetailHeading(heading); openBackablePage('policyDetail', 'manifesto7') }}
           />
         ) : (!showVariations && version === 'B' && plainView === 'policyDetail') ? (
           <GenericPolicyDetailPage heading={policyDetailHeading} isMobile={isMobile} isTablet={isTablet} />
@@ -4609,7 +4778,7 @@ function PoliciesPage({ version, initialTab = 'policies', initialPlainView = 'ma
 
 export default function App() {
   const [version, setVersion] = useState('B')
-  const [initialTab, setInitialTab] = useState('policies')
+  const [initialTab, setInitialTab] = useState('platform')
   const [initialPlainView, setInitialPlainView] = useState('manifesto4')
 
   if (version === 'home') {
